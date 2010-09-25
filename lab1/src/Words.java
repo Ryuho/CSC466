@@ -1,8 +1,6 @@
 
-public class Words implements java.lang.Comparable {
-	String str;
-	Integer freq;
-	static boolean isStrSorted;
+public class Words extends TextToken {
+
 	
 	Words(String w)
 	{
@@ -16,23 +14,6 @@ public class Words implements java.lang.Comparable {
 		freq++;
 	}
 	
-	public int compareTo(Object o) 
-	{
-		if(isStrSorted)
-		{
-			return str.compareTo(o);
-		}
-		return freq.compareTo(o);
-	}
 	
-	public static void setFreqSort()
-	{
-		isStrSorted = false;
-	}
-	
-	public static void setStrSort()
-	{
-		isStrSorted = true;
-	}
 
 }
