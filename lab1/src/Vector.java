@@ -29,12 +29,7 @@ public class Vector {
 		return elements.get(index).doubleValue();
 	}
 	
-	boolean addElement(float num)
-	{
-		return elements.add(num);
-	}
-	
-	boolean addElement(int num)
+	boolean addElement(Number num)
 	{
 		return elements.add(num);
 	}
@@ -52,5 +47,20 @@ public class Vector {
 			}
 		}
 		return a;
+	}
+	
+	public String toString()
+	{
+		String bacon = "<";
+		int size = this.getSize();
+		for(int i = 0; i < size;i++)
+		{
+			bacon += getElement(i);
+			if(!(i >= size-1))
+			{
+				bacon += ", ";
+			}
+		}
+		return bacon + ">";
 	}
 }
