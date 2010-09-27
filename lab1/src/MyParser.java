@@ -44,7 +44,6 @@ public class MyParser {
 
 		StringTokenizer st = new StringTokenizer(s,",");
 
-		
 		while (st.hasMoreTokens()) {
 			try{
 				answer.addElement(Double.parseDouble(st.nextToken()));
@@ -56,9 +55,9 @@ public class MyParser {
 		return answer;
 	}
 	
-	//ArrayList<TextToken> parseTextFile(String filename)
-	//{
-	//	return null;
-	//}
+	ArrayList<TextToken> parseTextFile(String filename)
+	{
+		return null;
+	}
 
 }
