@@ -16,7 +16,28 @@ public class WordLists
 		{
 			if(lis.get(i) instanceof Words)
 			{
-				temp.add((Words) lis.get(i));
+				//check for frequency
+				boolean contains =false;
+				int containsIndex = 0;
+				
+				for(int j = 0; j< temp.size(); j++)
+				{
+					if(lis.get(i).str.equalsIgnoreCase(temp.get(j).str))
+					{
+						contains = true;
+						containsIndex = j;
+						break;
+					}
+				}
+				
+				if(contains)
+				{
+					temp.get(containsIndex).addOne(); 
+				}
+				else
+				{
+					temp.add((Words) lis.get(i));
+				}
 				st.add((Words) lis.get(i));
 			}
 			else if(lis.get(i) instanceof EOS)
@@ -47,6 +68,7 @@ public class WordLists
 	{
 		TextToken.setFreqSort();
 		Collections.sort(wlist);
+		//System.out.println(wlist.toString());
 		return wlist;
 	}
 
@@ -89,11 +111,12 @@ public class WordLists
 			if(word.freq >= target)
 			{
 				System.out.print(word.str+"-"+word.freq);
+				if(i < wlist.size()-2)
+				{
+					System.out.print(", ");
+				}
 			}
-			if(i < wlist.size()-1)
-			{
-				System.out.print(", ");
-			}
+			
 		}
 		System.out.print('\n');
 	}
@@ -108,11 +131,12 @@ public class WordLists
 			if(word.freq == target)
 			{
 				System.out.print(word.str+"-"+word.freq);
+				if(i < wlist.size()-2)
+				{
+					System.out.print(", ");
+				}
 			}
-			if(i < wlist.size()-1)
-			{
-				System.out.print(", ");
-			}
+			
 		}
 		System.out.print('\n');
 	}
@@ -122,7 +146,7 @@ public class WordLists
 	{
 		sortFreq();
 		System.out.println("Printing " + target + " most common words");
-		for(int i = target-1; i >= 0 ;i--)
+		for(int i = wlist.size()-1; i >= wlist.size()-target ;i--)
 		{
 			System.out.println(wlist.get(i).str + " - " + wlist.get(i).freq);
 		}
@@ -133,7 +157,7 @@ public class WordLists
 	{
 		for(int i = 0; i < wlist.size();i++)
 		{
-			if(target == wlist.get(i).str)
+			if(target.equalsIgnoreCase(wlist.get(i).str) )
 			{
 				return true;
 			}
@@ -145,7 +169,7 @@ public class WordLists
 	{
 		for(int i = 0; i < sen.size();i++)
 		{
-			if(tar == sen.get(i).str)
+			if(tar.equalsIgnoreCase(sen.get(i).str))
 			{
 				return true;
 			}
