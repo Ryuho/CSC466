@@ -117,8 +117,11 @@ public class MyParser {
 				boolean done = false;
 				while(!done)
 				{
-					
-					if(currChunk.length() >= 4 && 
+					if(currChunk.length() == 0)
+					{
+						break;
+					}
+					else if(currChunk.length() >= 4 && 
 							currChunk.substring(currChunk.length()-4, currChunk.length()).compareTo("....") == 0)
 					{
 						bufferTokens.add(new Chars("..."));
@@ -131,7 +134,7 @@ public class MyParser {
 						bufferTokens.add(new Chars("..."));
 						currChunk = currChunk.substring(0,currChunk.length()-3);
 					}
-					else if(currChunk.charAt(0) == '-' && currChunk.length() ==1)
+					else if(currChunk.length() == 1 && currChunk.charAt(0) == '-')
 					{
 						tokens.add(new Chars("-"));
 						break;
