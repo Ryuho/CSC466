@@ -18,16 +18,17 @@ public class WordLists
 				temp.add((Words) lis.get(i));
 				st.add((Words) lis.get(i));
 			}
-			else if(lis.get(i) instanceof EOP)
-			{
-				paragraphCount++;
-			}
-			else
+			else if(lis.get(i) instanceof EOS)
 			{
 				slist.add(st);
 				st = new ArrayList<Words>();
 				sentenceCount++;
 			}
+			else if(lis.get(i) instanceof EOP)
+			{
+				paragraphCount++;
+			}
+			
 		}
 		wlist = temp;
 	}

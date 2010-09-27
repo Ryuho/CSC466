@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 
 public class VectorMath {
 	
@@ -104,6 +106,57 @@ public class VectorMath {
 		product /= (siz1 - 1) * standardDeviation(a) * standardDeviation(b);
 		return product;
 	}
+	
+	void LSMrow(Vector a)
+	{
+		double largest = 0; 
+		double mean = 0;
+		double smallest = Double.MAX_VALUE;
+		
+		//going through all the numbers
+		for(int i =0; i < a.getSize(); i++)
+		{
+			if(a.getElement(i) >= largest)
+			{
+				largest = a.getElement(i);
+			}
+			if(a.getElement(i) <= smallest)
+			{
+				smallest = a.getElement(i);
+			}
+			mean += a.getElement(i); 
+		}
+		mean /= a.getSize();
+		
+		System.out.println("Largest number: " + largest + "  Smallest number: " + smallest
+				+ "  Mean: " + mean);	
+	}
+	
+	void LSMcolumn(ArrayList<Vector> lis, int colTarget)
+	{
+		double largest = 0; 
+		double mean = 0;
+		double smallest = Double.MAX_VALUE;
+		
+		//going through all the numbers
+		for(int i =0; i < lis.size(); i++)
+		{
+			if(lis.get(i).getElement(colTarget) >= largest)
+			{
+				largest = lis.get(i).getElement(colTarget);
+			}
+			if(lis.get(i).getElement(colTarget) <= smallest)
+			{
+				smallest = lis.get(i).getElement(colTarget);
+			}
+			mean += lis.get(i).getElement(colTarget); 
+		}
+		mean /= lis.size();
+		
+		System.out.println("Largest number: " + largest + "  Smallest number: " + smallest
+				+ "  Mean: " + mean);
+	}
+	
 	double vectorMean(Vector a)
 	{
 		double sum = 0;
@@ -118,25 +171,50 @@ public class VectorMath {
 	{
 		double mean = 0;
 		final int n = v.getSize();
+		double sum = 0;
 		if(n<2)
 		{
 			return Double.NaN;
 		}
 		for(int i = 0; i< n; i++)
 		{
-			mean += v.getElement(i);
+			mean = mean + v.getElement(i);
 		}
 		mean /= n;
 		
-		double sum = 0;
 		for (int i = 0; i< n; i++)
 		{
 			double b = v.getElement(i) - mean;
-			sum += b *b;
+			sum = sum + b *b;
 		}
 		
-		return Math.sqrt(sum / (n));
+		double fin = Math.sqrt(sum / (n));
+		return fin;	
+	}
+	
+	public double standardDeviation(ArrayList<Vector> lis, int colTarget)
+	{
+		double mean = 0;
+		final int n = lis.size();
+		double sum = 0;
+		if(n<2)
+		{
+			return Double.NaN;
+		}
+		for(int i = 0; i< n; i++)
+		{
+			mean = mean + lis.get(i).getElement(colTarget);
+		}
+		mean /= n;
 		
+		for (int i = 0; i< n; i++)
+		{
+			double b = lis.get(i).getElement(colTarget) - mean;
+			sum = sum + b *b;
+		}
+		
+		double fin = Math.sqrt(sum / (n));
+		return fin;
 	}
 
 }
