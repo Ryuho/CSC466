@@ -3,7 +3,7 @@ import java.util.ArrayList;
 
 public class VectorMath {
 	
-	double getEucledianDistance(Vector a, Vector b)
+	public static double getEucledianDistance(Vector a, Vector b)
 	{
 		//subtract corresponding elements and then square the elements
 		int siz1 = a.getSize();
@@ -28,15 +28,15 @@ public class VectorMath {
 		//take square root
 		return Math.sqrt(product);
 	}
-	double getEucledianDistance(Vector a)
+	public static double getEucledianDistance(Vector a)
 	{
 		return getEucledianDistance(a, new Vector(a));
 	}
-	int getDimensionLength(Vector a)
+	public static int getDimensionLength(Vector a)
 	{
 		return a.getSize();
 	}
-	double getDotProduct(Vector a, Vector b)
+	public static double getDotProduct(Vector a, Vector b)
 	{
 		int siz1 = a.getSize();
 		int siz2 = b.getSize();
@@ -58,7 +58,7 @@ public class VectorMath {
 		}
 		return product;
 	}
-	double getManhattanDistance(Vector a, Vector b)
+	public static double getManhattanDistance(Vector a, Vector b)
 	{
 		int siz1 = a.getSize();
 		int siz2 = b.getSize();
@@ -81,7 +81,7 @@ public class VectorMath {
 		return product;
 	}
 	
-	double getPearsonCorrelation(Vector a, Vector b)
+	public static double getPearsonCorrelation(Vector a, Vector b)
 	{
 		int siz1 = a.getSize();
 		int siz2 = b.getSize();
@@ -107,7 +107,7 @@ public class VectorMath {
 		return product;
 	}
 	
-	void LSMrow(Vector a)
+	public static void LSMrow(Vector a)
 	{
 		double largest = 0; 
 		double mean = 0;
@@ -132,7 +132,7 @@ public class VectorMath {
 				+ "  Mean: " + mean);	
 	}
 	
-	void LSMcolumn(ArrayList<Vector> lis, int colTarget)
+	public static void LSMcolumn(ArrayList<Vector> lis, int colTarget)
 	{
 		double largest = 0; 
 		double mean = 0;
@@ -157,7 +157,7 @@ public class VectorMath {
 				+ "  Mean: " + mean);
 	}
 	
-	double vectorMean(Vector a)
+	public static double vectorMean(Vector a)
 	{
 		double sum = 0;
 		for(int i = 0; i < a.getSize(); i++)
@@ -167,7 +167,7 @@ public class VectorMath {
 		sum /= a.getSize();
 		return sum;
 	}
-	double standardDeviation(Vector v)
+	public static double standardDeviation(Vector v)
 	{
 		double mean = 0;
 		final int n = v.getSize();
@@ -192,7 +192,7 @@ public class VectorMath {
 		return fin;	
 	}
 	
-	public double standardDeviation(ArrayList<Vector> lis, int colTarget)
+	public static double standardDeviation(ArrayList<Vector> lis, int colTarget)
 	{
 		double mean = 0;
 		final int n = lis.size();
