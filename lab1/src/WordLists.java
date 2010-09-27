@@ -11,6 +11,7 @@ public class WordLists
 	{
 		ArrayList<Words> st = new ArrayList<Words>();
 		ArrayList<Words> temp = new ArrayList<Words>();
+		slist = new ArrayList<ArrayList<Words>>();
 		for(int i = 0; i < lis.size(); i++)
 		{
 			if(lis.get(i) instanceof Words)

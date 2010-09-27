@@ -56,5 +56,30 @@ public class MainTests
 	static void testText()
 	{
 		ArrayList<TextToken> lis = MyParser.parseTextFile("data/strFile.txt");
+		WordLists wl = new WordLists(lis);
+		
+		System.out.println("Found " + wl.uniqueWords() + " unique words");
+		System.out.println("Found " + wl.totalWords() + " total words");
+		System.out.println("Found " + wl.numSentences() + " total sentences");
+		System.out.println("Found " + wl.numParagraphs() + " total paragraphs");
+		System.out.println(" ");
+		
+		wl.pFreqAtLeast(2);
+		wl.pFreqAt(2);
+		wl.pMostCommon(10);
+		
+		System.out.println("Finding word Don't: "+ wl.findWord("Don't"));
+		System.out.println("Finding word object: "+ wl.findWord("object"));
+		System.out.println("Finding word Filby: "+ wl.findWord("Filby"));
+		System.out.println("Finding word Alfalfa: "+ wl.findWord("Alfalfa"));
+		
+		System.out.println("Finding words solid and body in sentence (they are): "
+				+ wl.findTwoWords("solid", "body"));
+		System.out.println("Finding words wait and cube in sentence(they aren't): "
+				+ wl.findTwoWords("solid", "body"));
+		System.out.println("Finding words solid and cucumber in sentence(they aren't): "
+				+ wl.findTwoWords("solid", "cucumber"));
+		
+	
 	}
 }
