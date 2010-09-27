@@ -188,7 +188,7 @@ public class VectorMath {
 			sum = sum + b *b;
 		}
 		
-		double fin = Math.sqrt(sum / (n));
+		double fin = Math.sqrt(sum / (n - 1));
 		return fin;	
 	}
 	
@@ -213,7 +213,7 @@ public class VectorMath {
 			sum = sum + b *b;
 		}
 		
-		double fin = Math.sqrt(sum / (n));
+		double fin = Math.sqrt(sum / (n - 1));
 		return fin;
 	}
 
