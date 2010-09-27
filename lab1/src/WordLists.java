@@ -7,7 +7,7 @@ public class WordLists
 	int paragraphCount = 0;
 	
 	/*Creates word list from raw List, must be used first */
-	public void creatWList(ArrayList<TextToken> lis)
+	WordLists(ArrayList<TextToken> lis)
 	{
 		ArrayList<Words> st = new ArrayList<Words>();
 		ArrayList<Words> temp = new ArrayList<Words>();
