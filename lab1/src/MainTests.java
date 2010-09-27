@@ -26,7 +26,7 @@ public class MainTests
 	
 	static void testCVS()
 	{
-		ArrayList<Vector> vecList = MyParser.parseNumCSV("data/numFile.txt");
+		ArrayList<Vector> vecList = MyParser.parseNumCSV("numFile.csv");
 		System.out.println("Euclidean distance for 1st vector <1, 2, 3, 5>: " + 
 				VectorMath.getEucledianDistance(vecList.get(0)));
 		System.out.println("Euclidean distance between 1st and 2nd vectors: " + 
@@ -55,7 +55,7 @@ public class MainTests
 	
 	static void testText()
 	{
-		ArrayList<TextToken> lis = MyParser.parseTextFile("data/HuckFinn.txt");
+		ArrayList<TextToken> lis = MyParser.parseTextFile("strFile.txt");
 		WordLists wl = new WordLists(lis);
 		
 		System.out.println("Found " + wl.uniqueWords() + " unique words");
@@ -68,7 +68,7 @@ public class MainTests
 		wl.pFreqAt(2);
 		wl.pMostCommon(10);
 		
-		System.out.println("Finding word Don't: "+ wl.findWord("Don't"));
+		System.out.println("Finding word Don't: "+ wl.findWord("Don’t"));
 		System.out.println("Finding word object: "+ wl.findWord("object"));
 		System.out.println("Finding word Filby: "+ wl.findWord("Filby"));
 		System.out.println("Finding word Alfalfa: "+ wl.findWord("Alfalfa"));
@@ -79,6 +79,10 @@ public class MainTests
 				+ wl.findTwoWords("wait", "cube"));
 		System.out.println("Finding words solid and cucumber in sentence(they aren't): "
 				+ wl.findTwoWords("solid", "cucumber"));
+		System.out.println("Finding how many times 'a' and 'the' appear in the same sentence: "
+				+ wl.findWords("a", "the"));
+		System.out.println("Finding how many times 'cube' and 'existence' appear in the same sentence: "
+				+ wl.findWords("cube", "existence"));
 		
 	
 	}

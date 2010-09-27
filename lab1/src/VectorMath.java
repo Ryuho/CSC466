@@ -176,11 +176,7 @@ public class VectorMath {
 		{
 			return Double.NaN;
 		}
-		for(int i = 0; i< n; i++)
-		{
-			mean = mean + v.getElement(i);
-		}
-		mean /= n;
+		mean = vectorMean(v);
 		
 		for (int i = 0; i< n; i++)
 		{
