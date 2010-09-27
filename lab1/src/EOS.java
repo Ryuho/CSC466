@@ -12,4 +12,9 @@ public class EOS extends TextToken {
 	{
 		return number;
 	}
+	
+	public String toString()
+	{
+		return "<EOS>";
+	}
 }

@@ -12,4 +12,9 @@ public class EOP extends TextToken {
 	{
 		return number;
 	}
+	
+	public String toString()
+	{
+		return "<EOP>";
+	}
 }

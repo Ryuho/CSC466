@@ -1,6 +1,6 @@
 
-public class Words extends TextToken {
-	Words(String w)
+public class Chars extends TextToken {
+	Chars(String w)
 	{
 		str = w;
 		freq = 1;
@@ -14,6 +14,6 @@ public class Words extends TextToken {
 	
 	public String toString()
 	{
-		return str;
+		return "<"+str+">";
 	}
 }
