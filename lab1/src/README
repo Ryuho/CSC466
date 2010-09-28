@@ -1,0 +1,10 @@
+
+this program craeted in Eclipse;
+
+we did do the extra credit part; it should just run as a java application. 
+A menu appears asking if you want to read in a CVS file (numFile.csv) or
+a text file (strFile.txt). Press just 1 or 2 and the program should do the 
+rest.
+
+
+- kblizard & rkudo 

@@ -187,4 +187,17 @@ public class WordLists
 		}
 		return false;
 	}
+	
+	public int findWords(String tar1, String tar2)
+	{
+		int count = 0;
+		for(int i = 0; i < slist.size();i++)
+		{
+			if(searchSentence(tar1, slist.get(i)) && searchSentence(tar2, slist.get(i)))
+			{
+				count++;
+			}
+		}
+		return count;
+	}
 }
