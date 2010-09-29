@@ -9,23 +9,17 @@ public class Apriori
 		//first pass F1:= {{i}|i e I; support({i})>= minSup);
 	}
 	
-	public void AprMainLoop()
+	public static ArrayList<Vector> AprMainLoop()
 	{
-		
+		ArrayList<Vector> tmp = new ArrayList<Vector>();
+		return tmp;
 	}
 	
-	public ArrayList<Vector> canidateGen()
+	public static ArrayList<Vector> canidateGen()
 	{
-		
+		ArrayList<Vector> tmp = new ArrayList<Vector>();
+		return tmp;
 	}
 	
-	public ArrayList<Vector> genRules()
-	{
-		
-	}
-	
-	public ArrayList<Vector> apGenRules()
-	{
-		
-	}
+
 }
