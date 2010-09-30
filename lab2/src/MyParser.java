@@ -11,8 +11,8 @@ public class MyParser {
 		try {
 			fstream = new FileInputStream(filename);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 			System.err.println("File Not Found.");
+			System.exit(1);
 		}
 		
 		DataInputStream in = new DataInputStream(fstream);
@@ -52,10 +52,10 @@ public class MyParser {
 		while (st.hasMoreTokens()) {
 			empyString = false;
 			try{
-				answer.addElement(Double.parseDouble(st.nextToken()));
+				answer.addElement(Integer.parseInt(st.nextToken()));
 				empyString = false;
 			}catch(java.lang.NumberFormatException e){
-				answer.addElement(0.0);
+				answer.addElement(0);
 			}
 		}
 		

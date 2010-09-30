@@ -2,17 +2,17 @@ import java.util.*;
 
 public class Vector {
 	
-	ArrayList<Number> elements;
+	ArrayList<Integer> elements;
 	
 	Vector()
 	{
-		elements = new ArrayList<Number>();
+		elements = new ArrayList<Integer>();
 	}
 	
 	//makes a zero vector the same length as a
 	Vector(Vector a)
 	{
-		elements = new ArrayList<Number>();
+		elements = new ArrayList<Integer>();
 		for(int i = 0; i < a.getSize(); i++)
 		{
 			addElement(0);
@@ -24,12 +24,12 @@ public class Vector {
 		return elements.size();
 	}
 
-	double getElement(int index)
+	int getElement(int index)
 	{
-		return elements.get(index).doubleValue();
+		return elements.get(index);
 	}
 	
-	boolean addElement(Number num)
+	boolean addElement(Integer num)
 	{
 		return elements.add(num);
 	}
