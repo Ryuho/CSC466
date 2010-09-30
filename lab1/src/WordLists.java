@@ -56,6 +56,7 @@ public class WordLists
 	}
 	
 	/*sort word list by word */
+	@SuppressWarnings("unchecked")
 	public ArrayList<Words> sortStr()
 	{
 		TextToken.setStrSort();
@@ -64,6 +65,7 @@ public class WordLists
 	}
 	
 	/*sort word list by frequencies */
+	@SuppressWarnings("unchecked")
 	public ArrayList<Words> sortFreq()
 	{
 		TextToken.setFreqSort();

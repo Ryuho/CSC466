@@ -1,4 +1,5 @@
 
+@SuppressWarnings("unchecked")
 public abstract class TextToken implements java.lang.Comparable {
 	
 	java.lang.String str;
