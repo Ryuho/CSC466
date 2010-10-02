@@ -3,10 +3,10 @@ import java.util.*;
 
 
 public class MyParser {
-	static ArrayList<Vector> parseNumCSV(String filename)
+	static ArrayList<Vector> parseSparseVectorCSV(String filename)
 	{
 		ArrayList<Vector> answer = new ArrayList<Vector>();
-		
+
 		FileInputStream fstream = null;
 		try {
 			fstream = new FileInputStream(filename);
@@ -14,11 +14,11 @@ public class MyParser {
 			System.err.println("File Not Found.");
 			System.exit(1);
 		}
-		
+
 		DataInputStream in = new DataInputStream(fstream);
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		String strLine = null;
-		
+
 		try {
 			while ((strLine = br.readLine()) != null)
 				{
@@ -27,13 +27,13 @@ public class MyParser {
 					{
 						answer.add(tempVec);
 					}
-					
+
 				}
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.err.println("Exception while reading file.");
 		}
-		
+
 
 		return answer;
 	}
@@ -47,10 +47,10 @@ public class MyParser {
 		boolean empyString = true;
 		Vector answer = new Vector();
 
-		StringTokenizer st = new StringTokenizer(s,",");
+		StringTokenizer st = new StringTokenizer(s,", ");
 
 		while (st.hasMoreTokens()) {
-			empyString = false;
+			empyString = true;
 			try{
 				answer.addElement(Integer.parseInt(st.nextToken()));
 				empyString = false;
@@ -58,11 +58,11 @@ public class MyParser {
 				answer.addElement(0);
 			}
 		}
-		
+
 		if(empyString){
 			return null;
 		}
 		return answer;
 	}
-	
+
 }
