@@ -26,10 +26,14 @@ public class Apriori
             itemGroups.add(temp);
         }
 
+        ArrayList<ArrayList<Item>> tempCandidate = new ArrayList<ArrayList<Item>>(itemGroups);
         //main loop
         for(int itemSize = 1; itemSize < largestItemSetSize; itemSize++){
             //candidate frequent itemsets
-            itemGroups = candidateGen(itemGroups, itemSize);
+        	if(tempCandidate.size() == 0){
+        		break;
+        	}
+            itemGroups = candidateGen(tempCandidate, itemSize);
 
             //initialize counts
             int [] groupFreqAr = new int[itemGroups.size()];
@@ -40,25 +44,29 @@ public class Apriori
                 for(int itemGroupsIdx = 0; itemGroupsIdx < itemGroups.size(); itemGroupsIdx++){
                     if(vecContainsItems(vec.get(vecIdx),itemGroups.get(itemGroupsIdx))){
                         groupFreqAr[itemGroupsIdx]++;
-                        System.out.println("Match at "+vec.get(vecIdx).getElement(0)+" for "+itemGroups.get(itemGroupsIdx));
+                        //System.out.println("Match at "+vec.get(vecIdx).getElement(0)+" for "+itemGroups.get(itemGroupsIdx));
                     }
                 }
             }
 
+            tempCandidate = new ArrayList<ArrayList<Item>>();
             //go through the array with counts of the frequency of set of groups
             //and add it to the final return AL of vector if the item group is
             //above minSupp
             for(int groupIdx = 0; groupIdx < itemGroups.size(); groupIdx++){
                 double supp = (double)groupFreqAr[groupIdx]/(double)vec.size();
-                System.out.println("support for "+itemGroups.get(groupIdx)+" is "+supp);
                 if(supp > minSupp){
+                	System.out.println("support for "+itemGroups.get(groupIdx)+" is "+supp);
                     Vector temp = new Vector();
+                    tempCandidate.add(new ArrayList<Item>());
                     for(int itemIdx = 0; itemIdx < itemGroups.get(groupIdx).size(); itemIdx++){
                         temp.addElement(itemGroups.get(groupIdx).get(itemIdx).itemID);
+                        tempCandidate.get(tempCandidate.size()-1).add(itemGroups.get(groupIdx).get(itemIdx));
                     }
                     answer.add(temp);
                 }
             }
+            
 
         }
 		return answer;
@@ -132,32 +140,27 @@ public class Apriori
                 }
             }
         }
-        //System.out.println("candidateGen="+answer);
-        //System.out.println(answer.size());
+        System.out.println("canGen size="+answer.size()+"|"+answer);
 		return answer;
 	}
 
     private static ArrayList<Item> joinItems(ArrayList<Item> a, ArrayList<Item> b){
-        ArrayList<Item> answer = new ArrayList<Item>();
+        ArrayList<Item> answer = new ArrayList<Item>(a);
         //for each item in AL a
-        for(int aIdx = 0; aIdx < a.size(); aIdx++){
-            //for each item in AL b
-            for(int bIdx = 0; bIdx < b.size(); bIdx++){
+        for(int bIndex = 0; bIndex < b.size(); bIndex++){
+            boolean dupFound = false;
+            for(int answerIndex = 0; answerIndex < answer.size(); answerIndex++){
                 //check to see if they are the same item
-                if(a.get(aIdx).itemID == b.get(bIdx).itemID){
-                    //remve the item from AL b
-                    b.remove(bIdx);
+                if(answer.get(answerIndex).itemID == b.get(bIndex).itemID){
+                   dupFound = true;
                 }
             }
+            if(!dupFound){
+            	answer.add(b.get(bIndex));
+            }
+
         }
 
-        for(int aIdx = 0; aIdx < a.size(); aIdx++){
-            answer.add(a.get(aIdx));
-        }
-
-        for(int bIdx = 0; bIdx < b.size(); bIdx++){
-            answer.add(b.get(bIdx));
-        }
         Collections.sort(answer);
         return answer;
     }
