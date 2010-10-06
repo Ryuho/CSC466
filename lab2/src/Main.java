@@ -44,7 +44,7 @@ public class Main {
         {
         	if(showRules)
         	{
-        		System.out.println("\t Rule:" + rules.get(i).toString());
+        		System.out.println(" Rule:" + rules.get(i).toString());
         	}	
         }
 
