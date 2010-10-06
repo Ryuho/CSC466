@@ -7,58 +7,168 @@ public class genRules
 	/* determines association rules
 	 * Using number -1 to indicate where an arrow is */
 	public static ArrayList<AssociationRule> genRulesMainLoop(ArrayList<Vector> itemsets, 
-			ArrayList<Item> items, double minConf)
+			ArrayList<Vector> vec, double minConf)
 	{
+		double support = 0.0;
+		
+		
 		// for each f e F s.t. |f| = k >= 2 (for all itemsets greater than size 1).
-			//H1 = 0 //initialize
-			//for s e f //for all elements in the vector
-				//if support(f-{s} -> {s}) >= minConf
-					//H1 = H1 (union) {f-{s}->{s}};
-			//apGenRules (f, H1)
 		ArrayList<AssociationRule> possRules = new ArrayList<AssociationRule>();
-		for(int i = 0; i< itemsets.size(); i++)
+		for(int i = 0; i< itemsets.size(); i++) //for each itemset.
 		{
+			ArrayList<AssociationRule> newRule = new ArrayList<AssociationRule>();
 			Vector curr = itemsets.get(i);
-			if(curr.getSize() > 1)
+			
+			if(curr.getSize() > 1) 
 			{
 				//Vector w/o currElement ---> currElement
-				for(int j = 0; j < curr.getSize(); j++)
+				//H1 = 0 //initialize
+				//support = fk.count/n. Counting rules
+				//for s e f //for all elements in the vector
+				for(int j = 0; j < curr.getSize(); j++)  //for each element in the current itemset
 				{
-					//possRules.add();
+					AssociationRule tmpRule = new AssociationRule();
+					//if support(f-{s} -> {s}) >= minConf
+					//H1 = H1 (union) {f-{s}->{s}};
+					
+					//take j out of antecedent and put it in the consequent.
+					//And then calculate its support
+					
+					for(int k = 0; k < curr.getSize(); k++) 
+					{
+						if(k != j)
+						{
+							tmpRule.addLeft(curr.getElement(k));
+						}
+						else
+						{
+							tmpRule.addRight(curr.getElement(j));
+						}
+					}
+					newRule.add(tmpRule);
 				}
-			}
+				//support now. A receipt has to contain all items in a receipt for it to count.
+				int siz = curr.getSize();
+				int suppCount = 0;  //items in receipt that matches
+				ArrayList<Integer> leftSupCount = new ArrayList<Integer>(newRule.size()); 
+				int confidenceCount = 0;
+				/*for(int j = 0; j < vec.size(); j++)
+				{
+					for(int k = 0; k < siz; k++)
+					{
+						for(int l =0; l < vec.get(j).getSize(); l++)
+						{
+							if(vec.get(j).getElement(l) == curr.getElement(k))
+							{
+								suppCount++;
+							}
+							
+						//TODO. modify loop to accommodate multiple rules
+							if(k == 0 && vec.get(j).getElement(l) == newRule.getRight(0))
+							{
+								confidenceCount++;
+							}
+							if(newRule.left.contains(vec.get(j).getElement(l)))
+							{
+								leftSupCount++;
+							}
+						}
+					}
+					if(suppCount == siz)
+					{
+						support++;
+					}
+				
+				
+					suppCount = 0;
+				}*///end support loop
+				
+				//universal support for ALL elements in current itemset. (numerators)
+				for(int j = 0; j < vec.size(); j++)
+				{
+					for(int l =0; l < vec.get(j).getSize(); l++)
+					{
+						if(vec.get(j).getElement(l) == curr.getElement(0))
+						{
+							suppCount++;
+						}
+					}
+					if(suppCount == siz)
+					{
+						support++;
+					}
+					suppCount = 0;
+				}///end universal support loop
+				
+				//unique support. (denominators)
+				//for each new Rule
+				//for every receipt, and for every element in that receipt verses
+				int minsupport = 0;
+				for(int k = 0; k < newRule.size(); k++) //all new rules
+				{
+					leftSupCount.add(k, 0); //init this element for modification
+					for(int j = 0; j < vec.size(); j++) //all itemsets
+					{
+						for(int l =0; l < vec.get(j).getSize(); l++) // all elements in itemsets
+						{
+							for(int m = 0; m < newRule.get(k).left.size(); m++) //elements in left rule
+							{
+								if(vec.get(j).getElement(l) == newRule.get(k).left.get(m))
+								{
+									leftSupCount.set(k, leftSupCount.get(k)+1);
+								}
+							}
+						}
+						if(leftSupCount.get(k) == newRule.get(k).left.size())
+						{
+							minsupport++;
+						}
+					}
+					
+					support /= minsupport;
+					
+					//check confidence
+					if(support <= minConf)
+					{
+						newRule.remove(k);
+					}
+					
+					//loop resets
+					minsupport = 0;
+				}//end individual support
+				
+				//ADD new rule to set
+				possRules = joinItems(possRules, newRule);
+				
+				//loop resets
+				//leftSupCount = 0;
+				support = 0;
+			} 
 		}
 		return possRules;
 	}
 	
-	private static ArrayList<AssociationRule> joinItems(ArrayList<Item> a, ArrayList<Item> b){
-        ArrayList<Item> answer = new ArrayList<Item>();
-        
-        //TODO. modify such that this method makes new AssociationRules out of the given one.
-        //for each item in AL a
-        for(int aIdx = 0; aIdx < a.size(); aIdx++){
-            //for each item in AL b
-            for(int bIdx = 0; bIdx < b.size(); bIdx++){
-                //check to see if they are the same item
-                if(a.get(aIdx).itemID == b.get(bIdx).itemID){
-                    //remve the item from AL b
-                    b.remove(bIdx);
-                }
-            }
+	
+	
+	private static ArrayList<AssociationRule> joinItems(ArrayList<AssociationRule> possRules, 
+			ArrayList<AssociationRule> newRule)
+	{
+        for(int i = 0; i < possRules.size(); i++)
+        {
+        	for(int j=0; j<newRule.size(); j++)
+        	{
+        		if(newRule.get(j).left.containsAll(possRules.get(i).left) &&
+        				newRule.get(j).right.containsAll(possRules.get(i).right))
+        		{
+        			newRule.remove(j);
+        		}
+        	}
         }
-
-        for(int aIdx = 0; aIdx < a.size(); aIdx++){
-            answer.add(a.get(aIdx));
-        }
-
-        for(int bIdx = 0; bIdx < b.size(); bIdx++){
-            answer.add(b.get(bIdx));
-        }
-        Collections.sort(answer);
-        return answer;
+        possRules.addAll(newRule);
+        return possRules;
     }
 	
-	private ArrayList<AssociationRule> canidateGen(AssociationRule itemVec, int itemSize)
+/*	private ArrayList<AssociationRule> canidateGen(AssociationRule itemVec, int itemSize)
 	{
 		ArrayList<AssociationRule> answer = new ArrayList<AssociationRule>();
         for(int i = 0; i < itemVec.left.size(); i++)
@@ -83,8 +193,9 @@ public class genRules
         //System.out.println(answer.size());
 		return answer;
 	}
+	*/
 	
-	public static ArrayList<AssociationRule> apGenRules(double minConf, AssociationRule rule, int m)
+	/*public static ArrayList<AssociationRule> apGenRules(double minConf, AssociationRule rule, int m)
 	{
 		//if (k> m+ 1) AND H not null
 			//H(m+1) = canidateGen(Hm, m);
@@ -114,5 +225,5 @@ public class genRules
 			//apGenRules(minConf, );
 		}
 		return H;
-	}
+	}*/
 }
