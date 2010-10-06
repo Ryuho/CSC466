@@ -6,7 +6,7 @@ public class Apriori
 {
 	//first pass F1:= {{i}|i e I; support({i})>= minSup);
 
-	public static ArrayList<Vector> AprMainLoop(ArrayList<Vector> vec, double minSupp)
+	public static ArrayList<Vector> AprMainLoop(ArrayList<Vector> vec, double minSupp, boolean skyLine)
 	{
         ArrayList<Vector> answer = new ArrayList<Vector>();
 
@@ -70,7 +70,13 @@ public class Apriori
             
 
         }
-		return answer;
+        
+        if(skyLine){
+        	return skyLine(answer);
+        }
+        else{
+        	return answer;
+        }
 	}
 
 	private static ArrayList<Item> firstPass(ArrayList<Vector> vec, double minSupp){
@@ -180,6 +186,39 @@ public class Apriori
             }
         }
         return true;
+    }
+    
+    private static boolean vecContainsItems(Vector vecA, Vector vecB){
+        for(int vecAIdx = 0; vecAIdx < vecA.getSize(); vecAIdx++){
+            boolean found = false;
+            for(int vecBIdx = 0; vecBIdx < vecB.getSize(); vecBIdx++){
+                if(vecA.getElement(vecAIdx) == vecB.getElement(vecBIdx)){
+                    found = true;
+                }
+            }
+            if(!found){
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    private static ArrayList<Vector> skyLine(ArrayList<Vector> input){
+    	ArrayList<Vector> answer = new ArrayList<Vector>();
+    	for(int inputIndex = 0; inputIndex < input.size(); inputIndex++){
+    		boolean addIn = true;
+    		for(int checkIndex = inputIndex+1; checkIndex < input.size(); checkIndex++){
+    			if(vecContainsItems(input.get(inputIndex),input.get(checkIndex))){
+    				addIn = false;
+    			}
+    		}
+    		if(addIn){
+    			answer.add(input.get(inputIndex));
+    		}
+    		
+    		
+    	}
+    	return answer;
     }
 
 }

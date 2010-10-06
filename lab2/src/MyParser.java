@@ -34,7 +34,6 @@ public class MyParser {
 			System.err.println("Exception while reading file.");
 		}
 
-
 		return answer;
 	}
 
