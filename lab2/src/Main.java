@@ -13,7 +13,7 @@ public class Main {
 		
 		
 		String fileName = "data/out1.csv";
-		if(args.length == 1){
+		if(args.length >= 1){
 			fileName = args[0];
 		}
 
@@ -21,14 +21,14 @@ public class Main {
         vecList = MyParser.parseSparseVectorCSV(fileName);
 
         double minSupport = 0.1;
-        if(args.length == 2){
+        if(args.length >= 2){
         	minSupport = Double.parseDouble(args[1]);
         }
         else{
         	System.out.println("No argument for minimum support found, using "+minSupport+" as value.");
         }
         double minConfidence = 0.1;
-        if(args.length == 3){
+        if(args.length >= 3){
         	minConfidence = Double.parseDouble(args[2]);
         }
         else{
