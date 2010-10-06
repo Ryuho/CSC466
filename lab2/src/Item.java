@@ -19,7 +19,7 @@ public class Item implements Comparable {
 
 	public String toString()
 	{		
-		return Integer.toString(itemID);
+		return itemName(itemID);
 	}
 
     public static String itemName(int id){

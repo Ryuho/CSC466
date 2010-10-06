@@ -56,13 +56,14 @@ public class Apriori
                 double supp = (double)groupFreqAr[groupIdx]/(double)vec.size();
                 //System.out.println("support for "+itemGroups.get(groupIdx)+" is "+supp);
                 if(supp > minSupp){
-                	System.out.println("support for "+itemGroups.get(groupIdx)+" is "+supp);
+                	//System.out.println("support for "+itemGroups.get(groupIdx)+" is "+supp);
                     Vector temp = new Vector();
                     tempCandidate.add(new ArrayList<Item>());
                     for(int itemIdx = 0; itemIdx < itemGroups.get(groupIdx).size(); itemIdx++){
                         temp.addElement(itemGroups.get(groupIdx).get(itemIdx).itemID);
                         tempCandidate.get(tempCandidate.size()-1).add(itemGroups.get(groupIdx).get(itemIdx));
                     }
+                    temp.setSupport(supp);
                     answer.add(temp);
                 }
             }
@@ -141,7 +142,7 @@ public class Apriori
                 }
             }
         }
-        System.out.println("canGen size="+answer.size()+"|"+answer);
+        //System.out.println("canGen size="+answer.size()+"|"+answer);
 		return answer;
 	}
 

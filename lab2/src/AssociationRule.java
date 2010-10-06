@@ -82,11 +82,11 @@ public class AssociationRule
 		String compound = "{ ";
 		for (int i = 0; i < left.size(); i++)
 		{
-			//compound += Item.itemName(left.get(i)) + ", ";
-			compound += left.get(i) + ", ";
+			compound += Item.itemName(left.get(i)) + ", ";
+			//compound += left.get(i) + ", ";
 		}
-		//compound += "--> " + Item.itemName(right.get(0)) + " (Support-" + support +" confidence-"+confidence+ ")}" ;
-		compound += "--> " + right.get(0) + " (Support-" + support +" confidence-"+confidence+ ")}" ;
+		compound += "--> " + Item.itemName(right.get(0)) + " (Support = " + support +" confidence = "+confidence+ ")}" ;
+		//compound += "--> " + right.get(0) + " (Support-" + support +" confidence-"+confidence+ ")}" ;
 		return compound;
 	}
 	

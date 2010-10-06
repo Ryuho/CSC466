@@ -37,7 +37,7 @@ public class Main {
         {
         	if(showItemsets)
         	{
-        		System.out.println("itemset:" + apriOut.get(i).toString());
+        		System.out.println("itemset:" + apriOut.get(i) + " Support = " +apriOut.get(i).support);
         	}	
         }
         for(int i = 0; i < rules.size(); i++)

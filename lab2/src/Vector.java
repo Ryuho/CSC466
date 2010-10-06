@@ -3,10 +3,11 @@ import java.util.*;
 public class Vector {
 	
 	ArrayList<Integer> elements;
-	
+	double support;
 	Vector()
 	{
 		elements = new ArrayList<Integer>();
+		support = 0;
 	}
 	
 	//makes a zero vector the same length as a
@@ -32,6 +33,11 @@ public class Vector {
 	boolean addElement(Integer num)
 	{
 		return elements.add(num);
+	}
+	
+	public void setSupport(double d)
+	{
+		support = d;
 	}
 	
 	Vector makeEqualLength(Vector a, Vector b)
