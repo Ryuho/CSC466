@@ -55,7 +55,7 @@ public class Vector {
 		int size = this.getSize();
 		for(int i = 0; i < size;i++)
 		{
-			bacon += getElement(i);
+			bacon += Item.itemName(getElement(i));
 			if(!(i >= size-1))
 			{
 				bacon += ", ";
