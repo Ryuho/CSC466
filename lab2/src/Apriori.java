@@ -6,8 +6,7 @@ public class Apriori
 {
 	//first pass F1:= {{i}|i e I; support({i})>= minSup);
 
-	public static ArrayList<Vector> AprMainLoop(ArrayList<Vector> vec,
-			double minConf, double minSupp)
+	public static ArrayList<Vector> AprMainLoop(ArrayList<Vector> vec, double minSupp)
 	{
         ArrayList<Vector> answer = new ArrayList<Vector>();
 
