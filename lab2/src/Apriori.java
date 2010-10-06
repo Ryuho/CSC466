@@ -54,6 +54,7 @@ public class Apriori
             //above minSupp
             for(int groupIdx = 0; groupIdx < itemGroups.size(); groupIdx++){
                 double supp = (double)groupFreqAr[groupIdx]/(double)vec.size();
+                //System.out.println("support for "+itemGroups.get(groupIdx)+" is "+supp);
                 if(supp > minSupp){
                 	System.out.println("support for "+itemGroups.get(groupIdx)+" is "+supp);
                     Vector temp = new Vector();
@@ -102,6 +103,7 @@ public class Apriori
 				{
 					itemFreq.add(new Item(vec.get(arListIndex).getElement(vecIndex)));
 				}
+				contains = false;
 			}
 		}
 
@@ -111,13 +113,13 @@ public class Apriori
             Item tempItem = itemFreq.get(itemIdx);
             double suppVal = tempItem.freq/(double)numOfReceipts;
             //System.out.println("itemID: "+tempItem.itemID+", freq="+tempItem.freq+", supp="+suppVal);
-            if(tempItem.freq/(double)numOfReceipts <= minSupp){
+            if(suppVal <= minSupp){
                 //System.out.println(tempItem.itemID+" removed with "+suppVal+" frequency");
                 itemFreq.remove(itemIdx);
                 itemIdx--;
             }
         }
-        
+        //System.out.println("first pass="+itemFreq);
 		return itemFreq;
 	}
 
