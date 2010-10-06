@@ -19,7 +19,7 @@ public class genRules
 			ArrayList<AssociationRule> newRule = new ArrayList<AssociationRule>();
 			Vector curr = itemsets.get(i);
 			
-			if(curr.getSize() > 1) 
+			if(curr.getSize() > 1) //if k >= 2
 			{
 				//Vector w/o currElement ---> currElement
 				//H1 = 0 //initialize
@@ -45,52 +45,34 @@ public class genRules
 							tmpRule.addRight(curr.getElement(j));
 						}
 					}
+					System.out.println("allRules="+tmpRule);
 					newRule.add(tmpRule);
 				}
 				//support now. A receipt has to contain all items in a receipt for it to count.
 				int siz = curr.getSize();
 				int suppCount = 0;  //items in receipt that matches
 				ArrayList<Integer> leftSupCount = new ArrayList<Integer>(newRule.size()); 
+				ArrayList<Integer> minsupport = new ArrayList<Integer>();
+				//int leftSupCount = 0;
 				int confidenceCount = 0;
-				/*for(int j = 0; j < vec.size(); j++)
+				
+				for(int init = 0; init < newRule.size(); init++)
 				{
-					for(int k = 0; k < siz; k++)
-					{
-						for(int l =0; l < vec.get(j).getSize(); l++)
-						{
-							if(vec.get(j).getElement(l) == curr.getElement(k))
-							{
-								suppCount++;
-							}
-							
-						//TODO. modify loop to accommodate multiple rules
-							if(k == 0 && vec.get(j).getElement(l) == newRule.getRight(0))
-							{
-								confidenceCount++;
-							}
-							if(newRule.left.contains(vec.get(j).getElement(l)))
-							{
-								leftSupCount++;
-							}
-						}
-					}
-					if(suppCount == siz)
-					{
-						support++;
-					}
-				
-				
-					suppCount = 0;
-				}*///end support loop
+					leftSupCount.add(0);
+					minsupport.add(0);
+				}
 				
 				//universal support for ALL elements in current itemset. (numerators)
 				for(int j = 0; j < vec.size(); j++)
 				{
-					for(int l =0; l < vec.get(j).getSize(); l++)
+					for(int l =1; l < vec.get(j).getSize(); l++)
 					{
-						if(vec.get(j).getElement(l) == curr.getElement(0))
+						for(int itemInd = 0; itemInd < curr.getSize(); itemInd++)
 						{
-							suppCount++;
+							if(vec.get(j).getElement(l) == curr.getElement(itemInd))
+							{
+								suppCount++;
+							}
 						}
 					}
 					if(suppCount == siz)
@@ -103,13 +85,34 @@ public class genRules
 				//unique support. (denominators)
 				//for each new Rule
 				//for every receipt, and for every element in that receipt verses
-				int minsupport = 0;
-				for(int k = 0; k < newRule.size(); k++) //all new rules
+				;
+				
+				for(int recepitIndex = 0; recepitIndex < vec.size(); recepitIndex++)
+				{
+					for(int recElement =1; recElement < vec.get(recepitIndex).getSize(); recElement++)
+					{
+						for(int itemInd = 0; itemInd < newRule.size(); itemInd++)
+						{
+							if(newRule.get(itemInd).left.contains(vec.get(recepitIndex).getElement(recElement))) //curr.getElement(itemInd))
+							{
+								leftSupCount.set(itemInd, leftSupCount.get(itemInd)+1);
+							}
+							if(leftSupCount.get(itemInd) == newRule.get(itemInd).left.size())
+							{
+								minsupport.set(itemInd, minsupport.get(itemInd)+1);
+							}
+						}
+						
+					}
+					
+					//leftSupCount = 0;
+				}//end individual support
+				/*for(int k = 0; k < newRule.size(); k++) //all new rules
 				{
 					leftSupCount.add(k, 0); //init this element for modification
-					for(int j = 0; j < vec.size(); j++) //all itemsets
+					for(int j = 0; j < vec.size(); j++) //all receipts
 					{
-						for(int l =0; l < vec.get(j).getSize(); l++) // all elements in itemsets
+						for(int l =1; l < vec.get(j).getSize(); l++) // all elements in receipts
 						{
 							for(int m = 0; m < newRule.get(k).left.size(); m++) //elements in left rule
 							{
@@ -123,19 +126,34 @@ public class genRules
 						{
 							minsupport++;
 						}
-					}
+					}*/
 					
-					support /= minsupport;
+				for(int itemInd = 0; itemInd < newRule.size(); itemInd++)
+				{
+				
+					double confidence = support / leftSupCount.get(itemInd);
+					support = support / vec.size();
+					
 					
 					//check confidence
-					if(support <= minConf)
+					if(confidence <= minConf)
 					{
-						newRule.remove(k);
+						newRule.remove(itemInd);
+						itemInd--;
+					}
+					else
+					{
+						System.out.println(confidence + " " + support);
+						AssociationRule tmp = newRule.get(itemInd);
+						tmp.setSupport(support);
+						tmp.setConfidence(confidence);
+						newRule.set(itemInd, tmp);
 					}
 					
 					//loop resets
-					minsupport = 0;
-				}//end individual support
+					//minsupport = 0;
+				
+				}
 				
 				//ADD new rule to set
 				possRules = joinItems(possRules, newRule);
@@ -167,63 +185,4 @@ public class genRules
         possRules.addAll(newRule);
         return possRules;
     }
-	
-/*	private ArrayList<AssociationRule> canidateGen(AssociationRule itemVec, int itemSize)
-	{
-		ArrayList<AssociationRule> answer = new ArrayList<AssociationRule>();
-        for(int i = 0; i < itemVec.left.size(); i++)
-        {
-            for(int j = i+1; j < itemVec.right.size(); j++)
-            { 
-            	//Make a new set of item combinations. 
-                ArrayList<AssociationRule> joinedItems = 
-                	joinItems(itemVec.left,itemVec.right);
-                
-                //add them to the new set, if applicable
-                if(joinedItems.size() == itemSize + 1)
-                {
-                    if(!answer.contains(joinedItems))
-                    {
-                        answer.addAll(joinedItems);
-                    }
-                }
-            }
-        }
-        //System.out.println("candidateGen="+answer);
-        //System.out.println(answer.size());
-		return answer;
-	}
-	*/
-	
-	/*public static ArrayList<AssociationRule> apGenRules(double minConf, AssociationRule rule, int m)
-	{
-		//if (k> m+ 1) AND H not null
-			//H(m+1) = canidateGen(Hm, m);
-			//for h e H (m+1)
-				//confidence = count(f)/count(f-h);
-				//if confidence >= minConf
-					//output (f - h) -> h;  //found new rule
-				//else
-					//H(m+1) = H(m+1) - {h}
-			//apGenRules(f, H(m+1), M+1)
-		ArrayList<AssociationRule> H = new ArrayList<AssociationRule>( );
-		ArrayList<AssociationRule> ruleList = new ArrayList<AssociationRule>();
-		if((rule.getSize()-1 > m+1) && rule.getSize() != 0)
-		{
-			//run canidateGen here.
-
-			//for each rule permutation, count the confidence of it.
-			for(int i = 0; i < H.size(); i++)
-			{
-				double confidence = 0;
-				//count the occurrences of f. Divide by the occurrences of f without the rule?
-				if(confidence >= minConf)
-				{
-					ruleList.add(H.get(i));
-				}
-			}
-			//apGenRules(minConf, );
-		}
-		return H;
-	}*/
 }
