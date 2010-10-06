@@ -157,7 +157,9 @@ public class genRules
 				}
 				
 				//ADD new rule to set
+				possRules = skyline(possRules, newRule);
 				possRules = joinItems(possRules, newRule);
+				
 				
 				//loop resets
 				//leftSupCount = 0;
@@ -188,4 +190,22 @@ public class genRules
         possRules.addAll(newRule);
         return possRules;
     }
+
+
+private static ArrayList<AssociationRule> skyline(ArrayList<AssociationRule> possRules, 
+		ArrayList<AssociationRule> newRules)
+		{
+			for(int i = 0; i < possRules.size(); i++)
+			{
+				for(int j = 0; j < newRules.size(); j++)
+				{
+					if(newRules.get(j).left.containsAll(possRules.get(i).left) &&
+	        				newRules.get(j).left.size() > possRules.get(i).left.size())
+					{
+						possRules.remove(i);
+					}
+				}
+			}
+			return possRules;
+		}
 }
