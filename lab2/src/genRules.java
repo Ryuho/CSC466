@@ -45,7 +45,7 @@ public class genRules
 							tmpRule.addRight(curr.getElement(j));
 						}
 					}
-					System.out.println("allRules="+tmpRule);
+					//System.out.println("allRules="+tmpRule);
 					newRule.add(tmpRule);
 				}
 				//support now. A receipt has to contain all items in a receipt for it to count.
@@ -54,7 +54,7 @@ public class genRules
 				ArrayList<Integer> leftSupCount = new ArrayList<Integer>(newRule.size()); 
 				ArrayList<Integer> minsupport = new ArrayList<Integer>();
 				//int leftSupCount = 0;
-				int confidenceCount = 0;
+				//int confidenceCount = 0;
 				
 				for(int init = 0; init < newRule.size(); init++)
 				{
@@ -127,7 +127,7 @@ public class genRules
 							minsupport++;
 						}
 					}*/
-					
+				
 				for(int itemInd = 0; itemInd < newRule.size(); itemInd++)
 				{
 				
@@ -154,7 +154,6 @@ public class genRules
 					//minsupport = 0;
 				
 				}
-				
 				//ADD new rule to set
 				possRules = joinItems(possRules, newRule);
 				
@@ -176,7 +175,9 @@ public class genRules
         	for(int j=0; j<newRule.size(); j++)
         	{
         		if(newRule.get(j).left.containsAll(possRules.get(i).left) &&
-        				newRule.get(j).right.containsAll(possRules.get(i).right))
+        				newRule.get(j).left.size() == possRules.get(i).left.size() &&
+        				newRule.get(j).right.containsAll(possRules.get(i).right) && 
+        				newRule.get(j).right.size() == possRules.get(i).right.size() )
         		{
         			newRule.remove(j);
         		}
