@@ -45,7 +45,7 @@ public class genRules
 							tmpRule.addRight(curr.getElement(j));
 						}
 					}
-					System.out.println("allRules="+tmpRule);
+					//System.out.println("allRules="+tmpRule.toString());
 					newRule.add(tmpRule);
 				}
 				//support now. A receipt has to contain all items in a receipt for it to count.
@@ -54,7 +54,7 @@ public class genRules
 				ArrayList<Integer> leftSupCount = new ArrayList<Integer>(newRule.size()); 
 				ArrayList<Integer> minsupport = new ArrayList<Integer>();
 				//int leftSupCount = 0;
-				int confidenceCount = 0;
+				//int confidenceCount = 0;
 				
 				for(int init = 0; init < newRule.size(); init++)
 				{
@@ -85,7 +85,7 @@ public class genRules
 				//unique support. (denominators)
 				//for each new Rule
 				//for every receipt, and for every element in that receipt verses
-				;
+				
 				
 				for(int recepitIndex = 0; recepitIndex < vec.size(); recepitIndex++)
 				{
@@ -127,25 +127,26 @@ public class genRules
 							minsupport++;
 						}
 					}*/
-					
+				
 				for(int itemInd = 0; itemInd < newRule.size(); itemInd++)
 				{
 				
 					double confidence = support / leftSupCount.get(itemInd);
-					support = support / vec.size();
+					double Ursupport = support / vec.size();
 					
 					
 					//check confidence
 					if(confidence <= minConf)
 					{
+						System.out.println("allRules="+newRule.toString());
 						newRule.remove(itemInd);
 						itemInd--;
 					}
 					else
 					{
-						System.out.println(confidence + " " + support);
+						//System.out.println(confidence + " " + support);
 						AssociationRule tmp = newRule.get(itemInd);
-						tmp.setSupport(support);
+						tmp.setSupport(Ursupport);
 						tmp.setConfidence(confidence);
 						newRule.set(itemInd, tmp);
 					}
@@ -176,7 +177,9 @@ public class genRules
         	for(int j=0; j<newRule.size(); j++)
         	{
         		if(newRule.get(j).left.containsAll(possRules.get(i).left) &&
-        				newRule.get(j).right.containsAll(possRules.get(i).right))
+        				newRule.get(j).left.size() == possRules.get(i).left.size() &&
+        				newRule.get(j).right.containsAll(possRules.get(i).right) && 
+        				newRule.get(j).right.size() == possRules.get(i).right.size() )
         		{
         			newRule.remove(j);
         		}
