@@ -1,5 +1,3 @@
-package src;
-class InduceC45
-{
+public class InduceC45{
 	
 }
