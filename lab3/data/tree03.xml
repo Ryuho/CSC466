@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Tree name = "known">
+	<node var ="Political Party">
+		<edge var ="Democratic">
+			<node var ="Bush Approval">
+				<edge var = "Approve">
+					<decision end="2" p=".9" />
+				</edge>
+				<edge var = "Disapprove">
+					<decision end="1" p=".95" />
+				</edge>
+			</node>
+                </edge>
+		<edge var = "Republican">
+			  <node var ="Bush Approval">
+				<edge var = "Approve">
+					<decision end="2" p=".99" />
+				</edge>
+				<edge var = "Disapprove">
+				    <node var ="Gender">
+                                        <edge var="Male">
+					<decision end="2" p=".8" />
+                                        </edge>
+                                        <edge var ="Female"> 
+					<decision end="1" p=".8" />
+                                        </edge>
+                                    </node>					
+
+				</edge>
+			</node>
+		</edge>
+		<edge var="Independent">
+			<node var ="Ideology">
+				<edge var = "Liberal">
+ 					<decision end ="1" p=".8" />
+				</edge>
+				<edge var = "Moderate">
+			  	    <node var ="Bush Approval">
+				       <edge var = "Approve">
+					   <decision end="2" p=".8" />
+				       </edge>
+				       <edge var = "Disapprove">
+					   <decision end="1" p=".8" />
+				       </edge>
+ 			            </node>
+				</edge>
+                                <edge var = "Conservative">
+					 <decision end="2" p=".8" />
+ 				</edge>
+			</node>
+		</edge>
+	</node>
+</Tree>

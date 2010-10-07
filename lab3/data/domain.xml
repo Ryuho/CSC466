@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<domain>
+	<variable name="Political Party">
+		<group name="Democratic" p=".39"/>
+		<group name="Republican" p=".32"/>
+		<group name="Independent" p=".29"/>
+	</variable>
+  	<variable name="Ideology">
+		<group name="Liberal" p=".22"/>
+		<group name="Moderate" p=".44"/>
+		<group name="Conservative" p=".34"/>
+	</variable>
+  	<variable name="Race">
+		<group name="Black" p=".14"/>
+		<group name="White" p=".74"/>
+		<group name="Other" p=".12"/>
+	</variable>
+  	<variable name="Gender">
+		<group name="Male" p=".47"/>
+		<group name="Female" p=".53"/>
+	</variable>
+  	<variable name="Religion">
+		<group name="Protestant" p=".54"/>
+		<group name="Catholic" p=".27"/>
+		<group name="Other" p=".20"/>
+	</variable>
+  	<variable name="Family Income">
+		<group name="Less than 30000" p=".18"/>
+		<group name="30000-49999" p=".19"/>
+		<group name="50000-74999" p=".21"/>
+		<group name="75000-99999" p=".15"/>
+		<group name="100000-149999" p=".14"/>
+		<group name="150000+" p=".13"/>
+	</variable>
+  	<variable name="Education">
+		<group name="H.S. diploma or less" p=".24"/>
+		<group name="College" p=".59"/>
+		<group name="Post-Grad" p=".19"/> 
+	</variable>
+  	<variable name="Age">
+		<group name="18-29" p=".18"/>
+		<group name="30-44" p=".29"/>
+		<group name="45-64" p=".37"/>
+		<group name="65+" p=".16"/>
+	</variable>
+  	<variable name="Region">
+		<group name="Northeast" p=".21"/>
+		<group name="South" p=".32"/>
+		<group name="Midwest" p=".24"/>
+		<group name="West" p=".23"/>
+	</variable>
+  	<variable name="Bush Approval">
+		<group name="Approve" p=".27"/>
+		<group name="Disapprove" p=".71"/>
+	</variable>
+  	<Category name="Vote">
+		<choice name="Obama" type="1"/>
+		<choice name="McCain" type="2"/>
+	</Category>
+</domain>
