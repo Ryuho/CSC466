@@ -9,9 +9,13 @@ import java.util.StringTokenizer;
 
 
 public class fileParser {
-    static ArrayList<ArrayList<Integer>> parseCSV(String filename)
+    static csvInfo parseCSV(String filename)
     {
-        ArrayList<ArrayList<Integer>> answer = new ArrayList<ArrayList<Integer>>();
+        ArrayList<String> stringNames = new ArrayList<String>();
+        ArrayList<Integer> domainSizes = new ArrayList<Integer>();
+        String categoryAttribute = "";
+        ArrayList<ArrayList<Integer>> dataSets = new ArrayList<ArrayList<Integer>>();
+        
 
         FileInputStream fstream = null;
         try {
@@ -26,12 +30,18 @@ public class fileParser {
         String strLine = null;
 
         try {
+            String firstLine = br.readLine();
+            stringNames = stringToStringAL(firstLine);
+            String secondLine = br.readLine();
+            domainSizes = stringToIntegerAL(secondLine);
+            categoryAttribute = br.readLine();
+            
             while ((strLine = br.readLine()) != null)
                 {
-                ArrayList<Integer> tempAL = stringToAL(strLine);
+                ArrayList<Integer> tempAL = stringToIntegerAL(strLine);
                     if(tempAL != null)
                     {
-                        answer.add(tempAL);
+                        dataSets.add(tempAL);
                     }
 
                 }
@@ -40,10 +50,13 @@ public class fileParser {
             System.err.println("Exception while reading file.");
         }
 
+        
+        
+        csvInfo answer = new csvInfo(stringNames, domainSizes, dataSets, categoryAttribute);
         return answer;
     }
 
-    static ArrayList<Integer> stringToAL(String s){
+    private static ArrayList<Integer> stringToIntegerAL(String s){
         s = s.replaceAll("^\\s*,", "0,");
         s = s.replaceAll(",{2}", ",0,");
         s = s.replaceAll(",{2}", ",0,");
@@ -61,6 +74,27 @@ public class fileParser {
                 empyString = false;
             }catch(java.lang.NumberFormatException e){
                 answer.add(0);
+            }
+        }
+
+        if(empyString){
+            return null;
+        }
+        return answer;
+    }
+    
+    private static ArrayList<String> stringToStringAL(String s){
+        boolean empyString = true;
+        ArrayList<String> answer = new ArrayList<String>();
+
+        StringTokenizer st = new StringTokenizer(s,",");
+
+        while (st.hasMoreTokens()) {
+            empyString = true;
+            try{
+                answer.add(st.nextToken());
+                empyString = false;
+            }catch(java.lang.NumberFormatException e){
             }
         }
 
