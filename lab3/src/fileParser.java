@@ -1,11 +1,9 @@
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
+import org.w3c.dom.*;
+import javax.xml.parsers.*;
+
+import com.sun.org.apache.xerces.internal.parsers.DOMParser;
 
 
 public class fileParser {
@@ -105,8 +103,58 @@ public class fileParser {
     }
     
     static DecisionTree parseXMLDomain(String filename){
-        return null;
+        DecisionTree answer = new DecisionTree();
+        
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setIgnoringComments(true);
+        factory.setCoalescing(true); // Convert CDATA to Text nodes
+        factory.setNamespaceAware(false); // No namespaces: this is default
+        factory.setValidating(false); // Don't validate DTD: also default
+        DocumentBuilder parser = null;
+        Document document = null;
+        
+        NodeList domNL = null;
+        NodeList varNL = null;
+        NodeList grpNL = null;
+        NodeList catNL = null;
+        
+        try {
+            parser = factory.newDocumentBuilder();
+            document = parser.parse(new File(filename));
+            domNL = document.getElementsByTagName("domain");
+            varNL = document.getElementsByTagName("variable");
+            grpNL = document.getElementsByTagName("group");
+            catNL = document.getElementsByTagName("Category");
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+        
+        System.out.println("domain #:"+domNL.getLength());
+        System.out.println("variable #:"+varNL.getLength());
+        System.out.println("group #:"+grpNL.getLength());
+        System.out.println("Category #:"+catNL.getLength());
+        
+        for(int index = 0; index < domNL.getLength(); index++){
+            System.out.println(domNL.item(index));
+        }
+
+        for(int index = 0; index < varNL.getLength(); index++){
+            System.out.println(varNL.item(index));
+        }
+        
+        for(int index = 0; index < grpNL.getLength(); index++){
+            System.out.println(grpNL.item(index));
+        }
+        
+        for(int index = 0; index < catNL.getLength(); index++){
+            System.out.println(catNL.item(index));
+        }
+        
+        return answer;
     }
+    
     static DecisionTree parseXMLTree(String filename){
         return null;
     }
