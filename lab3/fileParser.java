@@ -144,7 +144,7 @@ public class fileParser {
             //return null;
             System.exit(-1);
         }
-        
+        /*
         System.out.println("domain #:"+domNL.getLength());
         System.out.println("variable #:"+varNL.getLength());
         System.out.println("group #:"+grpNL.getLength());
@@ -165,7 +165,7 @@ public class fileParser {
         for(int index = 0; index < catNL.getLength(); index++){
             System.out.println(catNL.item(index).getAttributes().item(0));
         }
-        
+        */
         return document;
     }
     
