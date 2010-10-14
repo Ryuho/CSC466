@@ -3,8 +3,6 @@ import java.util.*;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
 
-import com.sun.org.apache.xerces.internal.parsers.DOMParser;
-
 
 public class fileParser {
     static csvInfo parseCSV(String filename)
@@ -102,57 +100,63 @@ public class fileParser {
         return answer;
     }
     
-    static DecisionTree parseXMLDomain(String filename){
-        DecisionTree answer = new DecisionTree();
-        
+    static Document parseXMLDomain(String filename){
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setIgnoringComments(true);
-        factory.setCoalescing(true); // Convert CDATA to Text nodes
+        factory.setCoalescing(true); // Convert CDATA to Text nodes; 
         factory.setNamespaceAware(false); // No namespaces: this is default
         factory.setValidating(false); // Don't validate DTD: also default
+    	factory.setExpandEntityReferences(false); 
+    	factory.setIgnoringElementContentWhitespace(true);
         DocumentBuilder parser = null;
         Document document = null;
         
+        /*
         NodeList domNL = null;
         NodeList varNL = null;
         NodeList grpNL = null;
         NodeList catNL = null;
+        */
         
         try {
             parser = factory.newDocumentBuilder();
+            parser.setErrorHandler(null);
             document = parser.parse(new File(filename));
-            domNL = document.getElementsByTagName("domain");
-            varNL = document.getElementsByTagName("variable");
-            grpNL = document.getElementsByTagName("group");
-            catNL = document.getElementsByTagName("Category");
+            /*
+            domNL = document.getElementsByTagName("Tree");
+            varNL = document.getElementsByTagName("node");
+            grpNL = document.getElementsByTagName("edge");
+            catNL = document.getElementsByTagName("decision");
+            */
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            return null;
+            //return null;
+            System.exit(-1);
         }
-        
+        /*
         System.out.println("domain #:"+domNL.getLength());
         System.out.println("variable #:"+varNL.getLength());
         System.out.println("group #:"+grpNL.getLength());
         System.out.println("Category #:"+catNL.getLength());
         
         for(int index = 0; index < domNL.getLength(); index++){
-            System.out.println(domNL.item(index));
+            System.out.println(domNL.item(index).getAttributes().item(0));
         }
 
         for(int index = 0; index < varNL.getLength(); index++){
-            System.out.println(varNL.item(index));
+            System.out.println(varNL.item(index).getAttributes().item(0));
         }
         
         for(int index = 0; index < grpNL.getLength(); index++){
-            System.out.println(grpNL.item(index));
+            System.out.println(grpNL.item(index).getAttributes().item(0));
         }
         
         for(int index = 0; index < catNL.getLength(); index++){
-            System.out.println(catNL.item(index));
+            System.out.println(catNL.item(index).getAttributes().item(0));
         }
-        
-        return answer;
+        */
+        return document;
     }
     
     static DecisionTree parseXMLTree(String filename){
