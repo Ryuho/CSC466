@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.*;
+
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
 
@@ -46,9 +47,67 @@ public class fileParser {
             System.err.println("Exception while reading file.");
         }
 
+        int idIndex = -1;
+        int categoryIndex = -1;
+        String categoryName = "";
+        String idName = "";
         
+        for(int i = 0; i < domainSizes.size(); i++){
+        	if(domainSizes.get(i) == -1){
+        		idIndex = i;
+        		idName = stringNames.get(i);
+        	}
+        }
         
-        csvInfo answer = new csvInfo(stringNames, domainSizes, dataSets, categoryAttribute);
+        for(int i = 0; i < stringNames.size(); i++){
+        	if(stringNames.get(i).compareTo(categoryAttribute) == 0){
+        		categoryIndex = i;
+        		categoryName = stringNames.get(i);
+        	}
+        }
+        
+        if(idIndex < categoryIndex){
+        	domainSizes.remove(categoryIndex);
+        	domainSizes.remove(idIndex);
+        	stringNames.remove(categoryIndex);
+        	stringNames.remove(idIndex);
+        }
+        else{
+        	domainSizes.remove(idIndex);
+        	domainSizes.remove(categoryIndex);
+        	stringNames.remove(idIndex);
+        	stringNames.remove(categoryIndex);
+        }
+        
+        ArrayList<Data> datas = new ArrayList<Data>();
+        if(idIndex < categoryIndex){
+            for(int i = 0; i < dataSets.size(); i++){
+            	//record id and category choice
+            	int id = dataSets.get(i).get(idIndex);
+            	int category = dataSets.get(i).get(categoryIndex);
+            	//remove id and category choice from data
+            	dataSets.get(i).remove(categoryIndex);
+            	dataSets.get(i).remove(idIndex);
+            	//put all of it in Data
+            	Data temp = new Data(dataSets.get(i), id, category);
+            	datas.add(temp);
+            }
+        }
+        else{
+            for(int i = 0; i < dataSets.size(); i++){
+            	//record id and category choice
+            	int id = dataSets.get(i).get(idIndex);
+            	int category = dataSets.get(i).get(categoryIndex);
+            	//remove id and category choice from data
+            	dataSets.get(i).remove(idIndex);
+            	dataSets.get(i).remove(categoryIndex);
+            	//put all of it in Data
+            	Data temp = new Data(dataSets.get(i), id, category);
+            	datas.add(temp);
+            }
+        }
+        
+        csvInfo answer = new csvInfo(stringNames, domainSizes, datas, categoryName, idName, categoryIndex);
         return answer;
     }
 

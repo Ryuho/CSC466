@@ -1,12 +1,7 @@
 import java.util.ArrayList;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.traversal.NodeFilter;
-import org.w3c.dom.traversal.TreeWalker;
-
 import com.sun.org.apache.xerces.internal.dom.DocumentImpl;
 import com.sun.org.apache.xerces.internal.dom.TreeWalkerImpl;
 
@@ -24,8 +19,8 @@ public class classifier
     	csvInfo dataset = fileParser.parseCSV("data/tree01-1000-numbers.csv");
     	
     	
-    	ArrayList<ArrayList<Integer>> dataArray = dataset.getDataSets();  //table of data
-    	ArrayList<String> GrNames = dataset.getStringNames();
+    	ArrayList<Data> dataArray = dataset.dataSets;  //table of data
+    	ArrayList<String> GrNames = dataset.stringNames;
     	AllElements allelements = new AllElements();
 
     	TreeWalkerImpl walk = (TreeWalkerImpl) tree.createTreeWalker(root, NodeFilter.SHOW_ELEMENT,
@@ -44,7 +39,7 @@ public class classifier
     
     
     public static String traverseTree(TreeWalkerImpl walk, ArrayList<String> GrNames, 
-    		ArrayList<Integer> dataArray )
+    		Data data )
     {
     	
     	String result = "";
@@ -68,7 +63,7 @@ public class classifier
     		int Qindex = GrNames.indexOf(raw) ;  //attribute of current Node
     		//System.out.println(walk.getCurrentNode().getNodeName());
     		
-    		int answerEdge = dataArray.get(Qindex);
+    		int answerEdge = data.dataSets.get(Qindex);
     		
     		//determine which edge to take. Move down tree. Assumes tree preserves ordering.
     		//walk.setCurrentNode(children.item(answerEdge));
@@ -90,7 +85,7 @@ public class classifier
     		else
     		{	//recursing down tree now.
     			walk.firstChild();
-    			result = traverseTree(walk, GrNames, dataArray);
+    			result = traverseTree(walk, GrNames, data);
     		}
     	}
     	return result;

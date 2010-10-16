@@ -2,61 +2,35 @@ import java.util.*;
 
 public class csvInfo {
     ArrayList<String> stringNames;
-    ArrayList<Integer> domainSizes;
-    String categoryAttribute;
-    ArrayList<ArrayList<Integer>> dataSets;
+    ArrayList<Integer> attributes;
+    String categoryName;
+    String idName;
+    ArrayList<Data> dataSets;
     
 
     csvInfo(ArrayList<String> stringNames, 
-            ArrayList<Integer> domainSizes, 
-            ArrayList<ArrayList<Integer>> dataSets, 
-            String categoryAttribute)
+            ArrayList<Integer> attributes, 
+            ArrayList<Data> dataSets,
+            String categoryName,
+            String idName,
+            int categoryIndex)
     {
         this.stringNames = stringNames;
-        this.domainSizes = domainSizes;
+        this.attributes = attributes;
         this.dataSets = dataSets;
-        this.categoryAttribute = categoryAttribute;
+        this.categoryName = categoryName;
+        this.idName = idName;
     }
     
-    public ArrayList<Integer> getDomainSizes() {
-        return domainSizes;
-    }
-
-    public void setDomainSizes(ArrayList<Integer> domainSizes) {
-        this.domainSizes = domainSizes;
-    }
-    
-    public ArrayList<String> getStringNames() {
-        return stringNames;
-    }
-
-    public void setStringNames(ArrayList<String> stringNames) {
-        this.stringNames = stringNames;
-    }
-
-    public ArrayList<ArrayList<Integer>> getDataSets() {
-        return dataSets;
-    }
-
-    public void setDataSets(ArrayList<ArrayList<Integer>> dataSets) {
-        this.dataSets = dataSets;
-    }
-
-    public String getCategoryAttribute() {
-        return categoryAttribute;
-    }
-
-    public void setCategoryAttribute(String categoryAttribute) {
-        this.categoryAttribute = categoryAttribute;
-    }
     
     @Override
     public String toString() {
         String answer = "";
+        answer += "stringNames="+this.stringNames.toString() + "\n";
+        answer += "attributes="+this.attributes.toString() + "\n";
+        answer += "categoryName="+this.categoryName.toString() + "\n";
+        answer += "idName="+this.idName.toString() + "\n";
         
-        answer += this.stringNames.toString() + "\n";
-        answer += this.domainSizes.toString() + "\n";
-        answer += this.categoryAttribute.toString() + "\n";
         for(int index = 0; index < this.dataSets.size(); index++)
         {
             answer += this.dataSets.get(index).toString() + "\n";

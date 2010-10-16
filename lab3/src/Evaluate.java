@@ -20,7 +20,8 @@ public class Evaluate{
     public ArrayList<ArrayList<csvInfo>> holdoutGen(csvInfo initSet, int numSlices)
     {
     	ArrayList<ArrayList<csvInfo>> result = new ArrayList<ArrayList<csvInfo>>();
-    	int sliceSize = initSet.getDataSets().size() / numSlices; 
+    	int sliceSize = initSet.dataSets.size() / numSlices; 
+    	
     	
     	/*Create slices of size sliceSize, but use random sampling to place slices in */
     	
