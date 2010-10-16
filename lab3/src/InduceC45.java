@@ -117,23 +117,36 @@ public class InduceC45{
     	}
     	System.out.println(catChoice);
     	
-
+    	
+    	System.out.println("attributes.get(currAtt)="+attributes.get(currAtt));
     	double sum [] = new double[attributes.get(currAtt)];
     	//for each attribute AL
-    	for(int ALIdx = 0; ALIdx < catChoice.size(); ALIdx++){
+    	for(int ALIdx = 0; ALIdx < attributes.get(currAtt); ALIdx++){
     		//for each kind of category
+    		double p [] = new double[catNum+1];
     		for(int catIdx = 0; catIdx < catNum; catIdx++){
-    			int p [] = new int[catNum*catChoice.size()];
     			//for each item in the array
     			for(int i = 0; i < catChoice.get(ALIdx).size(); i++){
         			if(catChoice.get(ALIdx).get(i) == catIdx+1){
-        				p[ALIdx]++;
+        				p[catIdx]++;
         			}
     			}
-    			System.out.println(p[ALIdx]);
     		}
+    		for(int temp = 0; temp < catNum; temp++){
+    			System.out.print(p[temp]+",");
+    		}
+    		System.out.println();
+
+    		double total = catChoice.get(ALIdx).size();
+    		for(int calcAttEnthro = 0; calcAttEnthro < catNum-1; calcAttEnthro++){
+	    		for(int i = 0; i < catNum; i++){
+	    			sum[calcAttEnthro] -= (p[i]/total)*(Math.log((p[i]/total))/Math.log(2.0));
+	    			System.out.println(""+-(p[i]/total)*(Math.log((p[i]/total))/Math.log(2.0)));
+	    		}
+    		}
+    		
     	}
-    	//System.exit(0);
+    	
     	return answer;
     }
     
