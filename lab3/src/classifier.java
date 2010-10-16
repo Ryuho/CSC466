@@ -1,5 +1,3 @@
-
-
 import java.util.ArrayList;
 
 import org.w3c.dom.Document;
@@ -19,11 +17,11 @@ public class classifier
         //java classifier <CSVFile> <XMLFile>
     	
     	//parse tree
-    	DocumentImpl tree = (DocumentImpl) fileParser.parseXMLDomain(args[1]);
+    	DocumentImpl tree = (DocumentImpl) fileParser.parseXMLDomain("data/domain.xml");
     	Node root = tree.getLastChild(); //why last?
     	
     	//parse in CVS dataset
-    	csvInfo dataset = fileParser.parseCSV(args[0]);
+    	csvInfo dataset = fileParser.parseCSV("data/tree01-1000-numbers.csv");
     	
     	
     	ArrayList<ArrayList<Integer>> dataArray = dataset.getDataSets();  //table of data

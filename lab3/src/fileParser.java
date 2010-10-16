@@ -159,7 +159,7 @@ public class fileParser {
         return document;
     }
     
-    static DecisionTree parseXMLTree(String filename){
+    static DecisionTreeNode parseXMLTree(String filename){
         return null;
     }
 }
