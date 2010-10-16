@@ -37,5 +37,34 @@ public class DecisionTreeNode
 		child.parent = this;
 		children.add(child);		
 	}
+
+	@Override
+	public String toString() {
+		String answer = "";
+		if(this.node != -1){
+			answer += "Node: " + this.node+"| ";
+		}
+		else if(this.edge != -1){
+			answer += "edge: " + this.edge+"| ";
+		}
+		else if(this.edgeChoice != -1){
+			answer += "edgeChoice: " + this.edgeChoice+"| ";
+		}
+		else if(this.decision != -1){
+			answer += "decision: " + this.decision+"| ";
+		}
+		
+		answer += "\n";
+		
+		if(this.children == null){
+			return answer;
+		}
+		
+		for(int i = 0; i < this.children.size(); i++){
+			answer += this.children.get(i).toString();
+		}
+		
+		return answer;
+	}
 	
 }

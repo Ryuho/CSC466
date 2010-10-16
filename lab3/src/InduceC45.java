@@ -9,12 +9,11 @@ public class InduceC45{
     	
     	//get csv data
     	csvInfo csvAL = fileParser.parseCSV("data/custom.csv");
-    	System.out.println(csvAL);  
+    	//System.out.println(csvAL);  
 
-    	DecisionTreeNode root = new DecisionTreeNode();
     	DecisionTreeNode result = C45(csvAL.dataSets, csvAL.attributes, 0.1, csvAL.categoryNumber);
-    	
-    	System.out.println("END");
+
+    	System.out.println(result);
     }
     
     public static DecisionTreeNode C45(ArrayList<Data> dataSet, 
@@ -47,40 +46,47 @@ public class InduceC45{
     		}
     		//actual tree construction
     		else{
-    			System.out.println("Created a split node!");
-    			System.out.println("splitAtt="+splitAtt);
+    			System.out.println("Created a split node at "+splitAtt+"!");
+    			//System.out.println("attributes="+attributes);
+    			//System.out.println("dataSet:");
+    			for(int i = 0; i < dataSet.size(); i++){
+    				//System.out.println(dataSet.get(i));
+    			}
     			
-    			//public DecisionTreeNode(int id, int node, int edge, int decision){
+    			//node used 
     			DecisionTreeNode tempRoot = new DecisionTreeNode();
                 //label the node splitting attribute
     			tempRoot.node = splitAtt;
-    			ArrayList<Data> tempAL;
+    			ArrayList<ArrayList<Data>> tempAL = new ArrayList<ArrayList<Data>>();
+    			
     			//for each dataset split by splitAtt, recurse C45 and append each of the result
-    			System.out.println("attributes="+attributes);
-    			System.out.println("attributes.get(splitAtt)="+attributes.get(splitAtt));
     			for(int attLoop = 1; attLoop <= attributes.get(splitAtt); attLoop++){
-    				tempAL = new ArrayList<Data>();
+    				tempAL.add(new ArrayList<Data>());
     				// if the attribute matches with the current loop, add it to the list
     				for(int dataLoop = 0; dataLoop < dataSet.size(); dataLoop++){
         				if(dataSet.get(dataLoop).dataSets.get(splitAtt) == attLoop){
-        					tempAL.add(dataSet.get(dataLoop));
-        					System.out.println(dataSet.get(dataLoop));
+        					Data tempData = new Data(dataSet.get(dataLoop));
+        					tempData.dataSets.remove(splitAtt);
+        					tempAL.get(attLoop-1).add(tempData);
+            				//System.out.println("Group after "+attLoop+":"+tempData);
         				}
-        						
     				}
-    				System.out.println("================");
-    				for(int tempALLoop = 0; tempALLoop < tempAL.size(); tempALLoop++){
-    					tempAL.get(tempALLoop).dataSets.remove(splitAtt);
-    				}
-    				attributes.remove(splitAtt);
-    				DecisionTreeNode tempNode = new DecisionTreeNode();
-    				tempNode = C45(dataSet, attributes, threshold, catNum);
-                    //for for each different groups the splitting attributes create
-            		//recurse with C45 and append the result
-    				tempRoot.addNode(tempNode);
     			}
-
-    			answer.addNode(tempRoot);
+    			//remove the now split (used) attribute 
+    			attributes.remove(splitAtt);
+    			
+    			//System.out.println("attributes="+attributes);
+    			//System.out.println("tempAL="+tempAL);
+    			//System.out.println("tempAL.size()="+tempAL.size());
+				for(int tempALLoop = 0; tempALLoop < tempAL.size(); tempALLoop++){
+					//if(tempAL.get(tempALLoop).get(0).dataSets.size() != 0){
+						//System.out.println("recursively calling="+tempALLoop);
+						//System.out.println("tempAL.get(tempALLoop)="+tempAL.get(tempALLoop));
+						DecisionTreeNode tempNode = new DecisionTreeNode();
+						tempNode = C45(tempAL.get(tempALLoop), attributes, threshold, catNum);
+						answer.addNode(tempNode);
+					//}					
+				}
 				return answer;
     		}
     	}

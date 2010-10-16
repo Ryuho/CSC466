@@ -13,7 +13,13 @@ public class Data {
 		this.category = category;
 	}
 	
-    @Override
+    public Data(Data data) {
+		this.dataSets = new ArrayList<Integer>(data.dataSets);
+		this.id = data.id;
+		this.category = data.category;
+	}
+
+	@Override
     public String toString() {
         String answer = "";
         answer += this.dataSets.toString(); 
