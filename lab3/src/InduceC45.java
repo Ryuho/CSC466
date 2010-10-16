@@ -8,7 +8,7 @@ public class InduceC45{
         //java InduceC45 <domainFile.xml> <TrainingSetFile.csv> [<restrictionsFile>]
     	
     	//get csv data
-    	csvInfo csvAL = fileParser.parseCSV("data/tree02-20-numbers.csv");
+    	csvInfo csvAL = fileParser.parseCSV("data/custom.csv");
     	System.out.println(csvAL);  
     	
     	//selectSplittingAttributeIG(int catIndex, ArrayList<Integer> attributes, ArrayList<Data> dataSet, double threshold){
@@ -95,13 +95,15 @@ public class InduceC45{
     		//System.out.println(p[catCount]);
     		answer -= (p[catCount])*(Math.log((p[catCount]))/Math.log(2));
     	}
+    	//System.out.println("enthropy="+answer);
     	return answer;
     }
     
     //given index of attribute it's calculating for, index of category, list of attributes, return the enthropyi
     public static double enthropyi(int currAtt, int catNum, ArrayList<Integer> attributes,  ArrayList<Data> dataSet){
     	double answer = 0.0;
-    	System.out.println("currAtt="+currAtt+"==========================");
+    	double calcAnswer[] = new double[attributes.get(currAtt)];
+    	
     	ArrayList<ArrayList<Integer>> catChoice = new ArrayList<ArrayList<Integer>>();
     	//for each attribute choice
     	for(int attIdx = 0; attIdx < attributes.get(currAtt); attIdx++){
@@ -115,15 +117,19 @@ public class InduceC45{
     			}
     		}
     	}
-    	System.out.println(catChoice);
+    	//System.out.println(catChoice);
     	
     	
-    	System.out.println("attributes.get(currAtt)="+attributes.get(currAtt));
-    	double sum [] = new double[attributes.get(currAtt)];
+    	//System.out.println("attributes.get(currAtt)="+attributes.get(currAtt));
     	//for each attribute AL
     	for(int ALIdx = 0; ALIdx < attributes.get(currAtt); ALIdx++){
+    		double total = 0;
+    		for(int temp = 0; temp < attributes.get(currAtt); temp++){
+    			total += catChoice.get(temp).size();
+    		}
     		//for each kind of category
     		double p [] = new double[catNum+1];
+    		double sum [] = new double[attributes.get(currAtt)];
     		for(int catIdx = 0; catIdx < catNum; catIdx++){
     			//for each item in the array
     			for(int i = 0; i < catChoice.get(ALIdx).size(); i++){
@@ -132,33 +138,49 @@ public class InduceC45{
         			}
     			}
     		}
-    		for(int temp = 0; temp < catNum; temp++){
-    			System.out.print(p[temp]+",");
-    		}
-    		System.out.println();
 
-    		double total = catChoice.get(ALIdx).size();
+    		double nominator = catChoice.get(ALIdx).size();
     		for(int calcAttEnthro = 0; calcAttEnthro < catNum-1; calcAttEnthro++){
 	    		for(int i = 0; i < catNum; i++){
-	    			sum[calcAttEnthro] -= (p[i]/total)*(Math.log((p[i]/total))/Math.log(2.0));
-	    			System.out.println(""+-(p[i]/total)*(Math.log((p[i]/total))/Math.log(2.0)));
+	    			sum[calcAttEnthro] -= (p[i]/nominator)*(Math.log((p[i]/nominator))/Math.log(2.0));
+	    			//System.out.println(""+-(p[i]/nominator)*(Math.log((p[i]/nominator))/Math.log(2.0)));
 	    		}
+	    		if(Double.isNaN(sum[calcAttEnthro])){
+	    			sum[calcAttEnthro] = 0;
+	    		}
+	    		//System.out.println("sum["+calcAttEnthro+"]="+sum[calcAttEnthro]);
+	    		//System.out.println("total="+total);
+	    		//System.out.println("nominator="+nominator);
+	    		//System.out.println("(nominator)/(total)*sum[calcAttEnthro]="+(nominator)/(total)*sum[calcAttEnthro]);
+	    		answer += (nominator)/(total)*sum[calcAttEnthro];
     		}
-    		
     	}
-    	
+    	//System.out.println("enthropyi="+answer);
     	return answer;
     }
     
     //index of category in attribute, list of attributes, dataset and a threashold, return the splitting attribute index
     public static int selectSplittingAttributeIG(int catNum, ArrayList<Integer> attributes, ArrayList<Data> dataSet, double threshold){
+    	int answer = -1;
+    	double answerValue = 0;
     	double p0 = enthropy(catNum,attributes, dataSet);
     	double p [] = new double[attributes.size()];
     	//for each attribute, calculate the enthropyi
     	for(int i = 0; i < attributes.size(); i++){
-    		p[i] = enthropyi(i, catNum, attributes, dataSet);
+    		p[i] = p0 - enthropyi(i, catNum, attributes, dataSet);
+    		System.out.println("p["+i+"]="+p[i]);
     	}
-    	return -1;
+    	
+    	
+    	for(int i = 0; i < attributes.size(); i++){
+    		if(answerValue < p[i]){
+    			answer = i;
+    			answerValue = p[i];
+    		}
+    	}
+    	
+    	System.out.println("selectSplittingAttributeIG="+answer);
+    	return answer;
     }
     
     
