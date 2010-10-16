@@ -6,6 +6,7 @@ public class csvInfo {
     String categoryName;
     String idName;
     ArrayList<Data> dataSets;
+    int categoryNumber;
     
 
     csvInfo(ArrayList<String> stringNames, 
@@ -13,13 +14,14 @@ public class csvInfo {
             ArrayList<Data> dataSets,
             String categoryName,
             String idName,
-            int categoryIndex)
+            int categoryNumber)
     {
         this.stringNames = stringNames;
         this.attributes = attributes;
         this.dataSets = dataSets;
         this.categoryName = categoryName;
         this.idName = idName;
+        this.categoryNumber = categoryNumber;
     }
     
     
@@ -29,6 +31,7 @@ public class csvInfo {
         answer += "stringNames="+this.stringNames.toString() + "\n";
         answer += "attributes="+this.attributes.toString() + "\n";
         answer += "categoryName="+this.categoryName.toString() + "\n";
+        answer += "categoryNumber="+this.categoryNumber + "\n";
         answer += "idName="+this.idName.toString() + "\n";
         
         for(int index = 0; index < this.dataSets.size(); index++)

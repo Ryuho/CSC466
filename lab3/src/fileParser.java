@@ -49,6 +49,7 @@ public class fileParser {
 
         int idIndex = -1;
         int categoryIndex = -1;
+        int categoryNumber = -1;
         String categoryName = "";
         String idName = "";
         
@@ -61,6 +62,7 @@ public class fileParser {
         
         for(int i = 0; i < stringNames.size(); i++){
         	if(stringNames.get(i).compareTo(categoryAttribute) == 0){
+        		categoryNumber = domainSizes.get(i);
         		categoryIndex = i;
         		categoryName = stringNames.get(i);
         	}
@@ -107,7 +109,7 @@ public class fileParser {
             }
         }
         
-        csvInfo answer = new csvInfo(stringNames, domainSizes, datas, categoryName, idName, categoryIndex);
+        csvInfo answer = new csvInfo(stringNames, domainSizes, datas, categoryName, idName, categoryNumber);
         return answer;
     }
 

@@ -6,6 +6,7 @@ public class DecisionTreeNode
 	int decision;
 	int node;
 	int edge;
+	int edgeChoice;
 	DecisionTreeNode parent;
 	ArrayList<DecisionTreeNode> children;
 	
@@ -14,15 +15,17 @@ public class DecisionTreeNode
 		decision = -1;
 		node = -1;
 		edge = -1;
+		edgeChoice = -1;
 		parent = null;
 		children = new ArrayList<DecisionTreeNode>();
 	}
 	
-	public DecisionTreeNode(int id, int node, int edge, int decision){
+	public DecisionTreeNode(int id, int node, int edge, int edgeChoice, int decision){
 		this.id = id;
 		this.decision = decision;
 		this.node = node;
 		this.edge = edge;
+		this.edgeChoice = edgeChoice;
 		this.parent = null;
 		this.children = null;
 	}

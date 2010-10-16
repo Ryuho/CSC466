@@ -10,29 +10,30 @@ public class InduceC45{
     	//get csv data
     	csvInfo csvAL = fileParser.parseCSV("data/custom.csv");
     	System.out.println(csvAL);  
+
+    	DecisionTreeNode root = new DecisionTreeNode();
+    	DecisionTreeNode result = C45(csvAL.dataSets, csvAL.attributes, 0.1, csvAL.categoryNumber);
     	
-    	//selectSplittingAttributeIG(int catIndex, ArrayList<Integer> attributes, ArrayList<Data> dataSet, double threshold){
-    	int test = selectSplittingAttributeIG(2, csvAL.attributes, csvAL.dataSets, 0.1);
-    	
-    	System.out.println(test);
+    	System.out.println("END");
     }
     
-    public static DecisionTreeNode C45(DecisionTreeNode tree, ArrayList<Data> dataSet, 
+    public static DecisionTreeNode C45(ArrayList<Data> dataSet, 
             ArrayList<Integer> attributes, double threshold, int catNum){
+    	DecisionTreeNode answer = new DecisionTreeNode();
     	
     	//if there is only one category left
     	if(oneCategoryLeft(dataSet)){
     		System.out.println("Only one category left!");
     		//make a node and label it as the category, add it to the tree, then return the tree
-    		//public DecisionTreeNode(int id, int node, int edge, int decision){
-    		return new DecisionTreeNode(-1, -1, -1, dataSet.get(0).category);
+    		//public DecisionTreeNode(int id, int node, int edge, int edgeChoice, int decision){
+    		return new DecisionTreeNode(-1, -1, -1, -1, dataSet.get(0).category);
     	}
     	//else if there are no more attributes, find the most common category and make a node,
     	//name it the most common cat, add it to the tree, reutrn the tree
     	else if(attributes.size() == 0){
     		System.out.println("No more attribute to split on!");
     		int commCat = commonCategory(catNum, dataSet);
-    		return new DecisionTreeNode(-1, -1, -1, commCat);
+    		return new DecisionTreeNode(-1, -1, -1, -1, commCat);
     	}
     	else{
     		//find the splitting attribute
@@ -42,40 +43,47 @@ public class InduceC45{
     	    	//else if there is no good attribute to split on, find the most common category 
     			//and make a node, name it the most common cat, add it to the tree, reutrn the tree
         		int commCat = commonCategory(catNum, dataSet);
-        		return new DecisionTreeNode(-1, -1, -1, commCat);
+        		return new DecisionTreeNode(-1, -1, -1, -1, commCat);
     		}
     		//actual tree construction
     		else{
     			System.out.println("Created a split node!");
-    			DecisionTreeNode tempNode = new DecisionTreeNode();
+    			System.out.println("splitAtt="+splitAtt);
+    			
+    			//public DecisionTreeNode(int id, int node, int edge, int decision){
+    			DecisionTreeNode tempRoot = new DecisionTreeNode();
                 //label the node splitting attribute
-    			tempNode.node = splitAtt;
+    			tempRoot.node = splitAtt;
     			ArrayList<Data> tempAL;
     			//for each dataset split by splitAtt, recurse C45 and append each of the result
-    			for(int catLoop = 0; catLoop < attributes.get(splitAtt); catLoop++){
+    			System.out.println("attributes="+attributes);
+    			System.out.println("attributes.get(splitAtt)="+attributes.get(splitAtt));
+    			for(int attLoop = 1; attLoop <= attributes.get(splitAtt); attLoop++){
     				tempAL = new ArrayList<Data>();
-    				
     				// if the attribute matches with the current loop, add it to the list
     				for(int dataLoop = 0; dataLoop < dataSet.size(); dataLoop++){
-        				if(dataSet.get(dataLoop).dataSets.get(splitAtt) == catLoop){
+        				if(dataSet.get(dataLoop).dataSets.get(splitAtt) == attLoop){
         					tempAL.add(dataSet.get(dataLoop));
-        				}    					
+        					System.out.println(dataSet.get(dataLoop));
+        				}
+        						
     				}
-    				
+    				System.out.println("================");
+    				for(int tempALLoop = 0; tempALLoop < tempAL.size(); tempALLoop++){
+    					tempAL.get(tempALLoop).dataSets.remove(splitAtt);
+    				}
+    				attributes.remove(splitAtt);
+    				DecisionTreeNode tempNode = new DecisionTreeNode();
+    				tempNode = C45(dataSet, attributes, threshold, catNum);
+                    //for for each different groups the splitting attributes create
+            		//recurse with C45 and append the result
+    				tempRoot.addNode(tempNode);
     			}
-                //for for each different groups the splitting attributes create
-        			//recurse with C45 and append the result
+
+    			answer.addNode(tempRoot);
+				return answer;
     		}
     	}
-        return tree;
-    }
-    
-    //FIXME this doesn't work currently
-    //so we are modeling domain.xml for now
-    public static DomainTreeNode DocToTree(Document doc){
-    	DomainTreeNode answer = new DomainTreeNode();
-    	
-    	return answer;
     }
     
     //given number of category, list of attributes, list of data, return the enthropy
@@ -102,8 +110,8 @@ public class InduceC45{
     //given index of attribute it's calculating for, index of category, list of attributes, return the enthropyi
     public static double enthropyi(int currAtt, int catNum, ArrayList<Integer> attributes,  ArrayList<Data> dataSet){
     	double answer = 0.0;
-    	double calcAnswer[] = new double[attributes.get(currAtt)];
     	
+    	//System.out.println("currAtt="+currAtt+"====================================");
     	ArrayList<ArrayList<Integer>> catChoice = new ArrayList<ArrayList<Integer>>();
     	//for each attribute choice
     	for(int attIdx = 0; attIdx < attributes.get(currAtt); attIdx++){
@@ -168,18 +176,18 @@ public class InduceC45{
     	//for each attribute, calculate the enthropyi
     	for(int i = 0; i < attributes.size(); i++){
     		p[i] = p0 - enthropyi(i, catNum, attributes, dataSet);
-    		System.out.println("p["+i+"]="+p[i]);
+    		//System.out.println("p["+i+"]="+p[i]);
     	}
     	
     	
     	for(int i = 0; i < attributes.size(); i++){
-    		if(answerValue < p[i]){
+    		if(answerValue < p[i] && threshold < p[i]){
     			answer = i;
     			answerValue = p[i];
     		}
     	}
     	
-    	System.out.println("selectSplittingAttributeIG="+answer);
+    	//System.out.println("selectSplittingAttributeIG="+answer);
     	return answer;
     }
     
@@ -200,7 +208,7 @@ public class InduceC45{
     public static int commonCategory(int catNum, ArrayList<Data> dataSet){
     	int tally [] = new int[catNum];
     	for(int i = 0; i < dataSet.size(); i++){
-    		tally[dataSet.get(i).category]++;
+    		tally[dataSet.get(i).category-1]++;
     	}
     	int answer = -1;
     	
