@@ -1,3 +1,5 @@
+package Src;
+
 public class Attribute
 {
 	private int id;
