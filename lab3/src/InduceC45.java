@@ -74,11 +74,11 @@ public class InduceC45{
         catch(Exception e){
         	
         }
-        if(export)
+        /*if(export)
         {
         	p.println ("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
         	p.println ("<Tree name = \"lab3\">");
-        }
+        }*/
         
         //String xml = DecisionTreeNode.printTree(tree,0,-1, csvAL.categoryIndex,csvAL.stringNames, edgeNames);
         try
@@ -88,7 +88,7 @@ public class InduceC45{
         
         TransformerFactory transfac = TransformerFactory.newInstance();
         Transformer trans = transfac.newTransformer();
-        trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
         trans.setOutputProperty(OutputKeys.INDENT, "yes");
 
         //create string from xml tree
@@ -110,7 +110,8 @@ public class InduceC45{
         catch(Exception e)
         {
         	//problem
-        	System.out.println("XML print error");
+        	System.err.println("XML print error");
+        	e.printStackTrace();
         	System.exit(-1);
         }
         
@@ -315,12 +316,15 @@ public class InduceC45{
     //given the category string and dataset, returns true if there are only one category left, false otherwise
     private static boolean oneCategoryLeft(ArrayList<Data> dataSet){
     	boolean oneCatLeft = true;
-    	int catChoice = dataSet.get(0).category;
+    	int catChoice;
+    		catChoice = dataSet.get(0).category;
     	for(int i = 0; i < dataSet.size(); i++){
     		if(catChoice != dataSet.get(i).category){
     			oneCatLeft = false;
     		}
     	}
+    	
+    	
     	return oneCatLeft;
     }
     

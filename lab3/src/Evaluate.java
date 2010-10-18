@@ -6,6 +6,8 @@ import src.InduceC45;
 
 import java.util.ArrayList;
 
+import com.sun.org.apache.xerces.internal.dom.DocumentImpl;
+
 
 
 
@@ -15,11 +17,22 @@ public class Evaluate{
 	/*Return the OVERALL confusion matrix, OVERALL recall, precision, pf and f-measure
 	 * Overall and average accuracy (two-way), and error rate */
 	
-	csvInfo inSet;
+	static csvInfo inSet;
+	static DocumentImpl domain;
+	static csvInfo csvAL;
+	static int n;
 	
     public static void main(String [ ] args){
         //training file, optional restrictions file, integer n for cross validation 
+    	ArrayList<csvInfo> dataslice;
     	
+    	domain = (DocumentImpl) fileParser.parseXMLDomain(args[2]);
+    	
+    	csvAL = fileParser.parseCSV(args[1]);
+    	n = Integer.valueOf(args[0]);
+    	dataslice = holdoutGen(csvAL, n);
+    	
+    	classification(dataslice, 1.0);
     	/*Cross validation algorithm:
     	 * select n (given)
     	 * using random sampling, split D into n slices of equal size
@@ -32,7 +45,7 @@ public class Evaluate{
     /*Generates a set of randomly sampled slices
      * initSet: the initial csvInfo that was read out of the tree
      * numSlices: the number of slices to create from this dataset. */
-    public ArrayList<csvInfo> holdoutGen(csvInfo initSet, int numSlices)
+    public static ArrayList<csvInfo> holdoutGen(csvInfo initSet, int numSlices)
     {
     	ArrayList<csvInfo> result = new ArrayList<csvInfo>();
     	int sliceSize;
@@ -44,9 +57,13 @@ public class Evaluate{
     	{
     		sliceSize = initSet.dataSets.size() / numSlices;
     	}
-    	else 
+    	else  //One giant slice
     	{
-    		sliceSize = 0;
+    		sliceSize = initSet.dataSets.size();
+    		numSlices = 0;
+    		result.add(new csvInfo());
+    		result.get(0).stringNames = initSet.stringNames;
+			result.get(0).attributes = initSet.attributes;
     	}
     
     	if(numSlices < 0) //Leave one Out
@@ -55,9 +72,9 @@ public class Evaluate{
     		sliceSize = 1;
     	}
     	
-    	if(numSlices > 0)
-    	{
-    		for(int i = 0; i < sliceSize; i++)
+    	//if(numSlices > 0)
+    	//{
+    		for(int i = 0; i < numSlices; i++)
     		{
     			result.add(new csvInfo());  //initializing to slice size;
     			result.get(i).stringNames = initSet.stringNames;
@@ -67,35 +84,61 @@ public class Evaluate{
     		/*Create slices of size sliceSize, but use random sampling to place slices in */
     		for(int i = 0; i < initSet.dataSets.size() ; i++)
     		{
-    			rand = ((int) (Math.random() * 100)) % numSlices;
-    		
-    			//check if slice is full before trying to add.
-    			while(result.get(rand).getTupleSize() >= sliceSize)
+    			if(numSlices == 0) //n = 0 special case
+				{
+					rand = 0;
+				}
+    			else if(sliceSize > 1)
     			{
-    				rand = (rand +1) % sliceSize;
+    				rand = ((int) (Math.random() * 100)) % numSlices;
+    				//check if slice is full before trying to add.
+    				while(rand >= numSlices || 
+        					result.get(rand).getTupleSize() >= sliceSize)
+        			{
+        				rand = (rand +1) % numSlices;
+        			}
+    			}
+    			else
+    			{
+    				rand = i;
     			}
     		
     			//add to slice
     			result.get(rand).dataSets.add(initSet.dataSets.get(i));
     		}
-    	}
+    	//}
     	inSet = initSet;
     	return result;
     }
     
-    public csvInfo getTrainingSet(csvInfo holdout)
+    public static csvInfo getTrainingSet(csvInfo holdout)
     {
-    	csvInfo train = inSet;
-    	train.dataSets.removeAll(holdout.dataSets);
+    	csvInfo train = new csvInfo();
+    	if(n != 0)
+    	{
+    		
+    		train.dataSets.addAll(csvAL.dataSets);
+    		train.categoryIndex = csvAL.categoryIndex;
+    		train.categoryNumber = csvAL.categoryNumber;
+    		train.categoryName = csvAL.categoryName;
+    		train.idName = csvAL.idName;
+    		train.attributes.addAll(csvAL.attributes);
+    		train.stringNames.addAll(csvAL.stringNames );
+    		train.dataSets.removeAll(holdout.dataSets);
+    	}
+    	else
+    	{
+    		train = csvAL;
+    	}
     	return train;
     }
     
     /*return type would contain a set of numbers to analyze. (pos/negs) */
-    public void classification(ArrayList<csvInfo> data, double threshold)
+    public static void classification(ArrayList<csvInfo> data, double threshold)
     {
     	csvInfo curSlice = null;
     	csvInfo train = null;
-    	DecisionTreeNode runRes = null;
+    	DocumentImpl runRes = null;
     	ConfusionMatrix results = new ConfusionMatrix();
     	double avgAccu = 0;
     	
@@ -104,57 +147,81 @@ public class Evaluate{
     	{
     		//Select Di as holdout set
     		curSlice = data.get(slce);
+    		//System.out.println(curSlice.getTupleSize());
     		
     		//Add all others into a single csvInfo training set and push it into InduceC45.
     		train = getTrainingSet(curSlice);
-    		runRes = InduceC45.C45(train.dataSets, train.attributes, 
-    								threshold, train.categoryNumber);
-    		//read tree back in.
+    		//System.out.println(train.getTupleSize());
+    		runRes = InduceC45.creatTree(domain, train);
+    		
     		//run holdout set through parsed tree, 
     		//and record results for averaging by comparing result with projected 
-    		//results.combine(classifier.confuseTree(runRules, curSlice));
+    		results.combine(classifier.confuseTree(runRes, curSlice));
     		
     		/*computations for average accuracy */
-    		if(slce < 2)
-    		{
-    			avgAccu += results.trueNegatives + results.truePositives;
-    		}
+    		
+    		
+    		avgAccu += results.trueNegatives + results.truePositives /
+    					(results.falseNegatives + results.falsePositives + 
+    					results.trueNegatives + results.truePositives);
+    		
     	}
     	
-    	avgAccu /= 2;
+    	avgAccu /= data.size();
     	generateConfusion(results, avgAccu);
     }
     
     /*return type and paramaters pending */
-    public void generateConfusion(ConfusionMatrix confuse, double avgAccu)
+    public static void generateConfusion(ConfusionMatrix confuse, double avgAccu)
     {
+    	double recall;
+    	double precision;
+    	double pf;
+    	double fMeasure;
+    	double overAccu;
+    	
     	System.out.println("Resulting Confusion Matrix:\n" +
     			" True Positives: " + confuse.truePositives +
-    			"\n False Positices: " + confuse.falsePositives + 
     			"\n True Negatives: "+ confuse.trueNegatives +
+    			"\n False Positives: " + confuse.falsePositives + 
     			"\n False Negatives: " + confuse.falseNegatives + "\n");
     	
     	//calculate precision and print
-    	double precision = confuse.truePositives / 
+    	precision = confuse.truePositives*1.0 / 
     				(confuse.truePositives + confuse.falsePositives);
-    	System.out.println("Precision = " + precision);
+    	System.out.println("Precision = " + precision*100);
     	
     	//calculate recall
-    	double recall = confuse.truePositives / 
+    	if((confuse.truePositives + confuse.falseNegatives) != 0.0)
+    	{
+    		recall = confuse.truePositives*1.0 / 
 					(confuse.truePositives + confuse.falseNegatives);
-    	System.out.println("Recall = " + recall);
+    	}
+    	else{
+    		recall = 0;}
+    	System.out.println("Recall = " + recall*100);
     	
     	//calculate pf
-    	double pf = confuse.falsePositives / 
+    	if(confuse.falsePositives + confuse.trueNegatives != 0)
+    	{
+    		pf = confuse.falsePositives*1.0 / 
 					(confuse.falsePositives + confuse.trueNegatives);
-    	System.out.println("PF = " + pf);
+    	}
+    	else{
+    		pf = 0;}
+    	System.out.println("PF = " + pf*100);
     	
     	//calculate f-measure
-    	double fMeasure = 2 / (1/precision + 1/recall);
+    	if(precision !=0 && recall != 0)
+    	{
+    		fMeasure = 2.0 / (1.0/precision + 1.0/recall);
+    	}
+    	else{
+    		fMeasure = 0;}
     	System.out.println("F-Measure = " + fMeasure);
     	
     	//overall and average accuracy
-    	double overAccu = confuse.trueNegatives + confuse.truePositives / confuse.tuple;
+    	overAccu = confuse.trueNegatives + confuse.truePositives / confuse.tuple;
     	System.out.println("Overall Accuracy = " + overAccu);
     	System.out.println("Average Accuracy = " + avgAccu);
 

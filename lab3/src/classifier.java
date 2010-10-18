@@ -43,7 +43,7 @@ public class classifier
     	}
     	}catch(Exception e)
     	{
-    		System.out.println("Check Paramaters. Files not found or not specified");
+    		System.err.println("Check Paramaters. Files not found or not specified");
     		System.exit(-1);
     	}
     }
@@ -54,7 +54,7 @@ public class classifier
     {
     	Node root = tree.getLastChild(); 
     	ConfusionMatrix fool = new ConfusionMatrix();
-    	int attSize = dataset.attributes.size();
+    	int attSize = dataset.attributes.size()-1;
     	
     	ArrayList<Data> dataArray = dataset.dataSets;  //table of data
     	ArrayList<String> GrNames = dataset.stringNames;
@@ -69,29 +69,31 @@ public class classifier
     	for(int i = 0; i < dataArray.size(); i++)
     	{
     		walk.setCurrentNode(root);
-    		walk.lastChild();  //set up traversal.
+    		walk.firstChild();  //set up traversal.
 
     		curDecision = traverseTree(walk , GrNames, dataArray.get(i));
     		int curAtt = Integer.valueOf(curDecision);
     		
     		fool.tuple();
+    		int res = dataArray.get(i).dataSets.get(attSize);
+    		//System.out.println(curAtt + "-" + res);
     		if(curAtt == 1)
     		{
-    			if(dataset.attributes.get(attSize) == 1)
+    			if(res == 1)
     				fool.tp();
     			else
     				fool.fp();
     		}
     		else if (curAtt == 2)
     		{
-    			if(dataset.attributes.get(attSize) == 2)
+    			if(res == 2)
     				fool.tn();
     			else
     				fool.fn();
     		}
     		else
     		{
-    			System.out.println("This cross Validation evaluates Binary " +
+    			System.err.println("This cross Validation evaluates Binary " +
     					"Classifications only.");
     			System.exit(-1);
     		}
@@ -122,7 +124,7 @@ public class classifier
     		raw = raw.substring(raw.indexOf('"')+1, raw.length()-1);
     		//get which question we're asking.
     		int Qindex = GrNames.indexOf(raw) ;  //attribute of current Node
-    		System.out.println(raw);
+    		//System.out.println(raw + Qindex);
     		
     		int answerEdge = data.dataSets.get(Qindex);
     		
