@@ -10,22 +10,21 @@
 					<decision end="1" p=".95" />
 				</edge>
 			</node>
-                </edge>
+				</edge>
 		<edge var = "Republican">
-			  <node var ="Bush Approval">
+			<node var ="Bush Approval">
 				<edge var = "Approve">
 					<decision end="2" p=".99" />
 				</edge>
 				<edge var = "Disapprove">
-				    <node var ="Gender">
-                                        <edge var="Male">
-					<decision end="2" p=".8" />
-                                        </edge>
-                                        <edge var ="Female"> 
-					<decision end="1" p=".8" />
-                                        </edge>
-                                    </node>					
-
+					<node var ="Gender">
+						<edge var="Male">
+							<decision end="2" p=".8" />
+						</edge>
+						<edge var ="Female">
+							<decision end="1" p=".8" />
+						</edge>
+					</node>
 				</edge>
 			</node>
 		</edge>
@@ -35,17 +34,17 @@
  					<decision end ="1" p=".8" />
 				</edge>
 				<edge var = "Moderate">
-			  	    <node var ="Bush Approval">
-				       <edge var = "Approve">
-					   <decision end="2" p=".8" />
-				       </edge>
-				       <edge var = "Disapprove">
-					   <decision end="1" p=".8" />
-				       </edge>
- 			            </node>
+			  		<node var ="Bush Approval">
+						<edge var = "Approve">
+							<decision end="2" p=".8" />
+						</edge>
+						<edge var = "Disapprove">
+							<decision end="1" p=".8" />
+						</edge>
+ 					</node>
 				</edge>
-                                <edge var = "Conservative">
-					 <decision end="2" p=".8" />
+				<edge var = "Conservative">
+					<decision end="2" p=".8" />
  				</edge>
 			</node>
 		</edge>

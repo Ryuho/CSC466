@@ -95,6 +95,7 @@ public class fileParser {
             	Data temp = new Data(dataSets.get(i), id, category);
             	datas.add(temp);
             }
+            categoryIndex--;
         }
         else{
             for(int i = 0; i < dataSets.size(); i++){
@@ -108,9 +109,10 @@ public class fileParser {
             	Data temp = new Data(dataSets.get(i), id, category);
             	datas.add(temp);
             }
+            idIndex--;
         }
         
-        csvInfo answer = new csvInfo(stringNames, domainSizes, datas, categoryName, idName, categoryNumber);
+        csvInfo answer = new csvInfo(stringNames, domainSizes, datas, categoryName, idName, categoryNumber,categoryIndex);
         return answer;
     }
 
@@ -221,7 +223,5 @@ public class fileParser {
         return document;
     }
     
-    static DecisionTreeNode parseXMLTree(String filename){
-        return null;
-    }
+    
 }

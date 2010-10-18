@@ -112,7 +112,7 @@ public class Evaluate{
     		//read tree back in.
     		//run holdout set through parsed tree, 
     		//and record results for averaging by comparing result with projected 
-    		results.combine(classifier.confuseTree(runRules, curSlice));
+    		//results.combine(classifier.confuseTree(runRules, curSlice));
     		
     		/*computations for average accuracy */
     		if(slce < 2)

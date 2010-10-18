@@ -14,6 +14,7 @@ public class csvInfo {
     String idName;
     ArrayList<Data> dataSets;
     int categoryNumber;
+    int categoryIndex;
     
 
     csvInfo(ArrayList<String> stringNames, 
@@ -21,7 +22,8 @@ public class csvInfo {
             ArrayList<Data> dataSets,
             String categoryName,
             String idName,
-            int categoryNumber)
+            int categoryNumber,
+            int categoryIndex)
     {
         this.stringNames = stringNames;
         this.attributes = attributes;
@@ -29,6 +31,7 @@ public class csvInfo {
         this.categoryName = categoryName;
         this.idName = idName;
         this.categoryNumber = categoryNumber;
+        this.categoryIndex = categoryIndex;
     }
     
     csvInfo()

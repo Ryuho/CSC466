@@ -1,33 +1,38 @@
 package src;
+
 import java.io.*;
 import java.util.ArrayList;
-
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 
 public class InduceC45{
     public static void main(String [ ] args){
         //java InduceC45 <domainFile.xml> <TrainingSetFile.csv> [<restrictionsFile>]
     	
+    	//read in domain file in xml format
+    	Document doc =  fileParser.parseXMLDomain(args[0]);
+    	
     	//get csv data
-    	csvInfo csvAL = fileParser.parseCSV("data/tree01-100-numbers.csv");
-    	//System.out.println(csvAL);  
+    	csvInfo csvAL = fileParser.parseCSV(args[1]);
+ 
+    	//the main C45 call
+    	DecisionTreeNode result = C45(new ArrayList<Data>(csvAL.dataSets), new ArrayList<Integer>(csvAL.attributes), 0.10, csvAL.categoryNumber);
 
-    	//Document doc =  fileParser.parseXMLDomain("data/custom.xml");
-    	
-    	
-    	DecisionTreeNode result = C45(csvAL.dataSets, csvAL.attributes, 0.1, csvAL.categoryNumber);
-
-    	System.out.println(DecisionTreeNode.printTree(result,0));
-    	
-    	
+    	//output the result to an XML file by calling this
+    	decisionTreeNodeToXML("output.xml", result, doc, csvAL);
+    	System.out.println();
     }
     
-    public static ArrayList<String> parseDoc(){
-		return null;
-    }
-    
-    public static void decisionTreeNodeToXML(String fileName, DecisionTreeNode tree){
+    public static void decisionTreeNodeToXML(String fileName, DecisionTreeNode tree, Document doc, csvInfo csvAL){
+    	
+    	ArrayList<ArrayList<String>> edgeNames = parseDoc(doc, 
+    			new ArrayList<Data>(csvAL.dataSets), 
+    			new ArrayList<String>(csvAL.stringNames), 
+    			new ArrayList<Integer>(csvAL.attributes));
+    	
     	FileOutputStream out = null; // declare a file output object
         PrintStream p = null; // declare a print stream object
         try{
@@ -41,7 +46,9 @@ public class InduceC45{
         
         p.println ("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
         p.println ("<Tree name = \"lab3\">");
-        
+        String xml = DecisionTreeNode.printTree(tree,0,-1, csvAL.categoryIndex,csvAL.stringNames, edgeNames);
+        p.print(xml);
+        p.close();
     }
     
     public static DecisionTreeNode C45(ArrayList<Data> dataSet, 
@@ -117,7 +124,7 @@ public class InduceC45{
 					}
 					//System.out.println("recursively calling="+tempALLoop);
 					//System.out.println("tempAL.get(tempALLoop)="+tempAL.get(tempALLoop));
-					
+
 					DecisionTreeNode edge = new DecisionTreeNode();
 					edge.edge = tempALLoop+1;
 					node.addNode(edge);
@@ -275,5 +282,58 @@ public class InduceC45{
 		return true;
 	}
     
-}
+    public static ArrayList<ArrayList<String>> parseDoc(Document document, 
+    		ArrayList<Data> dataArray, 
+    		ArrayList<String> GrNames, 
+    		ArrayList<Integer> attributes){
+    	
+    	ArrayList<ArrayList<String>> answer = new ArrayList<ArrayList<String>>();
+	    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	    factory.setIgnoringComments(true);
+	    factory.setCoalescing(true); // Convert CDATA to Text nodes; 
+	    factory.setNamespaceAware(false); // No namespaces: this is default
+	    factory.setValidating(false); // Don't validate DTD: also default
+		factory.setExpandEntityReferences(false); 
+		factory.setIgnoringElementContentWhitespace(true);
+	    DocumentBuilder parser = null;
+	    NodeList varNL = null;
+	    NodeList grpNL = null;
+	    
+	    try {
+	        parser = factory.newDocumentBuilder();
+	        parser.setErrorHandler(null);
+	        
+	        varNL = document.getElementsByTagName("variable");
+	        grpNL = document.getElementsByTagName("group");
+	        
+	    } catch (Exception e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+	        //return null;
+	        System.exit(-1);
+	    }
+	    
+	    if(GrNames.size() != varNL.getLength()){
+	    	System.err.println("Warning, size of variables does not between the domain XML file and CSV read!");
+	    }
+	    for(int i = 0; i < varNL.getLength(); i++){
+	    	answer.add(new ArrayList<String>());
+	    }
 
+	    int varIndex = 0;
+	    for(int grpIdx = 0; grpIdx < grpNL.getLength(); grpIdx++){
+            String temp = grpNL.item(grpIdx).getAttributes().item(0).toString();
+            temp = temp.substring(6, temp.length()-1);
+            answer.get(varIndex).add(temp);
+            
+            if(attributes.get(varIndex) > 1){
+            	attributes.set(varIndex,attributes.get(varIndex)-1);
+            }
+            else{
+            	varIndex++;
+            }
+	    }
+	    
+		return answer;
+    }
+}
