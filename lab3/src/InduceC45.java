@@ -10,15 +10,21 @@ public class InduceC45{
         //java InduceC45 <domainFile.xml> <TrainingSetFile.csv> [<restrictionsFile>]
     	
     	//get csv data
-    	csvInfo csvAL = fileParser.parseCSV("data/custom.csv");
-    	System.out.println(csvAL);  
+    	csvInfo csvAL = fileParser.parseCSV("data/tree01-1000-numbers.csv");
+    	//System.out.println(csvAL);  
 
-    	Document doc =  fileParser.parseXMLDomain("data/domain.xml");
+    	//Document doc =  fileParser.parseXMLDomain("data/custom.xml");
     	
     	
-    	//DecisionTreeNode result = C45(csvAL.dataSets, csvAL.attributes, 0.4, csvAL.categoryNumber);
+    	DecisionTreeNode result = C45(csvAL.dataSets, csvAL.attributes, 0.1, csvAL.categoryNumber);
 
-    	//System.out.println(DecisionTreeNode.printTree(result,0));
+    	System.out.println(DecisionTreeNode.printTree(result,0));
+    	
+    	
+    }
+    
+    public static ArrayList<String> parseDoc(){
+		return null;
     }
     
     public static void decisionTreeNodeToXML(String fileName, DecisionTreeNode tree){
@@ -43,7 +49,7 @@ public class InduceC45{
     	
     	//if there is only one category left
     	if(oneCategoryLeft(dataSet)){
-    		System.out.println("Only one category left!");
+    		//System.out.println("Only one category left!");
     		//make a node and label it as the category, add it to the tree, then return the tree
     		//public DecisionTreeNode(int id, int node, int edge, int edgeChoice, int decision){
     		return new DecisionTreeNode(-1, -1, -1, -1, dataSet.get(0).category);
@@ -51,7 +57,7 @@ public class InduceC45{
     	//else if there are no more attributes, find the most common category and make a node,
     	//name it the most common cat, add it to the tree, reutrn the tree
     	else if(noMoreAttributes(attributes)){
-    		System.out.println("No more attribute to split on!");
+    		//System.out.println("No more attribute to split on!");
     		int commCat = commonCategory(catNum, dataSet);
     		return new DecisionTreeNode(-1, -1, -1, -1, commCat);
     	}
@@ -60,7 +66,7 @@ public class InduceC45{
     		int splitAtt = selectSplittingAttributeIG(catNum,attributes, dataSet, threshold);
     		
     		if(splitAtt == -1){
-    			System.out.println("Couldn't find a good splitting attribute!");
+    			//System.out.println("Couldn't find a good splitting attribute!");
     	    	//else if there is no good attribute to split on, find the most common category 
     			//and make a node, name it the most common cat, add it to the tree, reutrn the tree
         		int commCat = commonCategory(catNum, dataSet);
@@ -68,7 +74,7 @@ public class InduceC45{
     		}
     		//actual tree construction
     		else{
-    			System.out.println("Created a split node at "+splitAtt+"!");
+    			//System.out.println("Created a split node at "+splitAtt+"!");
     			//System.out.println("attributes="+attributes);
     			//System.out.println("dataSet:");
     			for(int i = 0; i < dataSet.size(); i++){
@@ -105,8 +111,8 @@ public class InduceC45{
     			DecisionTreeNode node = new DecisionTreeNode();
     			node.node = splitAtt+1;
 				for(int tempALLoop = 0; tempALLoop < tempAL.size(); tempALLoop++){
-					System.out.println("recursively calling="+tempALLoop);
-					System.out.println("tempAL.get(tempALLoop)="+tempAL.get(tempALLoop));
+					//System.out.println("recursively calling="+tempALLoop);
+					//System.out.println("tempAL.get(tempALLoop)="+tempAL.get(tempALLoop));
 					
 					DecisionTreeNode edge = new DecisionTreeNode();
 					edge.edge = tempALLoop+1;
