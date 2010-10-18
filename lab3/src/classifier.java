@@ -49,6 +49,56 @@ public class classifier
     }
     
     
+    
+    public static ConfusionMatrix confuseTree(DocumentImpl tree, csvInfo dataset)
+    {
+    	Node root = tree.getLastChild(); 
+    	ConfusionMatrix fool = new ConfusionMatrix();
+    	int attSize = dataset.attributes.size();
+    	
+    	ArrayList<Data> dataArray = dataset.dataSets;  //table of data
+    	ArrayList<String> GrNames = dataset.stringNames;
+    	AllElements allelements = new AllElements();
+    	String curDecision = "";
+
+    	TreeWalkerImpl walk = (TreeWalkerImpl) tree.createTreeWalker(root, NodeFilter.SHOW_ELEMENT,
+    			(NodeFilter) allelements, true);
+    	
+    	
+    	//Evaluate dataset in the tree, for each person in table
+    	for(int i = 0; i < dataArray.size(); i++)
+    	{
+    		walk.setCurrentNode(root);
+    		walk.lastChild();  //set up traversal.
+
+    		curDecision = traverseTree(walk , GrNames, dataArray.get(i));
+    		int curAtt = Integer.valueOf(curDecision);
+    		
+    		fool.tuple();
+    		if(curAtt == 1)
+    		{
+    			if(dataset.attributes.get(attSize) == 1)
+    				fool.tp();
+    			else
+    				fool.fp();
+    		}
+    		else if (curAtt == 2)
+    		{
+    			if(dataset.attributes.get(attSize) == 2)
+    				fool.tn();
+    			else
+    				fool.fn();
+    		}
+    		else
+    		{
+    			System.out.println("This cross Validation evaluates Binary " +
+    					"Classifications only.");
+    			System.exit(-1);
+    		}
+    	}
+    	return fool;
+    }
+    
     public static String traverseTree(TreeWalkerImpl walk, ArrayList<String> GrNames, 
     		Data data )
     {
