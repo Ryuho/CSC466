@@ -45,7 +45,7 @@ public class DecisionTreeNode
 		}
 		
 		if(tree.node != -1){
-			answer += space+"Node: " + tree.node+"| \n";
+			answer += space+"node: " + tree.node+"| \n";
 			depth += 1;
 		}
 		else if(tree.edge != -1){

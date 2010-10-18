@@ -10,7 +10,7 @@ public class InduceC45{
         //java InduceC45 <domainFile.xml> <TrainingSetFile.csv> [<restrictionsFile>]
     	
     	//get csv data
-    	csvInfo csvAL = fileParser.parseCSV("data/tree01-1000-numbers.csv");
+    	csvInfo csvAL = fileParser.parseCSV("data/tree01-100-numbers.csv");
     	//System.out.println(csvAL);  
 
     	//Document doc =  fileParser.parseXMLDomain("data/custom.xml");
@@ -111,6 +111,10 @@ public class InduceC45{
     			DecisionTreeNode node = new DecisionTreeNode();
     			node.node = splitAtt+1;
 				for(int tempALLoop = 0; tempALLoop < tempAL.size(); tempALLoop++){
+					if(tempAL.get(tempALLoop).size() == 0){
+						//System.out.println("No more attributes left!");
+						continue;
+					}
 					//System.out.println("recursively calling="+tempALLoop);
 					//System.out.println("tempAL.get(tempALLoop)="+tempAL.get(tempALLoop));
 					
