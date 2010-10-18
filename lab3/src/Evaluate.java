@@ -35,30 +35,49 @@ public class Evaluate{
     public ArrayList<csvInfo> holdoutGen(csvInfo initSet, int numSlices)
     {
     	ArrayList<csvInfo> result = new ArrayList<csvInfo>();
-    	int sliceSize = initSet.dataSets.size() / numSlices; 
+    	int sliceSize;
     	int rand = 0;
     	
-    	for(int i = 0; i < sliceSize; i++)
+    	
+    	//checking for cross validation flag
+    	if(numSlices != 0)
     	{
-    		result.add(new csvInfo());  //initializing to slice size;
-    		result.get(i).stringNames = initSet.stringNames;
-    		result.get(i).attributes = initSet.attributes;
+    		sliceSize = initSet.dataSets.size() / numSlices;
+    	}
+    	else 
+    	{
+    		sliceSize = 0;
+    	}
+    
+    	if(numSlices < 0) //Leave one Out
+    	{
+    		numSlices = initSet.getTupleSize();
+    		sliceSize = 1;
     	}
     	
-    	/*Create slices of size sliceSize, but use random sampling to place slices in */
-    	for(int i = 0; i < initSet.dataSets.size() ; i++)
+    	if(numSlices > 0)
     	{
-    		rand = ((int) (Math.random() * 100)) % numSlices;
-    		
-    		//check if slice is full before trying to add.
-    		while(result.get(rand).getTupleSize() >= sliceSize)
+    		for(int i = 0; i < sliceSize; i++)
     		{
-    			rand = (rand +1) % sliceSize;
+    			result.add(new csvInfo());  //initializing to slice size;
+    			result.get(i).stringNames = initSet.stringNames;
+    			result.get(i).attributes = initSet.attributes;
     		}
+    	
+    		/*Create slices of size sliceSize, but use random sampling to place slices in */
+    		for(int i = 0; i < initSet.dataSets.size() ; i++)
+    		{
+    			rand = ((int) (Math.random() * 100)) % numSlices;
     		
-    		//add to slice
-    		result.get(rand).dataSets.add(initSet.dataSets.get(i));
+    			//check if slice is full before trying to add.
+    			while(result.get(rand).getTupleSize() >= sliceSize)
+    			{
+    				rand = (rand +1) % sliceSize;
+    			}
     		
+    			//add to slice
+    			result.get(rand).dataSets.add(initSet.dataSets.get(i));
+    		}
     	}
     	inSet = initSet;
     	return result;
@@ -77,6 +96,9 @@ public class Evaluate{
     	csvInfo curSlice = null;
     	csvInfo train = null;
     	DecisionTreeNode runRes = null;
+    	ConfusionMatrix results = new ConfusionMatrix();
+    	double avgAccu = 0;
+    	
     	//For each slice
     	for(int slce = 0; slce < data.size(); slce++)
     	{
@@ -90,25 +112,51 @@ public class Evaluate{
     		//read tree back in.
     		//run holdout set through parsed tree, 
     		//and record results for averaging by comparing result with projected 
-    			//(ture pos, false pos, false neg, true neg)
+    		results.combine(classifier.confuseTree(runRules, curSlice));
+    		
+    		/*computations for average accuracy */
+    		if(slce < 2)
+    		{
+    			avgAccu += results.trueNegatives + results.truePositives;
+    		}
     	}
+    	
+    	avgAccu /= 2;
+    	generateConfusion(results, avgAccu);
     }
     
     /*return type and paramaters pending */
-    public void generateConfusion()
+    public void generateConfusion(ConfusionMatrix confuse, double avgAccu)
     {
-    	//get true positives, false positives, and likewise for negatives
+    	System.out.println("Resulting Confusion Matrix:\n" +
+    			" True Positives: " + confuse.truePositives +
+    			"\n False Positices: " + confuse.falsePositives + 
+    			"\n True Negatives: "+ confuse.trueNegatives +
+    			"\n False Negatives: " + confuse.falseNegatives + "\n");
     	
     	//calculate precision and print
+    	double precision = confuse.truePositives / 
+    				(confuse.truePositives + confuse.falsePositives);
+    	System.out.println("Precision = " + precision);
     	
     	//calculate recall
+    	double recall = confuse.truePositives / 
+					(confuse.truePositives + confuse.falseNegatives);
+    	System.out.println("Recall = " + recall);
     	
     	//calculate pf
+    	double pf = confuse.falsePositives / 
+					(confuse.falsePositives + confuse.trueNegatives);
+    	System.out.println("PF = " + pf);
     	
     	//calculate f-measure
+    	double fMeasure = 2 / (1/precision + 1/recall);
+    	System.out.println("F-Measure = " + fMeasure);
     	
     	//overall and average accuracy
-    	
-    	//error rate
+    	double overAccu = confuse.trueNegatives + confuse.truePositives / confuse.tuple;
+    	System.out.println("Overall Accuracy = " + overAccu);
+    	System.out.println("Average Accuracy = " + avgAccu);
+
     }
 }
