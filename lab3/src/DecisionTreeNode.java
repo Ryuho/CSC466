@@ -7,7 +7,6 @@ public class DecisionTreeNode
 	int decision;
 	int node;
 	int edge;
-	int edgeChoice;
 	DecisionTreeNode parent;
 	ArrayList<DecisionTreeNode> children;
 	
@@ -16,7 +15,6 @@ public class DecisionTreeNode
 		decision = -1;
 		node = -1;
 		edge = -1;
-		edgeChoice = -1;
 		parent = null;
 		children = new ArrayList<DecisionTreeNode>();
 	}
@@ -26,7 +24,6 @@ public class DecisionTreeNode
 		this.decision = decision;
 		this.node = node;
 		this.edge = edge;
-		this.edgeChoice = edgeChoice;
 		this.parent = null;
 		this.children = null;
 	}
@@ -38,31 +35,36 @@ public class DecisionTreeNode
 		child.parent = this;
 		children.add(child);		
 	}
-
-	@Override
-	public String toString() {
+	
+	public static String printTree(DecisionTreeNode tree, int depth){
+		
 		String answer = "";
-		if(this.node != -1){
-			answer += "Node: " + this.node+"| ";
-		}
-		else if(this.edge != -1){
-			answer += "edge: " + this.edge+"| ";
-		}
-		else if(this.edgeChoice != -1){
-			answer += "edgeChoice: " + this.edgeChoice+"| ";
-		}
-		else if(this.decision != -1){
-			answer += "decision: " + this.decision+"| ";
+		String space = "";
+		for(int i = 0; i < depth; i++){
+			space += " ";
 		}
 		
-		answer += "\n";
+		if(tree.node != -1){
+			answer += space+"Node: " + tree.node+"| \n";
+			depth += 1;
+		}
+		else if(tree.edge != -1){
+			answer += space+"edge: " + tree.edge+"| \n";
+			depth += 1;
+		}
+		else if(tree.decision != -1){
+			answer += space+"decision: " + tree.decision+"| \n";
+			depth -= 2;
+		}
 		
-		if(this.children == null){
+		if(tree.children == null){
 			return answer;
 		}
 		
-		for(int i = 0; i < this.children.size(); i++){
-			answer += this.children.get(i).toString();
+
+		
+		for(int i = 0; i < tree.children.size(); i++){
+			answer += printTree(tree.children.get(i),depth);
 		}
 		
 		return answer;

@@ -1,7 +1,8 @@
 package src;
+import java.io.*;
 import java.util.ArrayList;
-import org.w3c.dom.*;
 
+import org.w3c.dom.Document;
 
 
 public class InduceC45{
@@ -10,16 +11,35 @@ public class InduceC45{
     	
     	//get csv data
     	csvInfo csvAL = fileParser.parseCSV("data/custom.csv");
-    	//System.out.println(csvAL);  
+    	System.out.println(csvAL);  
 
-    	DecisionTreeNode result = C45(csvAL.dataSets, csvAL.attributes, 0.1, csvAL.categoryNumber);
+    	Document doc =  fileParser.parseXMLDomain("data/domain.xml");
+    	
+    	
+    	//DecisionTreeNode result = C45(csvAL.dataSets, csvAL.attributes, 0.4, csvAL.categoryNumber);
 
-    	System.out.println(result);
+    	//System.out.println(DecisionTreeNode.printTree(result,0));
+    }
+    
+    public static void decisionTreeNodeToXML(String fileName, DecisionTreeNode tree){
+    	FileOutputStream out = null; // declare a file output object
+        PrintStream p = null; // declare a print stream object
+        try{
+        	out = new FileOutputStream(fileName);
+        	p = new PrintStream( out );
+
+        }
+        catch(Exception e){
+        	
+        }
+        
+        p.println ("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+        p.println ("<Tree name = \"lab3\">");
+        
     }
     
     public static DecisionTreeNode C45(ArrayList<Data> dataSet, 
             ArrayList<Integer> attributes, double threshold, int catNum){
-    	DecisionTreeNode answer = new DecisionTreeNode();
     	
     	//if there is only one category left
     	if(oneCategoryLeft(dataSet)){
@@ -30,7 +50,7 @@ public class InduceC45{
     	}
     	//else if there are no more attributes, find the most common category and make a node,
     	//name it the most common cat, add it to the tree, reutrn the tree
-    	else if(attributes.size() == 0){
+    	else if(noMoreAttributes(attributes)){
     		System.out.println("No more attribute to split on!");
     		int commCat = commonCategory(catNum, dataSet);
     		return new DecisionTreeNode(-1, -1, -1, -1, commCat);
@@ -38,6 +58,7 @@ public class InduceC45{
     	else{
     		//find the splitting attribute
     		int splitAtt = selectSplittingAttributeIG(catNum,attributes, dataSet, threshold);
+    		
     		if(splitAtt == -1){
     			System.out.println("Couldn't find a good splitting attribute!");
     	    	//else if there is no good attribute to split on, find the most common category 
@@ -67,33 +88,39 @@ public class InduceC45{
     				for(int dataLoop = 0; dataLoop < dataSet.size(); dataLoop++){
         				if(dataSet.get(dataLoop).dataSets.get(splitAtt) == attLoop){
         					Data tempData = new Data(dataSet.get(dataLoop));
-        					tempData.dataSets.remove(splitAtt);
+        					//tempData.dataSets.remove(splitAtt);
+
         					tempAL.get(attLoop-1).add(tempData);
             				//System.out.println("Group after "+attLoop+":"+tempData);
         				}
     				}
     			}
-    			//remove the now split (used) attribute 
-    			attributes.remove(splitAtt);
+    			//remove the now split (used) attribute
+    			attributes.set(splitAtt, -1);
     			
     			//System.out.println("attributes="+attributes);
     			//System.out.println("tempAL="+tempAL);
     			//System.out.println("tempAL.size()="+tempAL.size());
+    			
+    			DecisionTreeNode node = new DecisionTreeNode();
+    			node.node = splitAtt+1;
 				for(int tempALLoop = 0; tempALLoop < tempAL.size(); tempALLoop++){
-					//if(tempAL.get(tempALLoop).get(0).dataSets.size() != 0){
-						//System.out.println("recursively calling="+tempALLoop);
-						//System.out.println("tempAL.get(tempALLoop)="+tempAL.get(tempALLoop));
-						DecisionTreeNode tempNode = new DecisionTreeNode();
-						tempNode = C45(tempAL.get(tempALLoop), attributes, threshold, catNum);
-						answer.addNode(tempNode);
-					//}					
+					System.out.println("recursively calling="+tempALLoop);
+					System.out.println("tempAL.get(tempALLoop)="+tempAL.get(tempALLoop));
+					
+					DecisionTreeNode edge = new DecisionTreeNode();
+					edge.edge = tempALLoop+1;
+					node.addNode(edge);
+					DecisionTreeNode tempNode = C45(tempAL.get(tempALLoop), attributes, threshold, catNum);
+					edge.addNode(tempNode);
 				}
-				return answer;
+				return node;
     		}
     	}
     }
     
-    //given number of category, list of attributes, list of data, return the enthropy
+
+	//given number of category, list of attributes, list of data, return the enthropy
     public static double enthropy(int catNum, ArrayList<Integer> attributes,  ArrayList<Data> dataSet){
     	double answer = 0.0;
     	int dataNum = dataSet.size();
@@ -115,20 +142,20 @@ public class InduceC45{
     }
     
     //given index of attribute it's calculating for, index of category, list of attributes, return the enthropyi
-    public static double enthropyi(int currAtt, int catNum, ArrayList<Integer> attributes,  ArrayList<Data> dataSet){
+    private static double enthropyi(int currAtt, int catNum, ArrayList<Integer> attributes,  ArrayList<Data> dataSet){
     	double answer = 0.0;
-    	
     	//System.out.println("currAtt="+currAtt+"====================================");
     	ArrayList<ArrayList<Integer>> catChoice = new ArrayList<ArrayList<Integer>>();
     	//for each attribute choice
-    	for(int attIdx = 0; attIdx < attributes.get(currAtt); attIdx++){
+    	for(int attIdx = 1; attIdx <= attributes.get(currAtt); attIdx++){
+    		//System.out.println("For Dx attribute="+attIdx);
     		catChoice.add(new ArrayList<Integer>());
-    		//for each dataset
     		for(int i = 0; i < dataSet.size(); i++){
     			//if this current dataset chose the same category as the current loop
-    			if(dataSet.get(i).dataSets.get(currAtt) == attIdx+1){
+    			if(dataSet.get(i).dataSets.get(currAtt) == attIdx){
+    				//System.out.println("id="+dataSet.get(i).id+"| att="+dataSet.get(i).dataSets.get(attIdx)+"| cat="+dataSet.get(i).category);
     				//add the choice for current attribute
-    				catChoice.get(attIdx).add(dataSet.get(i).category);
+    				catChoice.get(attIdx-1).add(dataSet.get(i).category);
     			}
     		}
     	}
@@ -138,6 +165,7 @@ public class InduceC45{
     	//System.out.println("attributes.get(currAtt)="+attributes.get(currAtt));
     	//for each attribute AL
     	for(int ALIdx = 0; ALIdx < attributes.get(currAtt); ALIdx++){
+    		//calculate the total number of dataset
     		double total = 0;
     		for(int temp = 0; temp < attributes.get(currAtt); temp++){
     			total += catChoice.get(temp).size();
@@ -155,18 +183,16 @@ public class InduceC45{
     		}
 
     		double nominator = catChoice.get(ALIdx).size();
+    		//System.out.println("nominator="+nominator);
     		for(int calcAttEnthro = 0; calcAttEnthro < catNum-1; calcAttEnthro++){
 	    		for(int i = 0; i < catNum; i++){
+	    			//System.out.println("("+p[i]+"/"+nominator+")*(Math.log(("+p[i]+"/"+nominator+"))/Math.log(2.0))="+-(p[i]/nominator)*(Math.log((p[i]/nominator))/Math.log(2.0)));
 	    			sum[calcAttEnthro] -= (p[i]/nominator)*(Math.log((p[i]/nominator))/Math.log(2.0));
-	    			//System.out.println(""+-(p[i]/nominator)*(Math.log((p[i]/nominator))/Math.log(2.0)));
 	    		}
 	    		if(Double.isNaN(sum[calcAttEnthro])){
 	    			sum[calcAttEnthro] = 0;
 	    		}
-	    		//System.out.println("sum["+calcAttEnthro+"]="+sum[calcAttEnthro]);
-	    		//System.out.println("total="+total);
-	    		//System.out.println("nominator="+nominator);
-	    		//System.out.println("(nominator)/(total)*sum[calcAttEnthro]="+(nominator)/(total)*sum[calcAttEnthro]);
+	    		//System.out.println("("+nominator+")/("+total+")*"+sum[calcAttEnthro]+"="+(nominator)/(total)*sum[calcAttEnthro]);
 	    		answer += (nominator)/(total)*sum[calcAttEnthro];
     		}
     	}
@@ -175,13 +201,17 @@ public class InduceC45{
     }
     
     //index of category in attribute, list of attributes, dataset and a threashold, return the splitting attribute index
-    public static int selectSplittingAttributeIG(int catNum, ArrayList<Integer> attributes, ArrayList<Data> dataSet, double threshold){
+    private static int selectSplittingAttributeIG(int catNum, ArrayList<Integer> attributes, ArrayList<Data> dataSet, double threshold){
     	int answer = -1;
     	double answerValue = 0;
     	double p0 = enthropy(catNum,attributes, dataSet);
     	double p [] = new double[attributes.size()];
     	//for each attribute, calculate the enthropyi
     	for(int i = 0; i < attributes.size(); i++){
+    		if(attributes.get(i) == -1){
+    			p[i] = 0;
+    			continue;
+    		}
     		p[i] = p0 - enthropyi(i, catNum, attributes, dataSet);
     		//System.out.println("p["+i+"]="+p[i]);
     	}
@@ -193,14 +223,13 @@ public class InduceC45{
     			answerValue = p[i];
     		}
     	}
-    	
-    	//System.out.println("selectSplittingAttributeIG="+answer);
+    	//System.out.println("selectSplittingAttributeIG="+answer+"|value="+answerValue);
     	return answer;
     }
     
     
     //given the category string and dataset, returns true if there are only one category left, false otherwise
-    public static boolean oneCategoryLeft(ArrayList<Data> dataSet){
+    private static boolean oneCategoryLeft(ArrayList<Data> dataSet){
     	boolean oneCatLeft = true;
     	int catChoice = dataSet.get(0).category;
     	for(int i = 0; i < dataSet.size(); i++){
@@ -217,16 +246,24 @@ public class InduceC45{
     	for(int i = 0; i < dataSet.size(); i++){
     		tally[dataSet.get(i).category-1]++;
     	}
-    	int answer = -1;
     	
+    	int answer = -1;
     	for(int i = 0; i < catNum; i++){
     		if(tally[i] > answer){
-    			answer = tally[i];
+    			answer = i;
     		}
     	}
-    	
     	return answer;
     }
+    
+    private static boolean noMoreAttributes(ArrayList<Integer> attributes) {
+    	for(int i = 0; i < attributes.size(); i++){
+    		if(attributes.get(i) != -1){
+    			return false;
+    		}
+    	}
+		return true;
+	}
     
 }
 
