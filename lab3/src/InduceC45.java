@@ -4,8 +4,16 @@ import java.io.*;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+
+import com.sun.org.apache.xerces.internal.dom.DocumentImpl;
 
 
 public class InduceC45{
@@ -22,33 +30,92 @@ public class InduceC45{
     	DecisionTreeNode result = C45(new ArrayList<Data>(csvAL.dataSets), new ArrayList<Integer>(csvAL.attributes), 0.10, csvAL.categoryNumber);
 
     	//output the result to an XML file by calling this
-    	decisionTreeNodeToXML("output.xml", result, doc, csvAL);
-    	System.out.println();
-    }
-    
-    public static void decisionTreeNodeToXML(String fileName, DecisionTreeNode tree, Document doc, csvInfo csvAL){
-    	
     	ArrayList<ArrayList<String>> edgeNames = parseDoc(doc, 
     			new ArrayList<Data>(csvAL.dataSets), 
     			new ArrayList<String>(csvAL.stringNames), 
     			new ArrayList<Integer>(csvAL.attributes));
+    	decisionTreeNodeToXML("output.xml", result, edgeNames, csvAL, true);
+    	//System.out.println();
+    }
+    
+    public static DocumentImpl creatTree(Document doc, csvInfo csvAL)
+    { 
+    	//the main C45 call
+    	DecisionTreeNode result = C45(new ArrayList<Data>(csvAL.dataSets), new ArrayList<Integer>(csvAL.attributes), 0.10, csvAL.categoryNumber);
+
+    	//output the result to an XML file by calling this
+    	ArrayList<ArrayList<String>> edgeNames = parseDoc(doc, 
+    			new ArrayList<Data>(csvAL.dataSets), 
+    			new ArrayList<String>(csvAL.stringNames), 
+    			new ArrayList<Integer>(csvAL.attributes));
+    	DocumentImpl docu = decisionTreeNodeToXML("", result, edgeNames, csvAL, false);
+    	
+    	return docu;
+    }
+    
+    
+    
+    public static DocumentImpl decisionTreeNodeToXML(String fileName, DecisionTreeNode tree, 
+    		ArrayList<ArrayList<String>> edgeNames, csvInfo csvAL, boolean export)
+    {
+    	
+    	DocumentImpl docu = null;
     	
     	FileOutputStream out = null; // declare a file output object
         PrintStream p = null; // declare a print stream object
         try{
-        	out = new FileOutputStream(fileName);
-        	p = new PrintStream( out );
+        	if(export)
+        	{
+        		out = new FileOutputStream(fileName);
+        		p = new PrintStream( out );
+        	}
 
         }
         catch(Exception e){
         	
         }
+        if(export)
+        {
+        	p.println ("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+        	p.println ("<Tree name = \"lab3\">");
+        }
         
-        p.println ("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-        p.println ("<Tree name = \"lab3\">");
-        String xml = DecisionTreeNode.printTree(tree,0,-1, csvAL.categoryIndex,csvAL.stringNames, edgeNames);
-        p.print(xml);
-        p.close();
+        //String xml = DecisionTreeNode.printTree(tree,0,-1, csvAL.categoryIndex,csvAL.stringNames, edgeNames);
+        try
+        {
+        	docu = (DocumentImpl) DecisionTreeNode.toDoc(
+        			tree, 0,-1, csvAL.categoryIndex,csvAL.stringNames, edgeNames);
+        
+        TransformerFactory transfac = TransformerFactory.newInstance();
+        Transformer trans = transfac.newTransformer();
+        trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        trans.setOutputProperty(OutputKeys.INDENT, "yes");
+
+        //create string from xml tree
+        StringWriter sw = new StringWriter();
+        StreamResult result = new StreamResult(sw);
+        DOMSource source = new DOMSource(docu);
+        trans.transform(source, result);
+        String xmlString = sw.toString();
+
+        //print xml
+        //System.out.println("Here's the xml:\n\n" + xmlString);
+        
+        if(export)
+        {
+        	p.print(xmlString) ;
+        	p.close();
+        }
+        }
+        catch(Exception e)
+        {
+        	//problem
+        	System.out.println("XML print error");
+        	System.exit(-1);
+        }
+        
+        return docu;
+        
     }
     
     public static DecisionTreeNode C45(ArrayList<Data> dataSet, 
