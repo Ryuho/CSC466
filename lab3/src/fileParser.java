@@ -7,6 +7,35 @@ import javax.xml.parsers.*;
 
 
 public class fileParser {
+	
+	static ArrayList<Integer> parseRestricted(String filename)
+	{
+		//ArrayList<String> stringNames = new ArrayList<String>();
+        ArrayList<Integer> domainSizes = new ArrayList<Integer>();
+       
+        FileInputStream fstream = null;
+        try {
+            fstream = new FileInputStream(filename);
+        } catch (FileNotFoundException e) {
+            System.err.println("File Not Found.");
+            System.exit(1);
+        }
+
+        DataInputStream in = new DataInputStream(fstream);
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        
+        try {
+            String firstLine = br.readLine();
+            domainSizes = stringToIntegerAL(firstLine);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Exception while reading file.");
+        }
+        
+        return domainSizes;
+
+	}
     static csvInfo parseCSV(String filename)
     {
         ArrayList<String> stringNames = new ArrayList<String>();

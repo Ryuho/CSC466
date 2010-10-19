@@ -17,6 +17,23 @@ import com.sun.org.apache.xerces.internal.dom.DocumentImpl;
 
 
 public class InduceC45{
+	
+	static ArrayList<Integer> rest;
+	
+	public static csvInfo setRestrictions(String filename, csvInfo csvAL)
+	{
+    	rest = fileParser.parseRestricted(filename);
+		if(rest.size() != csvAL.attributes.size()){
+			System.out.println("Restriction file did not match csv!");
+		}
+		for(int i = 0; i < csvAL.attributes.size(); i++){
+			if(rest.get(i) == 0){
+				csvAL.attributes.set(i,-1);
+			}
+		}
+		return csvAL;
+	}
+	
     public static void main(String [ ] args){
         //java InduceC45 <domainFile.xml> <TrainingSetFile.csv> [<restrictionsFile>]
     	
@@ -26,28 +43,52 @@ public class InduceC45{
     	//get csv data
     	csvInfo csvAL = fileParser.parseCSV(args[1]);
  
-    	//the main C45 call
-    	DecisionTreeNode result = C45(new ArrayList<Data>(csvAL.dataSets), new ArrayList<Integer>(csvAL.attributes), 0.10, csvAL.categoryNumber);
-
     	//output the result to an XML file by calling this
     	ArrayList<ArrayList<String>> edgeNames = parseDoc(doc, 
     			new ArrayList<Data>(csvAL.dataSets), 
     			new ArrayList<String>(csvAL.stringNames), 
     			new ArrayList<Integer>(csvAL.attributes));
+    	
+    	rest = new ArrayList<Integer>(csvAL.attributes);
+    	//get restrictions file
+    	if(args.length >2)
+    	{
+    		
+    		rest = fileParser.parseRestricted(args[2]);
+    		if(rest.size() != csvAL.attributes.size()){
+    			System.out.println("Restriction file did not match csv!");
+    		}
+    		for(int i = 0; i < csvAL.attributes.size(); i++){
+    			if(rest.get(i) == 0){
+    				csvAL.attributes.set(i,-1);
+    			}
+    		}
+    	}
+    	
+    	
+    	
+    	//the main C45 call
+    	DecisionTreeNode result = C45(new ArrayList<Data>(csvAL.dataSets), new ArrayList<Integer>(csvAL.attributes), 0.10, csvAL.categoryNumber);
     	decisionTreeNodeToXML("output.xml", result, edgeNames, csvAL, true);
     	//System.out.println();
     }
     
-    public static DocumentImpl creatTree(Document doc, csvInfo csvAL)
+    public static DocumentImpl creatTree(Document doc, csvInfo csvAL, String filename)
     { 
-    	//the main C45 call
-    	DecisionTreeNode result = C45(new ArrayList<Data>(csvAL.dataSets), new ArrayList<Integer>(csvAL.attributes), 0.10, csvAL.categoryNumber);
-
     	//output the result to an XML file by calling this
     	ArrayList<ArrayList<String>> edgeNames = parseDoc(doc, 
     			new ArrayList<Data>(csvAL.dataSets), 
     			new ArrayList<String>(csvAL.stringNames), 
     			new ArrayList<Integer>(csvAL.attributes));
+    	
+    	if(filename != "")
+    	{
+    		setRestrictions(filename, csvAL);
+    	}
+    	
+    	//the main C45 call
+    	DecisionTreeNode result = C45(new ArrayList<Data>(csvAL.dataSets), new ArrayList<Integer>(csvAL.attributes), 0.10, csvAL.categoryNumber);
+
     	DocumentImpl docu = decisionTreeNodeToXML("", result, edgeNames, csvAL, false);
     	
     	return docu;

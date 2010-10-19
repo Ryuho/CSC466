@@ -21,6 +21,7 @@ public class Evaluate{
 	static DocumentImpl domain;
 	static csvInfo csvAL;
 	static int n;
+	static ArrayList<Integer> restrictions;
 	
     public static void main(String [ ] args){
         //training file, optional restrictions file, integer n for cross validation 
@@ -30,9 +31,16 @@ public class Evaluate{
     	
     	csvAL = fileParser.parseCSV(args[1]);
     	n = Integer.valueOf(args[0]);
+    	String restFilename = "";
+    	if(args.length > 3)
+    	{
+    		//restrictions = fileParser.parseRestricted();
+    		restFilename = args[3];
+    	}
+    	
     	dataslice = holdoutGen(csvAL, n);
     	
-    	classification(dataslice, 1.0);
+    	classification(dataslice, .10, restFilename);
     	/*Cross validation algorithm:
     	 * select n (given)
     	 * using random sampling, split D into n slices of equal size
@@ -134,7 +142,8 @@ public class Evaluate{
     }
     
     /*return type would contain a set of numbers to analyze. (pos/negs) */
-    public static void classification(ArrayList<csvInfo> data, double threshold)
+    public static void classification(ArrayList<csvInfo> data, double threshold, 
+    		String restrFilename)
     {
     	csvInfo curSlice = null;
     	csvInfo train = null;
@@ -152,7 +161,7 @@ public class Evaluate{
     		//Add all others into a single csvInfo training set and push it into InduceC45.
     		train = getTrainingSet(curSlice);
     		//System.out.println(train.getTupleSize());
-    		runRes = InduceC45.creatTree(domain, train);
+    		runRes = InduceC45.creatTree(domain, train, restrFilename);
     		
     		//run holdout set through parsed tree, 
     		//and record results for averaging by comparing result with projected 
