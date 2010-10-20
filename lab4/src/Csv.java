@@ -6,10 +6,11 @@ import java.util.StringTokenizer;
 
 public class Csv {
     ArrayList<ArrayList<Integer>> datas;
+    ArrayList<Integer> restrictions;
 
     Csv(String fileName) {
         datas = new ArrayList<ArrayList<Integer>>();
-
+        restrictions = new ArrayList<Integer>();
         FileInputStream fstream = null;
         try {
             fstream = new FileInputStream(fileName);
@@ -23,6 +24,9 @@ public class Csv {
         String strLine = null;
 
         try {
+            if((strLine = br.readLine()) != null) {
+                restrictions = stringToIntegerAL(strLine);
+            }
             while ((strLine = br.readLine()) != null) {
                 ArrayList<Integer> tempAL = stringToIntegerAL(strLine);
                 if (tempAL != null){
@@ -30,7 +34,7 @@ public class Csv {
                 }
 
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Exception while reading file.");
         }
@@ -46,14 +50,16 @@ public class Csv {
         ArrayList<Integer> answer = new ArrayList<Integer>();
 
         StringTokenizer st = new StringTokenizer(s, ", ");
-
+        
+        String currString;
         while (st.hasMoreTokens()) {
+            currString = st.nextToken();
             empyString = true;
             try {
-                answer.add(Integer.parseInt(st.nextToken()));
+                answer.add((int)Double.parseDouble(currString));
                 empyString = false;
             } catch (java.lang.NumberFormatException e) {
-                answer.add(0);
+                //System.err.println("Couldn't parse "+ currString + " into int!");
             }
         }
 
