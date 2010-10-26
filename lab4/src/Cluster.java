@@ -20,24 +20,15 @@ public class Cluster
 		data.add(singlepoint);
 	}
 	
-	public static ArrayList<Double> intToDoub(ArrayList<Integer> lis)
-	{
-		ArrayList<Double> ret = new ArrayList<Double>();
-		for(int i = 0; i < lis.size(); i++)
-		{
-			ret.add(lis.get(i)*1.0);
-		}
-		return ret;
-	}
 	
-	public static ArrayList<Cluster> makeInitClusters(ArrayList<ArrayList<Integer>> datasets, 
+	public static ArrayList<Cluster> makeInitClusters(ArrayList<ArrayList<Double>> datasets, 
 			ArrayList<Integer> rest)
 	{
 		ArrayList<Cluster> set = new ArrayList<Cluster>();
 		
 		for(int i = 0; i < datasets.size(); i++)
 		{
-			ArrayList<Double> dat = intToDoub(datasets.get(i));
+			ArrayList<Double> dat = datasets.get(i);
 			set.add(new Cluster(dat, rest));
 		}
 		return set;

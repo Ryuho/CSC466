@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class Csv {
-    ArrayList<ArrayList<Integer>> datas;
-    ArrayList<Integer> restrictions;
+	static ArrayList<ArrayList<Double>> datas;
+	static ArrayList<String> strings;
+	static ArrayList<Integer> restrictions;
 
     Csv(String fileName) {
-        datas = new ArrayList<ArrayList<Integer>>();
+        datas = new ArrayList<ArrayList<Double>>();
         restrictions = new ArrayList<Integer>();
+        strings = new ArrayList<String>();
         FileInputStream fstream = null;
         try {
             fstream = new FileInputStream(fileName);
@@ -28,7 +30,7 @@ public class Csv {
                 restrictions = stringToIntegerAL(strLine);
             }
             while ((strLine = br.readLine()) != null) {
-                ArrayList<Integer> tempAL = stringToIntegerAL(strLine);
+                ArrayList<Double> tempAL = stringToDoubleAL(strLine);
                 if (tempAL != null){
                     datas.add(tempAL);
                 }
@@ -49,7 +51,7 @@ public class Csv {
         boolean empyString = true;
         ArrayList<Integer> answer = new ArrayList<Integer>();
 
-        StringTokenizer st = new StringTokenizer(s, ", ");
+        StringTokenizer st = new StringTokenizer(s, ",");
         
         String currString;
         while (st.hasMoreTokens()) {
@@ -59,7 +61,37 @@ public class Csv {
                 answer.add((int)Double.parseDouble(currString));
                 empyString = false;
             } catch (java.lang.NumberFormatException e) {
-                //System.err.println("Couldn't parse "+ currString + " into int!");
+            	System.err.println("Error encountered while parsing restriction (first line)!");
+            }
+        }
+
+        if (empyString) {
+            return null;
+        }
+        return answer;
+    }
+    
+    private static ArrayList<Double> stringToDoubleAL(String s) {
+        s = s.replaceAll("^\\s*,", "0,");
+        s = s.replaceAll(",{2}", ",0,");
+        s = s.replaceAll(",{2}", ",0,");
+        s = s.replaceAll(",\\s*$", ",0");
+
+        boolean empyString = true;
+        ArrayList<Double> answer = new ArrayList<Double>();
+
+        StringTokenizer st = new StringTokenizer(s, ",");
+        
+        String currString;
+        while (st.hasMoreTokens()) {
+            currString = st.nextToken();
+            empyString = true;
+            try {
+                answer.add(Double.parseDouble(currString));
+                empyString = false;
+            } catch (java.lang.NumberFormatException e) {
+            	answer.add(-1.0);
+            	strings.add(currString);
             }
         }
 
