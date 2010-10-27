@@ -1,7 +1,6 @@
 package src;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class kmeans {
@@ -10,7 +9,7 @@ public class kmeans {
 
 	// 1 = random
 	// 2 = SelectCentroids
-	static int initCentMethod = 1;
+	static int initCentMethod = 2;
 
 	static int centRecalcMethod;
 
@@ -72,17 +71,6 @@ public class kmeans {
 			cent = SIC_Random(dataPoints, k);
 		} else {
 			cent = SIC_SelectCentroids(dataPoints, k);
-		}
-
-		System.out.println("dataPoints.size()=" + dataPoints.size());
-
-		// put all the dataPoints back in pool
-		dataPoints = new ArrayList<ArrayList<Double>>(csvInfo.datas);
-
-		// calculate the initial position
-		for (int i = 0; i < cent.size(); i++) {
-			cent.get(i).calcCenter_Mean();
-			System.out.println(i + ":" + cent.get(i));
 		}
 
 		// this becomes false when the main loop should be over
@@ -160,8 +148,9 @@ public class kmeans {
 			double averageDistValue = 0;
 			int maxDistIndex = 0;
 			int minDistIndex = 0;
-			for (int tempDistIndex = 0; tempDistIndex < cent.get(i).getDP()
-					.size(); tempDistIndex++) {
+			for (int tempDistIndex = 0; 
+					tempDistIndex < cent.get(i).getDP().size(); 
+					tempDistIndex++) {
 				double tempDistValue = pointDistance(
 						cent.get(i).getDP().get(tempDistIndex), cent.get(i)
 								.getPos());
@@ -208,9 +197,9 @@ public class kmeans {
 			int index = randNum % dataPoints.size();
 			Centroid tempCent = new Centroid();
 			tempCent.add(new ArrayList<Double>(dataPoints.get(index)));
-			dataPoints.remove(index);
-			System.out.println("tempCent=" + tempCent);
+			tempCent.setDP(new ArrayList<ArrayList<Double>>());
 			answer.add(new Centroid(tempCent));
+			answer.get(i).calcCenter_Mean();
 		}
 		System.out.println("dataPoints.size()=" + dataPoints.size());
 		return answer;
@@ -223,26 +212,82 @@ public class kmeans {
 		
 		//calculate the center of the whole dataPoints
 		ArrayList<Double> center = centerOfPoints(dataPoints);
-		System.out.println("center="+center);
+		//System.out.println("center="+center);
+		
 		//find the furtest one, that's the first centroid
 		int furthestIndex = furthestPoint(center,dataPoints);
 		
+		//keep track of used ones
+		int [] usedCentroids = new int[k];
+		usedCentroids[0] = furthestIndex;
 		
+		//adding the first centroid
 		Centroid tempCent = new Centroid();
 		tempCent.add(dataPoints.get(furthestIndex));
+		tempCent.calcCenter_Mean();
+		tempCent.setDP(new ArrayList<ArrayList<Double>>());
+		//System.out.println("0: "+tempCent.getPos());		
 		answer.add(new Centroid(tempCent));
-		//for 1 to k
-		  //for each dataPoint
+		
+		//keep track of all the points that was used for centroid
+		
+		//for number of k-1
+		for(int centCount = 1; centCount < k; centCount++){
+			double maxDistValue = pointDistance(dataPoints.get(0), answer.get(0).getPos());
+			int maxDistIndex = 0;
+			//System.out.println("answer.size()= "+answer.size());
+			//for each datapoints
+			for(int currDP = 0; currDP < dataPoints.size(); currDP++){
+				//check if this value was already used by looking up the array of used dataPoint indexes
+				boolean alreadyUsed = false;
+				for(int i = 0; i < usedCentroids.length; i++){
+					if(currDP == usedCentroids[i]){
+						alreadyUsed = true;
+					}
+				}
+				if(alreadyUsed){
+					//System.out.println(dataPoints.get(currDP)+" is already used");
+					continue;
+				}
+				
+				double tempDistValue = 0;
+				//for each centroid already there
+				for(int currCent = 0; currCent < answer.size(); currCent++){
+					//add the distance from curr datapoint to curr centroid
+					double pointDist = pointDistance(dataPoints.get(currDP), answer.get(currCent).getPos());
+					//System.out.println("    pointDist (vs "+currCent+")= "+pointDist+"| DP"+dataPoints.get(currDP)+"| cent"+answer.get(currCent).getPos());
+					tempDistValue += pointDist;
+				}
+				//System.out.println("  tempDistValue= "+tempDistValue);
+				
+				if(tempDistValue > maxDistValue){
+					maxDistValue = tempDistValue;
+					maxDistIndex = currDP;
+				}
+			}
+			//System.out.println(centCount+":MaxVal "+maxDistValue);
+			
+			//set this index of datapoint as used to create centroid
+			usedCentroids[centCount] = maxDistIndex;
+				
+			//create the centroid and add it to the list
+			tempCent = new Centroid();
+			tempCent.add(dataPoints.get(maxDistIndex));
+			tempCent.calcCenter_Mean();
+			tempCent.setDP(new ArrayList<ArrayList<Double>>());
+			System.out.println(centCount+":Pos "+tempCent.getPos());
+			answer.add(new Centroid(tempCent));
+		}
 		  
 
-		return null;
+		return answer;
 	}
 
 	// given a data point and list of centroids, return the index of the nearest
 	// centroid
 	private static int nearestCentroid(ArrayList<Double> dataPoint,
 			ArrayList<Centroid> cent) {
-		if(cent.size() == 0){
+		if (cent.size() == 0) {
 			System.err.println("No list of centroids found!");
 		}
 		int index = 0;
@@ -260,7 +305,7 @@ public class kmeans {
 
 	public static int nearestPoint(ArrayList<Double> point,
 			ArrayList<ArrayList<Double>> dataPoints) {
-		if(dataPoints.size() == 0){
+		if (dataPoints.size() == 0) {
 			System.err.println("No list of points found!");
 		}
 		int index = 0;
@@ -274,11 +319,10 @@ public class kmeans {
 		}
 		return index;
 	}
-	
-	
+
 	public static int furthestPoint(ArrayList<Double> point,
 			ArrayList<ArrayList<Double>> dataPoints) {
-		if(dataPoints.size() == 0){
+		if (dataPoints.size() == 0) {
 			System.err.println("No list of points found!");
 		}
 		int index = 0;
@@ -292,32 +336,35 @@ public class kmeans {
 		}
 		return index;
 	}
-	
-	public static ArrayList<Double> centerOfPoints(ArrayList<ArrayList<Double>> dataPoints) {
-		if(dataPoints.size() == 0){
-			System.err.println("Trying to calculate the center for empty list of points!");
+
+	public static ArrayList<Double> centerOfPoints(
+			ArrayList<ArrayList<Double>> dataPoints) {
+		if (dataPoints.size() == 0) {
+			System.err
+					.println("Trying to calculate the center for empty list of points!");
 		}
 		ArrayList<Double> answer = new ArrayList<Double>();
-		
-		//for each entry in a point
-		for(int pointIndex = 0; pointIndex < dataPoints.get(0).size(); pointIndex++){
+
+		// for each entry in a point
+		for (int pointIndex = 0; pointIndex < dataPoints.get(0).size(); pointIndex++) {
 			double tempSum = 0;
-			//for each dataPoints
-			for(int DPIndex = 0; DPIndex < dataPoints.size(); DPIndex++){
+			// for each dataPoints
+			for (int DPIndex = 0; DPIndex < dataPoints.size(); DPIndex++) {
 				tempSum += dataPoints.get(DPIndex).get(pointIndex);
 			}
-			tempSum /= (double)dataPoints.size();
+			tempSum /= (double) dataPoints.size();
 			answer.add(tempSum);
 		}
 		return answer;
 	}
-	
+
 	public static double pointDistance(ArrayList<Double> pt1,
 			ArrayList<Double> pt2) {
 		if (pt1.size() != pt2.size()) {
 			System.err.println("Vector size does not match!");
 			System.err.println("pt1 size=" + pt1.size() + "|pt2 size="
 					+ pt2.size());
+			//return 0;
 		}
 
 		double result = 0.0;

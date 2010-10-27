@@ -60,6 +60,7 @@ public class Centroid {
 	public void calcCenter_Mean(){
 		if(dataPoints.size() == 0){
 			System.err.println("Trying to calculate the center for empty Centroid!");
+			return;
 		}
 		lastPosition = new ArrayList<Double>(pos);
 		pos.clear();
