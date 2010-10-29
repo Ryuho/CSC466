@@ -6,6 +6,9 @@ public class Cluster
 {
 	ArrayList<ArrayList<Double>> data;
 	ArrayList<Integer> restrictions;
+	Cluster left;
+	Cluster right;
+	double distance;
 	
 	Cluster()
 	{
@@ -20,6 +23,15 @@ public class Cluster
 		data.add(singlepoint);
 	}
 	
+	public static ArrayList<Double> intToDoub(ArrayList<Integer> lis)
+	{
+		ArrayList<Double> ret = new ArrayList<Double>();
+		for(int i = 0; i < lis.size(); i++)
+		{
+			ret.add(lis.get(i)*1.0);
+		}
+		return ret;
+	}
 	
 	public static ArrayList<Cluster> makeInitClusters(ArrayList<ArrayList<Double>> datasets, 
 			ArrayList<Integer> rest)
@@ -39,16 +51,18 @@ public class Cluster
 		data.add(point);
 	}
 	
-	public void combineCluster(Cluster other)
+	public Cluster combineCluster(Cluster other)
 	{
 		data.addAll(other.data);
+		//data.
+		return this;
 	}
 	
 	public static double pointDistance(ArrayList<Double> pt1, 
 			ArrayList<Double> pt2, ArrayList<Integer> restriction)
 	{
 	    	double result = 0.0;
-	    	for(int i = 0; i < restriction.size(); i++)
+	    	for(int i = 0; i < pt1.size(); i++)
 	    	{
 	    		if(restriction.get(i) != 0)
 	    		{
@@ -65,7 +79,6 @@ public class Cluster
 		ArrayList<Double> result = new ArrayList<Double>();
 		for(int i = 0; i < pt1.size();i++)
 		{
-			//TODO wait, why is it Integer and not double??????/
 			result.add((pt1.get(i) + pt2.get(i))/2.0);
 		}
 		return result;
@@ -93,5 +106,22 @@ public class Cluster
 			}
 		}
 		return point;
+	}
+	
+	public String toString()
+	{
+		return data.toString();
+	}
+	
+	public boolean equals(Object obj)
+	{
+		if(obj instanceof Cluster)
+		{
+			if(((Cluster) obj).data.equals(data))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 }
