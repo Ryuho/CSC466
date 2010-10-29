@@ -53,9 +53,12 @@ public class Cluster
 	
 	public Cluster combineCluster(Cluster other)
 	{
-		data.addAll(other.data);
+		Cluster res = new Cluster();
+		res.data.addAll(data);
+		res.data.addAll(other.data);
+		res.restrictions = restrictions;
 		//data.
-		return this;
+		return res;
 	}
 	
 	public static double pointDistance(ArrayList<Double> pt1, 
@@ -64,7 +67,7 @@ public class Cluster
 	    	double result = 0.0;
 	    	for(int i = 0; i < pt1.size(); i++)
 	    	{
-	    		if(restriction.get(i) != 0)
+	    		if(restriction.get(i) != 0 && pt1.get(i) >= 0 && pt2.get(i) >= 0)
 	    		{
 	    			result += Math.pow(pt1.get(i) - pt2.get(i), 2);
 	    		}
