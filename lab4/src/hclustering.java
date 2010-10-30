@@ -7,71 +7,55 @@ public class hclustering {
     public static void main(String[] args) 
     {  
     	//hclustering <Filename.csv> <threshold>
-    	double threshold = 3;
+    	double threshold = -1;
     	String filename = "data/mammal_milk.csv";
     	
-    	if(args.length == 2){
+    	if(args.length >= 1){
             filename = args[0];
-            threshold = Double.valueOf(args[1]);
         }
+    	if(args.length == 2)
+    	{
+    		threshold = Double.valueOf(args[1]);
+    	}
         Csv data = new Csv(filename);
         
-        Dendogram wholeTree = Agglo(threshold, data);
-    	wholeTree.toXML(false, "lala.xml");
+        Dendogram wholeTree = Agglo(data);
+    	wholeTree.toXML(false, "output.xml");
+    	if(threshold >= 1)
+    	{
+    		ArrayList<Cluster> tClusters;
+    		tClusters = getClusters(threshold, wholeTree);
+    		System.out.println(printClusters(tClusters));
+    	}
 
     }
     
-/*    private int getDimensions(ArrayList<Integer> restrictions)
-    {
-    	int dimensions = 0;
-    	for(int i =0; i < restrictions.size(); i++)
-    	{
-    		if(restrictions.get(i) != 0 )
-    		{
-    			dimensions++;
-    		}
-    	}
-    	return dimensions;
-    }*/
-    
-   
-    
+
     //Main algorithm of the Agglomerative heriarchical clustering algorithm
     // Takes dataset D as input
-  //for every element in D
-	//C1 = currentElement. Make each point a cluster.
-	//C1 := all elements in C1 
-	//i = 1
-	//While the length of Ci > 1  (now filling diagonal matrix)
-		//for all clusters j
-			//for all clusters k greater than j+1
-				//Compute distance measure for Cij and Cik to this clsuter.
-		//Select the "min" distance for these cluster, and then merge them into one.
-		//Merge
-    public static Dendogram Agglo(double threshold, Csv dataset)
+    	//for every element in D
+			//C1 = currentElement. Make each point a cluster.
+			//C1 := all elements in C1 
+			//i = 1
+			//While the length of Ci > 1  (now filling diagonal matrix)
+				//for all clusters j
+					//for all clusters k greater than j+1
+						//Compute distance measure for Cij and Cik to this clsuter.
+				//Select the "min" distance for these cluster, and then merge them into one.
+				//Merge
+    public static Dendogram Agglo(Csv dataset)
     {
     	Dendogram output = null;
-    	//ArrayList<Cluster> clusterList = 
-    	//	Cluster.makeInitClusters(dataset.datas, dataset.restrictions); 
-    		//making initial clusters
+    	
     	ArrayList<Dendogram> dendoList = Dendogram.pointsToDendo(
     			Cluster.makeInitClusters(dataset.datas, dataset.restrictions));
-    	//int dimensions = getDimensions(dataset.restrictions); //graph will be n-dimensional
     	Dendogram curLowest;
-    	Cluster curr;
-    	int ikeep;
-    	int jkeep;
-    	double dist;
-    	int county = 0;
-    	
-    	
+    	double dist = 0.0;
     	
     	while(dendoList.size() > 1) //make tree up to one whole cluster
     	{
     		Dendogram left = null;
     		Dendogram right = null;
-    		ikeep = -1;
-    		jkeep = -1;
     		curLowest = null;
     		dist = 0.0;
     		Cluster iC = new Cluster();
@@ -91,8 +75,6 @@ public class hclustering {
 	    			//only keep minimum distance between clusters as the one to create;
 	    			if(curLowest == null || dist < curLowest.distance)
 	    			{
-	    				ikeep = i;
-	    				jkeep = j;
 	    				left = dendoList.get(i);
 	    				right = dendoList.get(j);
 	    				curLowest = new Dendogram();
@@ -117,12 +99,59 @@ public class hclustering {
     	return output;
     }
     
-    //Distance Matrix
     
-    //Distance measure for clusters. 
-    public double distMeasure()
+    
+    public static ArrayList<Cluster> getClusters(double threshold, Dendogram gram)
     {
-    	double output = 0.0;
+    	ArrayList<Cluster> list = new ArrayList<Cluster>();
+    	//base case: if distance below threshold, return empty;
+    	if(gram.distance <= threshold)
+    	{
+    		list.add(gram.cluster);
+    		return list;
+    	}
+    	if(gram.den1 == null && gram.den2 == null) //leaf case
+    	{
+    		list.add(gram.cluster);
+    	}
+    	else //non-leaf, non-terminus case
+    	{
+    		if(gram.den1!= null)
+    		{
+    			ArrayList<Cluster> res1 = getClusters(threshold, gram.den1);
+    			if(res1.size() == 0)
+    			{
+    				list.add(gram.cluster);
+    			}
+    			else
+    			{
+    				list.addAll(res1);
+    			}
+    		}
+    		if(gram.den2!= null)
+    		{
+    			ArrayList<Cluster> res2 = getClusters(threshold, gram.den2);
+    			if(res2.size() == 0 && !list.contains(gram.cluster))
+    			{
+    				list.add(gram.cluster);
+    			}
+    			else
+    			{
+    				list.addAll(res2);
+    			}
+    		}
+    	}
+	    return list;
+    }
+    
+
+    public static String printClusters(ArrayList<Cluster> clusters)
+    {
+    	String output = "";
+    	for(int i = 0; i <  clusters.size();i++)
+    	{
+    		output += "Cluster "+ (i+1) +": " + clusters.get(i).toString() + "\n";
+    	}
     	return output;
     }
 }

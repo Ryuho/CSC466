@@ -124,7 +124,7 @@ public class Dendogram
         	if(!export)
         	{
         		//print xml
-        		System.out.println("Here's the xml:\n\n" + xmlString);
+        		System.out.println("Dendogram:\n\n" + xmlString);
         	}
         
         	if(export)
@@ -151,7 +151,7 @@ public class Dendogram
         DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
         DocumentImpl doc = (DocumentImpl) docBuilder.newDocument();
 
-        Element cur2; //new ElementImpl(doc, "tree");
+        Element cur2 = new ElementImpl(doc, "tree");
         //cur2.setAttribute("height", Double.toString(distance));
         
 		cur2 = appendChild(doc, this);

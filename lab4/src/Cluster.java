@@ -7,6 +7,7 @@ public class Cluster
 	ArrayList<ArrayList<Double>> data;
 	ArrayList<Integer> restrictions;
 	Cluster left;
+	static ArrayList<String> strings;
 	Cluster right;
 	double distance;
 	
