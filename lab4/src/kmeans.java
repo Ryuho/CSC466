@@ -9,7 +9,7 @@ public class kmeans {
 
 	// 1 = random
 	// 2 = SelectCentroids
-	static int initCentMethod = 2;
+	static int initCentMethod = 1;
 
 	static int centRecalcMethod;
 
@@ -195,9 +195,10 @@ public class kmeans {
 		for (int i = 0; i < k; i++) {
 			int randNum = Math.abs(rand.nextInt());
 			int index = randNum % dataPoints.size();
+			//System.out.println("index=" + index);
 			Centroid tempCent = new Centroid();
 			tempCent.add(new ArrayList<Double>(dataPoints.get(index)));
-			tempCent.setDP(new ArrayList<ArrayList<Double>>());
+			tempCent.calcCenter_Mean();
 			answer.add(new Centroid(tempCent));
 			answer.get(i).calcCenter_Mean();
 		}
