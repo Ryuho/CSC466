@@ -20,12 +20,27 @@ public class hclustering {
         Csv data = new Csv(filename);
         
         Dendogram wholeTree = Agglo(data);
-    	wholeTree.toXML(false, "output.xml");
+    	wholeTree.toXML(false, "Dendogram.xml");
     	if(threshold >= 1)
     	{
+    		//Cluster identification step
     		ArrayList<Cluster> tClusters;
     		tClusters = getClusters(threshold, wholeTree);
     		System.out.println(printClusters(tClusters));
+    		
+    		//Evaluation step
+    		try
+    		{
+    			Evaluate.domain = data.toC45Doc(tClusters);
+    		}
+    		catch (Exception e)
+    		{
+    			System.err.println("ooo bad");
+    			e.printStackTrace();
+    			System.exit(-1);
+    		}
+    		csvInfo inf = toInfo(tClusters, Csv.strings);
+    		relearnCluster(inf, 5, .3);
     	}
 
     }
@@ -153,5 +168,39 @@ public class hclustering {
     		output += "Cluster "+ (i+1) +": " + clusters.get(i).toString() + "\n";
     	}
     	return output;
+    }
+    
+    //need to convert back to csvInfo to use with lab3
+    public static csvInfo toInfo(ArrayList<Cluster> tClusters, ArrayList<String> names)
+    {
+    	csvInfo output = new csvInfo();;
+    	output.idName = "Clusters";
+    	output.dataSets = new ArrayList<Data>();
+    	output.categoryNumber = tClusters.size();
+    	
+    	//add a "class" at the end of all data points that indicates which cluster it was added to
+    	for(int i = 0; i < tClusters.size(); i++)
+    	{
+    		for(int j = 0; j < tClusters.get(i).data.size(); j++)
+    		{
+    			Data dat = new Data(tClusters.get(i).data.get(j), j, i);
+    			output.dataSets.add(dat);
+    		}
+    	}
+    	for(int i = 0; i < Csv.datas.get(0).size(); i++)
+    	{
+    		output.stringNames.add(String.valueOf(Csv.datas.get(i).size()) );
+    	}
+    	output.attributes.addAll(Csv.restrictions);
+    	return output;
+    }
+    
+    public static void relearnCluster(csvInfo info, int n, double threshold)
+    {
+    	ArrayList<csvInfo> dataslice;
+    	dataslice = Evaluate.holdoutGen(info, n);
+    	Evaluate.n = n;
+    	Evaluate.csvAL = info;
+    	Evaluate.classification(dataslice, .10, "data/restrictions.csv");
     }
 }
