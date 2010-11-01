@@ -177,30 +177,43 @@ public class hclustering {
     	output.idName = "Clusters";
     	output.dataSets = new ArrayList<Data>();
     	output.categoryNumber = tClusters.size();
-    	
+    	int k = 0;
     	//add a "class" at the end of all data points that indicates which cluster it was added to
     	for(int i = 0; i < tClusters.size(); i++)
     	{
     		for(int j = 0; j < tClusters.get(i).data.size(); j++)
     		{
-    			Data dat = new Data(tClusters.get(i).data.get(j), j, i);
+    			Data dat = new Data(tClusters.get(i).data.get(j), k++, i);
     			output.dataSets.add(dat);
     		}
     	}
     	for(int i = 0; i < Csv.datas.get(0).size(); i++)
     	{
-    		output.stringNames.add(String.valueOf(Csv.datas.get(i).size()) );
+    		output.stringNames.add(String.valueOf(i));
     	}
-    	output.attributes.addAll(Csv.restrictions);
+    	
+    	//Now for attributes.
+    	ArrayList<ArrayList<Double>> shark = Csv.transposeData();
+    	if(shark.get(0).size() == 1)
+    		output.attributes.add(-1); //first column is IDentifier
+    	else
+    		output.attributes.add(shark.get(0).size());
+    	for(int i = 1; i < shark.size(); i++)
+    	{
+    		output.attributes.add(shark.get(i).size());
+    	}
+    	System.out.println(output.attributes);
+    	System.out.println(output.stringNames);
+    	System.out.println(output.dataSets);
     	return output;
     }
     
     public static void relearnCluster(csvInfo info, int n, double threshold)
     {
     	ArrayList<csvInfo> dataslice;
-    	dataslice = Evaluate.holdoutGen(info, n);
+    	dataslice = Evaluate.holdoutGen(info, -1);
     	Evaluate.n = n;
     	Evaluate.csvAL = info;
-    	Evaluate.classification(dataslice, .10, "data/restrictions.csv");
+    	Evaluate.classification(dataslice, .10, "data/restrictions.csv~");
     }
 }

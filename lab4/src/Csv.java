@@ -119,7 +119,7 @@ public class Csv {
     
     /*Treats datas like a matrix in 2 space, transposes it, 
      * and removes duplicates in the rows of the transposed matrix*/
-    private ArrayList<ArrayList<Double>> transposeData()
+    public static ArrayList<ArrayList<Double>> transposeData()
     {
     	ArrayList<ArrayList<Double>> shark = new ArrayList<ArrayList<Double>>();
         int m = 0;
@@ -172,7 +172,7 @@ public class Csv {
     	noo.appendChild(cat);
     	doc.appendChild(noo);
     	
-    	TransformerFactory transfac = TransformerFactory.newInstance();
+    	/*TransformerFactory transfac = TransformerFactory.newInstance();
     	Transformer trans = transfac.newTransformer();
     	trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
     	trans.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -184,7 +184,7 @@ public class Csv {
     	trans.transform(source, result);
     	String xmlString = sw.toString();
     	System.out.println(xmlString);
-
+    	 */
 		
 		return doc;
 	}
