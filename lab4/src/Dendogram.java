@@ -145,6 +145,8 @@ public class Dendogram
         
 	}
 	
+	
+	
 	public DocumentImpl toDocument() throws ParserConfigurationException
 	{
 		DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
@@ -152,6 +154,7 @@ public class Dendogram
         DocumentImpl doc = (DocumentImpl) docBuilder.newDocument();
 
         Element cur2 = new ElementImpl(doc, "tree");
+        
         //cur2.setAttribute("height", Double.toString(distance));
         
 		cur2 = appendChild(doc, this);
@@ -159,6 +162,7 @@ public class Dendogram
 		doc.appendChild(cur2);
 		return doc;
 	}
+	
 	
 	
 	private Element appendChild(DocumentImpl doc, Dendogram cur)
