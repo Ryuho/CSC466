@@ -8,6 +8,7 @@ public class Centroid {
 	private ArrayList<Double> lastPosition;
 	private int reassigned;
 	private int lastReassigned;
+	private double SSE;
 	
 	//default constructor
 	public Centroid(){
@@ -16,6 +17,7 @@ public class Centroid {
 		lastPosition = new ArrayList<Double>();
 		reassigned = 0;
 		lastReassigned = 0;
+		SSE = 0;
 	}
 	
 	//Copy constructor
@@ -44,6 +46,7 @@ public class Centroid {
 	public void add(ArrayList<Double> dataPoint){
 		dataPoints.add(dataPoint);
 		reassigned++;
+		//this.calcCenter_Mean();
 	}
 	
 	//Reset the dataPoints and reassigned, but NOT the pos or lastPosition
@@ -54,6 +57,9 @@ public class Centroid {
 	}
 	
 	public double distChange(){
+		//System.out.println("distChange:");
+		//System.out.println("pos="+pos);
+		//System.out.println("lastPosition="+lastPosition);
 		return kmeans.pointDistance(pos, lastPosition);
 	}
 	
@@ -80,6 +86,16 @@ public class Centroid {
 	}
 	public void calcCenter_Mode(){
 		//TODO
+	}
+	
+	public void calcSSE() {
+		SSE = 0;
+		//for each item in vector, subtract from center, square it, then add to sum
+		for(int dpIdx = 0; dpIdx < dataPoints.size(); dpIdx++){
+			for(int vecIdx = 0; vecIdx < dataPoints.get(0).size(); vecIdx++){
+				SSE += Math.pow(((dataPoints.get(dpIdx).get(vecIdx))-(pos.get(vecIdx))), 2);
+			}
+		}
 	}
 
 	public String toString(){
@@ -134,5 +150,13 @@ public class Centroid {
 
 	public int getLR() {
 		return lastReassigned;
+	}
+
+	public double getSSE() {
+		return SSE;
+	}
+
+	public void setSSE(double sSE) {
+		SSE = sSE;
 	}
 }

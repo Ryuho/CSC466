@@ -9,18 +9,18 @@ public class kmeans {
 
 	// 1 = random
 	// 2 = SelectCentroids
-	static int initCentMethod = 1;
+	static int initCentMethod = 2;
 
 	static int centRecalcMethod;
 
 	// 1 = # of reassigned pointeres
 	// 2 = total distance change of all centroids
 	// 3 = decrease of SSE
-	static int stopCriteria = 2;
+	static int stopCriteria = 3;
 
 	static int reassignMinimum = 4;
 	static double clustoidDistMinimum = 1.0;
-	static double SSEDecreaseMinimum = 5.0;
+	static double SSEDecreaseMinimum = 5;
 
 	public static void main(String[] args) {
 		// System.exit(0);
@@ -76,17 +76,11 @@ public class kmeans {
 		// this becomes false when the main loop should be over
 		boolean keepOnGoing = true;
 		// keeps track of SSE to see if main loops should be over
-		double SSEVal = -1;
-
+		double SSEVal = 0;
+		double SSEBefore = 0;
+		
 		// while we should keep on going
 		while (keepOnGoing) {
-			// if it's not the first time around
-			if (SSEVal != -1) {
-				// calculate the SSE
-				SSEVal = calcSSE(cent);
-				System.out.println("SSEVal=" + SSEVal);
-			}
-
 			// reset the centroids: clear all datapoints, and changed to false
 			for (int i = 0; i < cent.size(); i++) {
 				cent.get(i).reset();
@@ -105,6 +99,7 @@ public class kmeans {
 				cent.get(i).calcCenter_Mean();
 				System.out.println(i + ":" + cent.get(i));
 			}
+			
 			// check if we should stop:-------------------------
 
 			// reassignement of data pointers
@@ -126,9 +121,17 @@ public class kmeans {
 			if ((stopCriteria == 2) && distanceChanged <= clustoidDistMinimum) {
 				keepOnGoing = false;
 			}
-			// insignificant decrease in SSE
-			double decreseSSE = SSEVal - calcSSE(cent);
-			SSEVal = calcSSE(cent);
+			// calc current SSE
+			SSEBefore = SSEVal;
+			SSEVal = 0;
+			//for each cent
+			for(int centIdx = 0; centIdx < cent.size(); centIdx++){
+				cent.get(centIdx).calcSSE();
+				SSEVal += cent.get(centIdx).getSSE();
+			}
+			
+			// change in clustoids position
+			double decreseSSE = Math.abs(SSEBefore - SSEVal);
 			System.out.println("decreseSSE=" + decreseSSE);
 			if ((stopCriteria == 3) && decreseSSE <= SSEDecreaseMinimum) {
 				keepOnGoing = false;
@@ -174,8 +177,15 @@ public class kmeans {
 				System.out.println(cent.get(i).getDP().get(DPIndex));
 			}
 			System.out.println("");
-		}
 
+		}
+		
+		double totalSSE = 0;
+		for (int centIdx = 0; centIdx < cent.size(); centIdx++) {
+			totalSSE += cent.get(centIdx).getSSE();
+		}
+		System.out.println("TotalSSE Value="+totalSSE);
+		
 		// if it's 2d data, let's plot it.
 		if (restrictions.size() == 2) {
 			System.out.println("2D data detected, plotting...");
@@ -227,7 +237,7 @@ public class kmeans {
 		tempCent.add(dataPoints.get(furthestIndex));
 		tempCent.calcCenter_Mean();
 		tempCent.setDP(new ArrayList<ArrayList<Double>>());
-		//System.out.println("0: "+tempCent.getPos());		
+		System.out.println("0:Pos "+tempCent.getPos());		
 		answer.add(new Centroid(tempCent));
 		
 		//keep track of all the points that was used for centroid
@@ -376,8 +386,5 @@ public class kmeans {
 		return result;
 	}
 
-	private static double calcSSE(ArrayList<Centroid> cent) {
-		// TODO
-		return -1;
-	}
+
 }
