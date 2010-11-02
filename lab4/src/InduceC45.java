@@ -375,7 +375,7 @@ public class InduceC45{
     public static int commonCategory(int catNum, ArrayList<Data> dataSet){
     	int tally [] = new int[catNum];
     	for(int i = 0; i < dataSet.size(); i++){
-    		tally[dataSet.get(i).category-1]++;
+    		tally[dataSet.get(i).category]++;
     	}
     	
     	int answer = -1;

@@ -40,7 +40,7 @@ public class hclustering {
     			System.exit(-1);
     		}
     		csvInfo inf = toInfo(tClusters, Csv.strings);
-    		relearnCluster(inf, 5, .3);
+    		//relearnCluster(inf, 5, .3);
     	}
 
     }
@@ -162,11 +162,23 @@ public class hclustering {
 
     public static String printClusters(ArrayList<Cluster> clusters)
     {
+    	double totalSSE = 0.0;
     	String output = "";
     	for(int i = 0; i <  clusters.size();i++)
     	{
-    		output += "Cluster "+ (i+1) +": " + clusters.get(i).toString() + "\n";
+    		output += "Cluster "+ (i) +": \n";
+    		output += "Center: " + clusters.get(i).clusterCenter() + "\n";
+    		output += clusters.get(i).data.size() + " Points:\n";
+    		for(int j=0; j< clusters.get(i).data.size();j++)
+    		{
+    			output+= clusters.get(i).data.get(j) + ",\n";
+    		}
+    		output+= "SSE: "+ clusters.get(i).calcSSE();
+    		totalSSE += clusters.get(i).calcSSE();
+    		output += "\n\n";
     	}
+    	output += "Total SSE: "+ totalSSE + "\n";
+    	
     	return output;
     }
     
@@ -202,9 +214,9 @@ public class hclustering {
     	{
     		output.attributes.add(shark.get(i).size());
     	}
-    	System.out.println(output.attributes);
-    	System.out.println(output.stringNames);
-    	System.out.println(output.dataSets);
+    	//System.out.println(output.attributes);
+    	//System.out.println(output.stringNames);
+    	//System.out.println(output.dataSets);
     	return output;
     }
     

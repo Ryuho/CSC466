@@ -128,4 +128,14 @@ public class Cluster
 		}
 		return false;
 	}
+	public double calcSSE() {
+		double SSE = 0;
+		//for each item in vector, subtract from center, square it, then add to sum
+		for(int dpIdx = 0; dpIdx < data.size(); dpIdx++){
+			for(int vecIdx = 0; vecIdx < data.get(0).size(); vecIdx++){
+				SSE += Math.pow(((data.get(dpIdx).get(vecIdx))-(clusterCenter().get(vecIdx))), 2);
+			}
+		}
+		return SSE;
+	}
 }
