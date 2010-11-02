@@ -29,9 +29,9 @@ public class hclustering {
     		System.out.println(printClusters(tClusters));
     		
     		//Evaluation step
-    		try
+    		/*try
     		{
-    			Evaluate.domain = data.toC45Doc(tClusters);
+    			//Evaluate.domain = data.toC45Doc(tClusters);
     		}
     		catch (Exception e)
     		{
@@ -39,8 +39,10 @@ public class hclustering {
     			e.printStackTrace();
     			System.exit(-1);
     		}
-    		csvInfo inf = toInfo(tClusters, Csv.strings);
+    		//csvInfo inf = toInfo(tClusters, Csv.strings);
     		//relearnCluster(inf, 5, .3);
+    		 * */
+    		 
     	}
 
     }
@@ -84,6 +86,7 @@ public class hclustering {
 	    			jC = dendoList.get(j).cluster;
 	    			ArrayList<Double> center1 = iC.clusterCenter();
 	    			ArrayList<Double> center2 = jC.clusterCenter();
+	    			//System.out.println(iC.data.get(0).size() );
 	    			
 	    			dist = Cluster.pointDistance(center1, center2, dataset.restrictions);
 	    			
@@ -183,7 +186,7 @@ public class hclustering {
     }
     
     //need to convert back to csvInfo to use with lab3
-    public static csvInfo toInfo(ArrayList<Cluster> tClusters, ArrayList<String> names)
+    /*public static csvInfo toInfo(ArrayList<Cluster> tClusters, ArrayList<String> names)
     {
     	csvInfo output = new csvInfo();;
     	output.idName = "Clusters";
@@ -219,13 +222,13 @@ public class hclustering {
     	//System.out.println(output.dataSets);
     	return output;
     }
-    
-    public static void relearnCluster(csvInfo info, int n, double threshold)
+    */
+    /*public static void relearnCluster(csvInfo info, int n, double threshold)
     {
     	ArrayList<csvInfo> dataslice;
     	dataslice = Evaluate.holdoutGen(info, -1);
     	Evaluate.n = n;
     	Evaluate.csvAL = info;
     	Evaluate.classification(dataslice, .10, "data/restrictions.csv~");
-    }
+    }*/
 }
