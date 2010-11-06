@@ -29,9 +29,9 @@ public class hclustering {
     		System.out.println(printClusters(tClusters));
     		
     		//Evaluation step
-    		try
+    		/*try
     		{
-    			Evaluate.domain = data.toC45Doc(tClusters);
+    			//Evaluate.domain = data.toC45Doc(tClusters);
     		}
     		catch (Exception e)
     		{
@@ -39,8 +39,10 @@ public class hclustering {
     			e.printStackTrace();
     			System.exit(-1);
     		}
-    		csvInfo inf = toInfo(tClusters, Csv.strings);
-    		relearnCluster(inf, 5, .3);
+    		//csvInfo inf = toInfo(tClusters, Csv.strings);
+    		//relearnCluster(inf, 5, .3);
+    		 * */
+    		 
     	}
 
     }
@@ -84,6 +86,7 @@ public class hclustering {
 	    			jC = dendoList.get(j).cluster;
 	    			ArrayList<Double> center1 = iC.clusterCenter();
 	    			ArrayList<Double> center2 = jC.clusterCenter();
+	    			//System.out.println(iC.data.get(0).size() );
 	    			
 	    			dist = Cluster.pointDistance(center1, center2, dataset.restrictions);
 	    			
@@ -162,16 +165,28 @@ public class hclustering {
 
     public static String printClusters(ArrayList<Cluster> clusters)
     {
+    	double totalSSE = 0.0;
     	String output = "";
     	for(int i = 0; i <  clusters.size();i++)
     	{
-    		output += "Cluster "+ (i+1) +": " + clusters.get(i).toString() + "\n";
+    		output += "Cluster "+ (i) +": \n";
+    		output += "Center: " + clusters.get(i).clusterCenter() + "\n";
+    		output += clusters.get(i).data.size() + " Points:\n";
+    		for(int j=0; j< clusters.get(i).data.size();j++)
+    		{
+    			output+= clusters.get(i).data.get(j) + ",\n";
+    		}
+    		output+= "SSE: "+ clusters.get(i).calcSSE();
+    		totalSSE += clusters.get(i).calcSSE();
+    		output += "\n\n";
     	}
+    	output += "Total SSE: "+ totalSSE + "\n";
+    	
     	return output;
     }
     
     //need to convert back to csvInfo to use with lab3
-    public static csvInfo toInfo(ArrayList<Cluster> tClusters, ArrayList<String> names)
+    /*public static csvInfo toInfo(ArrayList<Cluster> tClusters, ArrayList<String> names)
     {
     	csvInfo output = new csvInfo();;
     	output.idName = "Clusters";
@@ -202,18 +217,18 @@ public class hclustering {
     	{
     		output.attributes.add(shark.get(i).size());
     	}
-    	System.out.println(output.attributes);
-    	System.out.println(output.stringNames);
-    	System.out.println(output.dataSets);
+    	//System.out.println(output.attributes);
+    	//System.out.println(output.stringNames);
+    	//System.out.println(output.dataSets);
     	return output;
     }
-    
-    public static void relearnCluster(csvInfo info, int n, double threshold)
+    */
+    /*public static void relearnCluster(csvInfo info, int n, double threshold)
     {
     	ArrayList<csvInfo> dataslice;
     	dataslice = Evaluate.holdoutGen(info, -1);
     	Evaluate.n = n;
     	Evaluate.csvAL = info;
     	Evaluate.classification(dataslice, .10, "data/restrictions.csv~");
-    }
+    }*/
 }

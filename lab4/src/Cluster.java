@@ -68,6 +68,7 @@ public class Cluster
 	    	double result = 0.0;
 	    	for(int i = 0; i < pt1.size(); i++)
 	    	{
+	    		//System.out.println(restriction.size());
 	    		if(restriction.get(i) != 0 && pt1.get(i) >= 0 && pt2.get(i) >= 0)
 	    		{
 	    			result += Math.pow(pt1.get(i) - pt2.get(i), 2);
@@ -81,10 +82,12 @@ public class Cluster
 			ArrayList<Double> pt2)
 	{
 		ArrayList<Double> result = new ArrayList<Double>();
+		//System.out.print(pt2.size());
 		for(int i = 0; i < pt1.size();i++)
 		{
 			result.add((pt1.get(i) + pt2.get(i))/2.0);
 		}
+		//System.out.println("-" result.size());
 		return result;
 	}
 	
@@ -127,5 +130,15 @@ public class Cluster
 			}
 		}
 		return false;
+	}
+	public double calcSSE() {
+		double SSE = 0;
+		//for each item in vector, subtract from center, square it, then add to sum
+		for(int dpIdx = 0; dpIdx < data.size(); dpIdx++){
+			for(int vecIdx = 0; vecIdx < data.get(0).size(); vecIdx++){
+				SSE += Math.pow(((data.get(dpIdx).get(vecIdx))-(clusterCenter().get(vecIdx))), 2);
+			}
+		}
+		return SSE;
 	}
 }
