@@ -33,7 +33,13 @@ public class Query {
 	}
 	
 	float K(int UID1, int UID2){
-		return 0;
+		float sum = 0;
+		for(int i = 0; i < csv.data.size(); i++){
+			for(int j = i+1; j < csv.data.size(); j++){
+				sum += Math.abs(Similarity(i,j));
+			}
+		}
+		return (float)1/sum;
 	}
 	
 	float AdjustedWeightedSum(int userId, int itemId){
