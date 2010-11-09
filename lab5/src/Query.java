@@ -37,7 +37,7 @@ public class Query {
         for(int cp = 0; cp < csv.data.size(); cp++){
             if(cp != userID){
                 float CPAverage = csv.data.get(cp).averageRating();
-                sum += (PearsonCorrelation(userID,cp, itemID) * (csv.data.get(cp).at(itemID) - CPAverage));
+                sum += (PearsonCorrelation(userID,cp) * (csv.data.get(cp).at(itemID) - CPAverage));
             }
         }
         return userAverage + k * sum;
@@ -47,7 +47,7 @@ public class Query {
         float sum = 0;
         for(int i = 0; i < csv.data.size(); i++){
             if(i != userID){
-                sum += Math.abs(PearsonCorrelation(userID,i, itemID));
+                sum += Math.abs(PearsonCorrelation(userID,i));
             }
         }
         return 1f/sum;
@@ -55,24 +55,45 @@ public class Query {
 	
 
 	
-    public float PearsonCorrelation(int UID1, int UID2, int itemID){
+    public float PearsonCorrelation(int UID1, int UID2){
         // sum1 / sqrt( (sum2)^2 * (sum3)^2)
         
         float sum1 = 0;
         float sum2 = 0;
         float sum3 = 0;
-        for(int i = 0; i < csv.data.size(); i++){
+        for(int i = 0; i < csv.data.get(0).ratings().size(); i++){
+        	if(csv.data.get(UID1).at(i) == 99 || csv.data.get(UID2).at(i) == 99){
+        		continue;
+        	}
             sum1 += (csv.data.get(UID1).at(i) - csv.data.get(UID1).averageRating()) *
                         (csv.data.get(UID2).at(i) - csv.data.get(UID2).averageRating()) ;
             
             sum2 += Math.pow((csv.data.get(UID1).at(i) - csv.data.get(UID1).averageRating()), 2);
             
             sum3 += Math.pow((csv.data.get(UID2).at(i) - csv.data.get(UID2).averageRating()), 2);
+            if(sum2 == 0)
+            {
+            	sum2+=.001;
+            }
+            if(sum3 ==0)
+            {
+            	sum3 += .001;
+            }
         }
         
+        if(Math.sqrt(sum2*sum3) == 0)
+        {
+        	System.err.println("oopz:" + sum2 + " " + sum3 + "UID2=" + UID2 + " UID1=" + UID1);
+        	System.exit(-1);
+        }
         
-        
-        return (float) (sum1 / Math.sqrt(sum2*sum3));
+        float result = (float) (sum1 / Math.sqrt(sum2*sum3));
+        if(result < -1 || result > 1)
+        {
+        	System.err.println("BAD Pearson Correlation!! No din din for you!");
+        	System.exit(-1);
+        }
+        return result;
 }
 	
 	/*

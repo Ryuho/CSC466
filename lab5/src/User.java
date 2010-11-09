@@ -78,14 +78,21 @@ public class User
 	public float computeAverageRating()
 	{
 		float result = 0f;
+		int counter = 0;
 		for(int i = 0; i < ratings.size(); i++)
 		{
 			if(ratings.get(i) != 99)
 			{
 				result += ratings.get(i);
+				counter++;
 			}
 		}
 		result /= (numRated * 1f);
+		if(counter != numRated)
+		{
+			System.err.println("nonmatching number of rated items ");
+			System.exit(-1);
+		}
 		averageRating = result;
 		return result;
 	}
