@@ -1,0 +1,22 @@
+need
+csvInfo. (constructor String filename)
+User
+	numRated
+	ArrayList<Float> ratings; size 100;
+	float averageRating;
+		 
+Query
+	MeanUtility(int userId, int itemId);
+	PearsonCorrelation(int userId, int itemId);
+	AdjustedWeightedSum(int userId, int itemId)
+	
+Item
+	float averageRating;
+	float invUserFreq;
+
+EvaluateCFRandom
+	RandomSampling(int method, int size);
+	
+EvaluateCFList
+	UserSpecified(int method, int size);
+
