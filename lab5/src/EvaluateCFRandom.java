@@ -1,9 +1,12 @@
-package src;
+//package src;
+
+import java.util.ArrayList;
 
 public class EvaluateCFRandom
 {
 	int metho;
 	int siz;
+	Csv matrix;
 
 	/**
 	 * @param args
@@ -32,6 +35,10 @@ public class EvaluateCFRandom
 	public void Evaluate(int method, int size)
 	{
 		//randomly generate size test cases. find elements in matrix not 99.
+		ArrayList<Integer> uInd = new ArrayList<Integer>();  //index of users
+		ArrayList<Integer> iInd = new ArrayList<Integer>();  //index of items
+		
+		//for(int u = 0; u < )
 		//Make that rating 99, and use method to predict rating.
 		//compare predicted rating with actual rating.
 		
