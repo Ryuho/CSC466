@@ -7,6 +7,7 @@ public class User
 	private int numRated;
 	private ArrayList<Float> ratings;
 	private float averageRating;
+	private int userID;
 	
 	User()
 	{
@@ -15,8 +16,9 @@ public class User
 		averageRating = 0.0f;
 	}
 	
-	User(ArrayList<Float> dat)
+	User(int userID, ArrayList<Float> dat)
 	{
+	    this.userID = userID;
 		numRated = Math.round(dat.get(0));
 		ratings = new ArrayList<Float>();
 		ratings.addAll(dat.subList(1, dat.size()));
@@ -73,6 +75,9 @@ public class User
 		return averageRating;
 	}
 	
+	public int getUserID(){
+	    return this.userID;
+	}
 	
 	/*changes averageRating to computed average rating */
 	public float computeAverageRating()

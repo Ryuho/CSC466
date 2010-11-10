@@ -5,16 +5,11 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class Csv {
-	//static ArrayList<ArrayList<Float>> datas;
+    //data to hold list of ratings, grouped by User
 	ArrayList<User> data;
-	//static ArrayList<String> strings;
-	//static ArrayList<Integer> restrictions;
 
     Csv(String fileName) {
-        //datas = new ArrayList<ArrayList<Float>>();
         data = new ArrayList<User>();
-        //restrictions = new ArrayList<Integer>();
-        //strings = new ArrayList<String>();
         FileInputStream fstream = null;
         
         //opening input stream
@@ -30,17 +25,15 @@ public class Csv {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String strLine = null;
 
+        int tempID = 0;
         //reading and parsing file
         try {
-            /*if((strLine = br.readLine()) != null) {  //NO RESTRICTIONS
-                restrictions = stringToIntegerAL(strLine);
-            }*/
             while ((strLine = br.readLine()) != null) {
                 ArrayList<Float> tempAL = stringToFloatAL(strLine);
                 if (tempAL != null){
-                    data.add(new User(tempAL));
+                    data.add(new User(tempID,tempAL));
+                    tempID++;
                 }
-
             }
         } catch (Exception e) {
             e.printStackTrace();

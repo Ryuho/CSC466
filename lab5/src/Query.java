@@ -1,8 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
 
-//package src;
-
 public class Query {
 	Csv csv;
 	Query(Csv input){
@@ -29,18 +27,41 @@ public class Query {
 		return sum;
 	}
 	
-	public float AdjustedWeightedSum(int userID, int itemID){
+    public float AdjustedWeightedSum(int userID, int itemID){
         //user's average rating + k * sim * (u(c',s) - uc') 
-	    float userAverage = csv.data.get(userID).averageRating();
-	    //calculate k
-	    float k = K(userID,itemID);
-	    
-	    //calculate the sum of (sim(u[c],u[c']) * (u(c',s) - uc'))
-	    float sum = 0;
+        float userAverage = csv.data.get(userID).averageRating();
+        //calculate k
+        float k = K(csv.data.get(userID),itemID, csv.data);
+        
+        //calculate the sum of (sim(u[c],u[c']) * (u(c',s) - uc'))
+        float sum = 0;
         for(int cp = 0; cp < csv.data.size(); cp++){
             if(cp != userID && (csv.data.get(cp).at(itemID) != 99)){
                 float CPAverage = csv.data.get(cp).averageRating();
-                sum += (CosineSimilarity(userID,cp) * (csv.data.get(cp).at(itemID) - CPAverage));
+                sum += (PearsonCorrelation(csv.data.get(userID),csv.data.get(cp)) * (csv.data.get(cp).at(itemID) - CPAverage));
+            }
+        }
+        return userAverage + k * sum;
+    }
+    
+    public float AdjustedWeightedSumRanked(int userID, int itemID, int N){
+        //get the user in question
+        User curruser = csv.data.get(userID);
+        
+        //user's average rating + k * sim * (u(c',s) - uc') 
+        float userAverage = curruser.averageRating();
+        
+        ArrayList<User> tempUser = getRank(curruser, N);
+        
+        //calculate k
+        float k = K(curruser,itemID,tempUser);
+        
+        //calculate the sum of (sim(u[c],u[c']) * (u(c',s) - uc'))
+        float sum = 0;
+        for(int cp = 0; cp < tempUser.size(); cp++){
+            if(tempUser.get(cp).at(itemID) != 99){
+                float CPAverage = tempUser.get(cp).averageRating();
+                sum += (PearsonCorrelation(curruser,tempUser.get(cp)) * (tempUser.get(cp).at(itemID) - CPAverage));
             }
         }
         return userAverage + k * sum;
@@ -50,7 +71,7 @@ public class Query {
         //user's average rating + k * sim * (u(c',s) - uc') 
 	    float userAverage = csv.data.get(userID).averageRating();
 	    //calculate k
-	    float k = K(userID,itemID);
+	    float k = K(csv.data.get(userID),itemID, csv.data);
 	    
 	    //calculate the sum of (sim(u[c],u[c']) * (u(c',s) - uc'))
 	    float sum = 0;
@@ -64,36 +85,34 @@ public class Query {
         return userAverage + k * sum;
     }
 	
-    public float K(int userID, int itemID){
+    public float K(User u, int itemID, ArrayList<User> UA){
         float sum = 0;
-        for(int i = 0; i < csv.data.size(); i++){
-            if(i != userID){
-                sum += Math.abs(CosineSimilarity(userID,i));
+        for(int i = 0; i < UA.size(); i++){
+            if(u.getUserID() != UA.get(i).getUserID()){
+                sum += Math.abs(PearsonCorrelation(u,UA.get(i)));
             }
         }
         return 1f/sum;
     }
 	
-
-	
-    public float PearsonCorrelation(int UID1, int UID2){
+    public float PearsonCorrelation(User u1, User u2){
         // sum1 / sqrt( (sum2)^2 * (sum3)^2)
         
         float sum1 = 0;
         float sum2 = 0;
         float sum3 = 0;
-        for(int i = 0; i < csv.data.get(0).ratings().size(); i++){
-        	if(csv.data.get(UID1).at(i) != 99 && csv.data.get(UID2).at(i) != 99){
-                sum1 += (csv.data.get(UID1).at(i) - csv.data.get(UID1).averageRating()) *
-                (csv.data.get(UID2).at(i) - csv.data.get(UID2).averageRating()) ;
+        for(int i = 0; i < u1.ratings().size(); i++){
+        	if(u1.at(i) != 99 && u2.at(i) != 99){
+                sum1 += (u1.at(i) - u1.averageRating()) *
+                (u2.at(i) - u2.averageRating()) ;
         	}
 
-            if(csv.data.get(UID1).at(i) != 99){
-                sum2 += Math.pow((csv.data.get(UID1).at(i) - csv.data.get(UID1).averageRating()), 2);
+            if(u1.at(i) != 99){
+                sum2 += Math.pow((u1.at(i) - u1.averageRating()), 2);
             }
             
-            if(csv.data.get(UID2).at(i) != 99){
-                sum3 += Math.pow((csv.data.get(UID2).at(i) - csv.data.get(UID2).averageRating()), 2);
+            if(u2.at(i) != 99){
+                sum3 += Math.pow((u2.at(i) - u2.averageRating()), 2);
             }
             
             if(sum2 == 0)
@@ -108,7 +127,7 @@ public class Query {
         
         if(Math.sqrt(sum2*sum3) == 0)
         {
-        	System.err.println("oopz:" + sum2 + " " + sum3 + "UID2=" + UID2 + " UID1=" + UID1);
+        	System.err.println("Error, denominator for Pearson Correlation 0!");
         	System.exit(-1);
         }
         
@@ -191,7 +210,7 @@ public class Query {
         return result;
     }
     
-    public float CosineSimilarity(int UID1, int UID2){
+    /*public float CosineSimilarity(int UID1, int UID2){
         // sum1 / sqrt( (sum2)^2 * (sum3)^2)
         
         float sum1 = 0;
@@ -233,14 +252,14 @@ public class Query {
             System.exit(-1);
         }
         return result;
-    }
+    }*/
 	
-    private ArrayList<User> getRank(int userID, ArrayList<User> UA, int N){
+    private ArrayList<User> getRank(User u, int N){
         ArrayList<User> answer = new ArrayList<User>();
         ArrayList<Pair> pairList= new ArrayList<Pair>();
-        for(int i = 0; i < UA.size(); i++){
-            if(i != userID){
-                pairList.add(new Pair(CosineSimilarity(userID,i), csv.data.get(i)));
+        for(int i = 0; i < csv.data.size(); i++){
+            if(u.getUserID() != csv.data.get(i).getUserID()){
+                pairList.add(new Pair(PearsonCorrelation(u,csv.data.get(i)), csv.data.get(i)));
             }
         }
         Collections.sort(pairList);
