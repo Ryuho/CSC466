@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 //package src;
 
 public class Query {
@@ -138,10 +140,14 @@ public class Query {
         float result = (float) (sum1 / Math.sqrt(sum2*sum3));
         if(result < -1 || result > 1)
         {
-            System.err.println("BAD Pearson Correlation!! No din din for you!");
+            System.err.println("BAD Cosine Similarity!! No din din for you!");
             System.exit(-1);
         }
         return result;
     }
 	
+    private ArrayList<User> getRank(int userID, ArrayList<User> UA, int N){
+        return null;
+    }
+    
 }

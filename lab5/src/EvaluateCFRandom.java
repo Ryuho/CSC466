@@ -99,6 +99,10 @@ public class EvaluateCFRandom
 			//output results
 			outputResults(i ,uInd.get(i), iInd.get(i), fInd.get(i), predicted, diff);
 			
+			if(diff >= 20.0){
+			    System.err.println("illegal delta value!!");
+			}
+			
 			//put back into matrix
 			matrix.data.get(uInd.get(i)).ratings().set(iInd.get(i), fInd.get(i)); 
 				//value restored
