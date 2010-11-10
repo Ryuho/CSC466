@@ -15,7 +15,7 @@ public class Query {
 		int numOfData = 0;
 		for(int userIdx = 0; userIdx < csv.data.size(); userIdx++){
 			if(csv.data.get(userIdx).ratings().get(itemID) != 99){
-				sum += csv.data.get(userIdx).ratings().get(itemID);
+				sum += csv.data.get(userIdx).at(itemID);
 				numOfData++;
 			}
 		}
@@ -35,9 +35,9 @@ public class Query {
 	    //calculate the sum of (sim(u[c],u[c']) * (u(c',s) - uc'))
 	    float sum = 0;
         for(int cp = 0; cp < csv.data.size(); cp++){
-            if(cp != userID){
+            if(cp != userID && (csv.data.get(cp).at(itemID) != 99)){
                 float CPAverage = csv.data.get(cp).averageRating();
-                sum += (PearsonCorrelation(userID,cp) * (csv.data.get(cp).at(itemID) - CPAverage));
+                sum += (CosineSimilarity(userID,cp) * (csv.data.get(cp).at(itemID) - CPAverage));
             }
         }
         return userAverage + k * sum;
@@ -47,7 +47,7 @@ public class Query {
         float sum = 0;
         for(int i = 0; i < csv.data.size(); i++){
             if(i != userID){
-                sum += Math.abs(PearsonCorrelation(userID,i));
+                sum += Math.abs(CosineSimilarity(userID,i));
             }
         }
         return 1f/sum;
@@ -62,22 +62,26 @@ public class Query {
         float sum2 = 0;
         float sum3 = 0;
         for(int i = 0; i < csv.data.get(0).ratings().size(); i++){
-        	if(csv.data.get(UID1).at(i) == 99 || csv.data.get(UID2).at(i) == 99){
-        		continue;
+        	if(csv.data.get(UID1).at(i) != 99 && csv.data.get(UID2).at(i) != 99){
+                sum1 += (csv.data.get(UID1).at(i) - csv.data.get(UID1).averageRating()) *
+                (csv.data.get(UID2).at(i) - csv.data.get(UID2).averageRating()) ;
         	}
-            sum1 += (csv.data.get(UID1).at(i) - csv.data.get(UID1).averageRating()) *
-                        (csv.data.get(UID2).at(i) - csv.data.get(UID2).averageRating()) ;
+
+            if(csv.data.get(UID1).at(i) != 99){
+                sum2 += Math.pow((csv.data.get(UID1).at(i) - csv.data.get(UID1).averageRating()), 2);
+            }
             
-            sum2 += Math.pow((csv.data.get(UID1).at(i) - csv.data.get(UID1).averageRating()), 2);
+            if(csv.data.get(UID2).at(i) != 99){
+                sum3 += Math.pow((csv.data.get(UID2).at(i) - csv.data.get(UID2).averageRating()), 2);
+            }
             
-            sum3 += Math.pow((csv.data.get(UID2).at(i) - csv.data.get(UID2).averageRating()), 2);
             if(sum2 == 0)
             {
-            	sum2+=.001;
+            	sum2+=.0001;
             }
             if(sum3 ==0)
             {
-            	sum3 += .001;
+            	sum3 += .0001;
             }
         }
         
@@ -94,35 +98,50 @@ public class Query {
         	System.exit(-1);
         }
         return result;
-}
-	
-	/*
-    public static double getPearsonCorrelation(Vector a, Vector b)
-    {
-            int siz1 = a.getSize();
-            int siz2 = b.getSize();
-            double product = 0.0;
-
-            if(siz2 > siz1)
-            {
-                    a = a.makeEqualLength(a, b);
-                    siz1 = siz2;
-            }
-            else if(siz2 < siz1)
-            {
-                    b = b.makeEqualLength(b, a);
+    }
+    
+    public float CosineSimilarity(int UID1, int UID2){
+        // sum1 / sqrt( (sum2)^2 * (sum3)^2)
+        
+        float sum1 = 0;
+        float sum2 = 0;
+        float sum3 = 0;
+        for(int i = 0; i < csv.data.get(0).ratings().size(); i++){
+            if(csv.data.get(UID1).at(i) != 99 && csv.data.get(UID2).at(i) != 99){
+                sum1 += csv.data.get(UID1).at(i) * csv.data.get(UID2).at(i);
             }
 
-            for(int i = 0; i < siz1; i++)
-            {
-                    product += (a.getElement(i) - vectorMean(a)) *
-                            (b.getElement(i) - vectorMean(b));
+            if(csv.data.get(UID1).at(i) != 99){
+                sum2 += Math.pow(csv.data.get(UID1).at(i), 2);
             }
-
-            product /= (siz1 - 1) * standardDeviation(a) * standardDeviation(b);
-            return product;
-    }*/
-	
-
+            
+            if(csv.data.get(UID2).at(i) != 99){
+                sum3 += Math.pow(csv.data.get(UID2).at(i), 2);
+            }
+            
+            if(sum2 == 0)
+            {
+                sum2+=.0001;
+            }
+            if(sum3 ==0)
+            {
+                sum3 += .0001;
+            }
+        }
+        
+        if(Math.sqrt(sum2*sum3) == 0)
+        {
+            System.err.println("oopz:" + sum2 + " " + sum3 + "UID2=" + UID2 + " UID1=" + UID1);
+            System.exit(-1);
+        }
+        
+        float result = (float) (sum1 / Math.sqrt(sum2*sum3));
+        if(result < -1 || result > 1)
+        {
+            System.err.println("BAD Pearson Correlation!! No din din for you!");
+            System.exit(-1);
+        }
+        return result;
+    }
 	
 }
