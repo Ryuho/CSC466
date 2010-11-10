@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
 
 //package src;
 
@@ -9,50 +8,41 @@ public class Query {
 		csv = input;
 	}
 	
-    public float MeanUtility(int userID, int itemID){
-        //blank out the user's item specified by param
-        csv.data.get(userID).ratings().set(itemID, (float)99);
-        
-        //for each item with valid rating for all users, sum the ratings up
-        float sum = 0;
-        int numOfData = 0;
-        
-        
-        
-        for(int userIdx = 0; userIdx < csv.data.size(); userIdx++){
-            if(csv.data.get(userIdx).ratings().get(itemID) != 99){
-                sum += csv.data.get(userIdx).at(itemID);
-                numOfData++;
+	public float MeanUtility(int userID, int itemID){
+		//blank out the user's item specified by param
+		csv.data.get(userID).ratings().set(itemID, (float)99);
+		
+		//for each item with valid rating for all users, sum the ratings up
+		float sum = 0;
+		int numOfData = 0;
+		for(int userIdx = 0; userIdx < csv.data.size(); userIdx++){
+			if(csv.data.get(userIdx).ratings().get(itemID) != 99){
+				sum += csv.data.get(userIdx).at(itemID);
+				numOfData++;
+			}
+		}
+		
+		//now divide it to get the average
+		sum = sum / (float)numOfData;
+		
+		return sum;
+	}
+	
+	public float AdjustedWeightedSum(int userID, int itemID){
+        //user's average rating + k * sim * (u(c',s) - uc') 
+	    float userAverage = csv.data.get(userID).averageRating();
+	    //calculate k
+	    float k = K(userID,itemID);
+	    
+	    //calculate the sum of (sim(u[c],u[c']) * (u(c',s) - uc'))
+	    float sum = 0;
+        for(int cp = 0; cp < csv.data.size(); cp++){
+            if(cp != userID && (csv.data.get(cp).at(itemID) != 99)){
+                float CPAverage = csv.data.get(cp).averageRating();
+                sum += (CosineSimilarity(userID,cp) * (csv.data.get(cp).at(itemID) - CPAverage));
             }
         }
-        
-        //now divide it to get the average
-        sum = sum / (float)numOfData;
-        
-        return sum;
-    }
-    
-    public float MeanUtilityWRank(int userID, int itemID, int N){
-        //blank out the user's item specified by param
-        csv.data.get(userID).ratings().set(itemID, (float)99);
-        
-        //for each item with valid rating for all users, sum the ratings up
-        float sum = 0;
-        int numOfData = 0;
-        
-        ArrayList<User> tempUsers = getRank(userID, csv.data, N);
-        
-        for(int userIdx = 0; userIdx < tempUsers.size(); userIdx++){
-            if(tempUsers.get(userIdx).at(itemID) != 99){
-                sum += tempUsers.get(userIdx).at(itemID);
-                numOfData++;
-            }
-        }
-        
-        //now divide it to get the average
-        sum = sum / (float)numOfData;
-        
-        return sum;
+        return userAverage + k * sum;
     }
 	
 	public float AdjustedWeightedSumTransformed(int userID, int itemID, ArrayList<Item> items){
@@ -82,8 +72,9 @@ public class Query {
         }
         return 1f/sum;
     }
+	
 
-    
+	
     public float PearsonCorrelation(int UID1, int UID2){
         // sum1 / sqrt( (sum2)^2 * (sum3)^2)
         
@@ -121,9 +112,9 @@ public class Query {
         }
         
         float result = (float) (sum1 / Math.sqrt(sum2*sum3));
-        if(result < -1.01 || result > 1.01)
+        if(result < -1 || result > 1)
         {
-        	System.err.println("Illegal Pearson Correlation value of "+result);
+        	System.err.println("BAD Pearson Correlation!! No din din for you!");
         	System.exit(-1);
         }
         return result;
@@ -188,11 +179,11 @@ public class Query {
         		((fjAll * (sum4 - Math.pow(sum2,2)))     // U
         	   * (fjAll * (sum5 - Math.pow(sum3,2)))));  // V
         
-        if((Math.abs((fjAll * (sum4 - Math.pow(sum2,2)))     // U
-         	   * (fjAll * (sum5 - Math.pow(sum3,2)))) < Math.abs(fjAll*sum1 - sum2*sum3 )) && Math.random() > .9)
+        if(Math.abs((fjAll * (sum4 - Math.pow(sum2,2)))     // U
+         	   * (fjAll * (sum5 - Math.pow(sum3,2)))) < Math.abs(fjAll*sum1 - sum2*sum3 ))
         {
-        	System.err.println(fjAll + " " + sum1 + " " +sum2 + " " +sum3 + " " +sum4 + " " +sum5 
-        			+ " \n" + result);
+        	//System.err.println(fjAll + " " + sum1 + " " +sum2 + " " +sum3 + " " +sum4 + " " +sum5 
+        	//		+ " \n" + result);
         	//System.exit(-1);
         }
         
@@ -243,23 +234,8 @@ public class Query {
         return result;
     }
 	
-    
     private ArrayList<User> getRank(int userID, ArrayList<User> UA, int N){
-        ArrayList<User> answer = new ArrayList<User>();
-        ArrayList<Pair> pairList= new ArrayList<Pair>();
-        for(int i = 0; i < UA.size(); i++){
-            if(i != userID){
-                pairList.add(new Pair(CosineSimilarity(userID,i), csv.data.get(i)));
-            }
-        }
-        Collections.sort(pairList);
-        
-        for(int i = 0; i < N; i++){
-            //System.out.println("simVar="+pairList.get(i).getSimValue());
-            answer.add(pairList.get(i).getUser());
-        }
-
-        return answer;
+        return null;
     }
     
 }
