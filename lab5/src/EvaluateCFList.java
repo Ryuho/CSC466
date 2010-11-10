@@ -80,8 +80,6 @@ public class EvaluateCFList {
 	public void Evaluate(int method, ArrayList<Integer> uInd, ArrayList<Integer> iInd)
 	{
 		//randomly generate size test cases. find elements in matrix not 99.
-		//ArrayList<Integer> uInd = new ArrayList<Integer>();  //index of users
-		//ArrayList<Integer> iInd = new ArrayList<Integer>();  //index of items
 		ArrayList<Float> fInd = new ArrayList<Float>(); 
 		ArrayList<Float> mae = new ArrayList<Float>();
 			//values to save so they can get overwritten
