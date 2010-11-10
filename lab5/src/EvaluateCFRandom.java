@@ -22,7 +22,8 @@ public class EvaluateCFRandom
 		{
 			System.out.println("1. Mean Utility\n" +
 					"2. Adjusted Weighted Sum\n" +
-					"3. Pearson Correlation");
+					"3. N nearest neighbor weighted sum\n" +
+					"4. Adjusted Weighted Sum with transformed vote\n");
 			System.exit(0);
 		}
 		else
@@ -80,15 +81,16 @@ public class EvaluateCFRandom
 			{
 				predicted = funcs.AdjustedWeightedSum(uInd.get(i), iInd.get(i));
 			}
-			else if(method == 3)
+			else if(method == 4)
 			{
-				//predicted = funcs.
+				predicted = funcs.AdjustedWeightedSumTransformed(uInd.get(i), iInd.get(i), items);
 			}
 			else
 			{
 				System.out.println("1. Mean Utility\n" +
 						"2. Adjusted Weighted Sum\n" +
-						"3. Pearson Correlation");
+						"3. N nearest neighbor weighted sum\n" +
+						"4. Adjusted Weighted Sum with transformed vote\n");
 				System.exit(0);
 			}
 			
