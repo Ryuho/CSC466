@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 
 //package src;
 
@@ -235,7 +236,21 @@ public class Query {
     }
 	
     private ArrayList<User> getRank(int userID, ArrayList<User> UA, int N){
-        return null;
+        ArrayList<User> answer = new ArrayList<User>();
+        ArrayList<Pair> pairList= new ArrayList<Pair>();
+        for(int i = 0; i < UA.size(); i++){
+            if(i != userID){
+                pairList.add(new Pair(CosineSimilarity(userID,i), csv.data.get(i)));
+            }
+        }
+        Collections.sort(pairList);
+        
+        for(int i = 0; i < N; i++){
+            //System.out.println("simVar="+pairList.get(i).getSimValue());
+            answer.add(pairList.get(i).getUser());
+        }
+
+        return answer;
     }
     
 }
