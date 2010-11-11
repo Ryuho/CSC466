@@ -267,23 +267,23 @@ public class Query {
         return result;
     }
     
-    /*public float CosineSimilarity(int UID1, int UID2){
+    public float CosineSimilarity(User u1, User u2){
         // sum1 / sqrt( (sum2)^2 * (sum3)^2)
         
         float sum1 = 0;
         float sum2 = 0;
         float sum3 = 0;
         for(int i = 0; i < csv.data.get(0).ratings().size(); i++){
-            if(csv.data.get(UID1).at(i) != 99 && csv.data.get(UID2).at(i) != 99){
-                sum1 += csv.data.get(UID1).at(i) * csv.data.get(UID2).at(i);
+            if(u1.at(i) != 99 && u2.at(i) != 99){
+                sum1 += u1.at(i) * u2.at(i);
             }
 
-            if(csv.data.get(UID1).at(i) != 99){
-                sum2 += Math.pow(csv.data.get(UID1).at(i), 2);
+            if(u1.at(i) != 99){
+                sum2 += Math.pow(u1.at(i), 2);
             }
             
-            if(csv.data.get(UID2).at(i) != 99){
-                sum3 += Math.pow(csv.data.get(UID2).at(i), 2);
+            if(u2.at(i) != 99){
+                sum3 += Math.pow(u2.at(i), 2);
             }
             
             if(sum2 == 0)
@@ -298,7 +298,7 @@ public class Query {
         
         if(Math.sqrt(sum2*sum3) == 0)
         {
-            System.err.println("oopz:" + sum2 + " " + sum3 + "UID2=" + UID2 + " UID1=" + UID1);
+            System.err.println("Error, denominator for Cosine Similarity 0!");
             System.exit(-1);
         }
         
@@ -309,7 +309,7 @@ public class Query {
             System.exit(-1);
         }
         return result;
-    }*/
+    }
 	
     private ArrayList<User> getRank(User u, int N){
         ArrayList<User> answer = new ArrayList<User>();
