@@ -1,22 +1,36 @@
-need
-csvInfo. (constructor String filename)
-User
-	numRated
-	ArrayList<Float> ratings; size 100;
-	float averageRating;
-		 
-Query
-	MeanUtility(int userId, int itemId);
-	PearsonCorrelation(int userId, int itemId);
-	AdjustedWeightedSum(int userId, int itemId)
-	
-Item
-	float averageRating;
-	float invUserFreq;
+Kathrine Blizard (kblizard@calpoly.edu)
+Ryuho Kudo (rkudo@calpoly.edu)
 
-EvaluateCFRandom
-	RandomSampling(int method, int size);
-	
-EvaluateCFList
-	UserSpecified(int method, int size);
+The .java files we turned in are:
+Csv.java  EvaluateCFList.java  EvaluateCFRandom.java  
+Item.java  jester-data-1.csv  Pair.java  Query.java  User.java
 
+
+To compile them:
+javac EvaluateCFRandom.java *.java
+javac EvaluateCFList.java *.java
+
+
+To run them:
+Have jester-data-1.csv in the same directory as the compiled .class files
+java EvaluateCFRandom <method> <size>
+java EvaluateCFList <method> <fileName>
+
+
+the method options are as follows:
+1. Mean Utility
+2. Mean Utility with rank
+3. Adjusted Weighted Sum
+4. Adjusted Weighted Sum with rank
+5. Adjusted Weighted Sum with transformed vote
+
+
+We implemented:
+ - Mean Utility function
+ - Mean Utility function with rank
+ - Adjusted Weighted Sum
+ - Adjusted Weighted Sum with rank
+ - getRank function, to return the top N Users that are similar to a given user
+ - Adjusted Weighted Sum with transformed vote
+ 
+The soft copy will be in a pdf format.

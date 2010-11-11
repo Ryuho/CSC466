@@ -21,7 +21,7 @@ public class EvaluateCFRandom
 		if(args.length <=1)
 		{
 			System.out.println("1. Mean Utility\n" +
-					"2. Mean Utility with rank" +
+					"2. Mean Utility with rank\n" +
 					"3. Adjusted Weighted Sum\n" +
 					"4. Adjusted Weighted Sum with rank\n" +
 					"5. Adjusted Weighted Sum with transformed vote\n"
@@ -34,7 +34,7 @@ public class EvaluateCFRandom
 			ev.siz = Integer.parseInt(args[1]);
 			
 			//create the matrix set
-			ev.matrix = new Csv("data/jester-data-1.csv");
+			ev.matrix = new Csv("jester-data-1.csv");
 			ev.items = Item.genAllItems(ev.matrix);
 			
 			ev.Evaluate(ev.metho, ev.siz);
