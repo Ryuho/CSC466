@@ -21,9 +21,11 @@ public class EvaluateCFRandom
 		if(args.length <=1)
 		{
 			System.out.println("1. Mean Utility\n" +
-					"2. Adjusted Weighted Sum\n" +
-					"3. N nearest neighbor Mean Utility\n" +
-					"4. Adjusted Weighted Sum with transformed vote\n");
+					"2. Mean Utility with rank" +
+					"3. Adjusted Weighted Sum\n" +
+					"4. Adjusted Weighted Sum with rank\n" +
+					"5. Adjusted Weighted Sum with transformed vote\n"
+					);
 			System.exit(0);
 		}
 		else
@@ -79,22 +81,28 @@ public class EvaluateCFRandom
 			}
 			else if(method == 2)
 			{
-				predicted = funcs.AdjustedWeightedSum(uInd.get(i), iInd.get(i));
+				predicted = funcs.MeanUtilityWRank(matrix.data.get(uInd.get(i)), iInd.get(i), 100);
 			}
 			else if(method == 3)
 			{
-				predicted = funcs.AdjustedWeightedSumRanked(uInd.get(i), iInd.get(i), 10);
+				predicted = funcs.AdjustedWeightedSum(uInd.get(i), iInd.get(i));
 			}
 			else if(method == 4)
+			{
+				predicted = funcs.AdjustedWeightedSumRanked(uInd.get(i), iInd.get(i), 100);
+			}
+			else if(method == 5)
 			{
 				predicted = funcs.AdjustedWeightedSumTransformed(uInd.get(i), iInd.get(i), items);
 			}
 			else
 			{
 				System.out.println("1. Mean Utility\n" +
-						"2. Adjusted Weighted Sum\n" +
-						"3. N nearest neighbor weighted sum\n" +
-						"4. Adjusted Weighted Sum with transformed vote\n");
+						"2. Mean Utility with rank" +
+						"3. Adjusted Weighted Sum\n" +
+						"4. Adjusted Weighted Sum with rank\n" +
+						"5. Adjusted Weighted Sum with transformed vote\n"
+						);
 				System.exit(0);
 			}
 			

@@ -57,8 +57,8 @@ public class Item
 	public float computeIUF()
 	{
 		float result = 0f;
-		result = (float) (Math.log(dataSize/numRatings)/
-						Math.log(2));  //log 2 at end makes it into log2
+		result = (float) (Math.log(dataSize/numRatings) //);
+						 /Math.log(2));  //log 2 at end makes it into log2
 		invUserFreq = result;
 		return result;
 	}

@@ -27,6 +27,30 @@ public class Query {
 		return sum;
 	}
 	
+	 public float MeanUtilityWRank(User u, int itemID, int N){
+	        //blank out the user's item specified by param
+	        u.ratings().set(itemID, (float)99);
+	        
+	        //for each item with valid rating for all users, sum the ratings up
+	        float sum = 0;
+	        int numOfData = 0;
+	        
+	        ArrayList<User> tempUsers = getRank(u,N);
+	        
+	        for(int userIdx = 0; userIdx < tempUsers.size(); userIdx++){
+	            if(tempUsers.get(userIdx).at(itemID) != 99){
+	                sum += tempUsers.get(userIdx).at(itemID);
+	                numOfData++;
+	            }
+	        }
+	        
+	        //now divide it to get the average
+	        sum = sum / (float)numOfData;
+	        
+	        return sum;
+	    }
+	 
+	
     public float AdjustedWeightedSum(int userID, int itemID){
         //user's average rating + k * sim * (u(c',s) - uc') 
         float userAverage = csv.data.get(userID).averageRating();
@@ -148,6 +172,8 @@ public class Query {
         float sum3 = 0;
         float sum4 = 0f;
         float sum5 = 0f;
+        float sum7 = 0f;
+        float sum8 = 0f;
         float fjAll = 0f;
         
         
@@ -163,14 +189,14 @@ public class Query {
 
             if(csv.data.get(UID1).at(i) != 99)
             {
-                sum2 += fj1 * (csv.data.get(UID1).at(i));
-                sum4 += Math.pow(fj1 * (csv.data.get(UID1).at(i)), 2);
+                sum2 += fj1 * (csv.data.get(UID1).at(i) );
+                sum4 += fj1 *  Math.pow((csv.data.get(UID1).at(i)), 2);
             }
             
             if(csv.data.get(UID2).at(i) != 99)
             {
                 sum3 += fj1 * (csv.data.get(UID2).at(i));
-                sum5 += Math.pow(fj1 * (csv.data.get(UID2).at(i)), 2);
+                sum5 += fj1 * Math.pow((csv.data.get(UID2).at(i) ), 2);
             }
             
             if(sum2 == 0)
@@ -194,17 +220,48 @@ public class Query {
             	sum1 += .00001;
             }
         }
-        
-        float result = (float) ((fjAll*sum1 - sum2*sum3 ) / 
-        		((fjAll * (sum4 - Math.pow(sum2,2)))     // U
-        	   * (fjAll * (sum5 - Math.pow(sum3,2)))));  // V
-        
-        if(Math.abs((fjAll * (sum4 - Math.pow(sum2,2)))     // U
-         	   * (fjAll * (sum5 - Math.pow(sum3,2)))) < Math.abs(fjAll*sum1 - sum2*sum3 ))
+        for(int i = 0; i < csv.data.get(0).ratings().size(); i++)
         {
-        	//System.err.println(fjAll + " " + sum1 + " " +sum2 + " " +sum3 + " " +sum4 + " " +sum5 
+        	float fj1 = items.get(i).invUserFreq();
+        	sum7 += fj1*(csv.data.get(UID1).at(i) ) - sum2;
+        	sum8 += fj1*(csv.data.get(UID2).at(i) ) - sum3;
+        }
+        float result = (float) ((fjAll*sum1 - sum2*sum3 ) / 
+        		Math.sqrt(  Math.pow(sum7, 2)     // U
+        	              * Math.pow(sum8, 2))) ;  // V
+        
+        //float result = (float) ((fjAll*sum1 - sum2*sum3 ) / 
+        //        		Math.sqrt( ((fjAll * (Math.pow(sum2,2)) - sum4)     // U
+        //        	              * (fjAll * (Math.pow(sum3,2)) - sum5) )));  // V
+        
+        //float result = (float) ((fjAll*sum1 - sum2*sum3 ) / 
+        //		Math.sqrt( ((fjAll * (sum4 - Math.pow(sum2,2)))     // U
+        //	              * (fjAll * (sum5 - Math.pow(sum3,2))))));  // V
+        
+        //float result = (float) ((fjAll*sum1 - sum2*sum3 ) / 
+        //				 ((fjAll * (sum4 - Math.pow(sum2,2)))     // U
+        //	            * (fjAll * (sum5 - Math.pow(sum3,2)))));  // V
+        
+        if( sum4 < Math.pow(sum2,2) && Math.random() > .95)
+        {
+        	//System.err.println(fjAll + "DERP " + sum1 + " " +sum2 + " " +sum3 + " " +sum4 + " " +sum5 
         	//		+ " \n" + result);
         	//System.exit(-1);
+        }
+        if( Math.abs(result) > 1 )//&& Math.random() > .95)
+        {
+        	//System.err.println( sum1 + " " +sum2 + " " +sum3 + " " +sum4 + " " +sum5  + " " +sum7 + " " +sum8
+        	//		+ " \n" + result);
+        	//System.exit(-1);
+        }
+        
+        if(result > 1.01)
+        {
+        	result = 1;
+        }
+        else if(result < -1.01)
+        {
+        	result = -1;
         }
         
         return result;
