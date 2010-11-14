@@ -2,9 +2,12 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-class Core {
-	
+class ir {
+	static ArrayList<Document> docs;
 	public static void main(String[] args) {
+		docs = new ArrayList<Document>();
+		
+		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String input = null;
 		
@@ -30,10 +33,14 @@ class Core {
 				System.exit(0);
 			}
 			else if(tokInput.get(0).compareToIgnoreCase("READ") == 0){
-				System.out.println("READ not implemented yet!");
+				tokInput.remove(0);
+				if(tokInput.get(0).compareToIgnoreCase("LIST") == 0){
+					tokInput.remove(0);
+				}
+				Read(tokInput);
 			}
 			else if(tokInput.get(0).compareToIgnoreCase("LIST") == 0){
-				System.out.println("LIST not implemented yet!");
+				List();
 			}
 			else if(tokInput.get(0).compareToIgnoreCase("CLEAR") == 0){
 				System.out.println("CLEAR not implemented yet!");
@@ -80,4 +87,34 @@ class Core {
 
         return answer;
     }
+    
+	private static void Read(ArrayList<String> fileList){
+		while(!fileList.isEmpty()){
+			String fileName = fileList.get(0);
+			fileList.remove(0);
+			if(fileName.endsWith(".xml")){
+				Document temp = Parser.parseXML(fileName);
+				if(temp != null){
+					docs.add(temp);
+				}
+			}
+			else if(fileName.endsWith(".txt")){
+				Document temp = Parser.parseTXT(fileName);
+				if(temp != null){
+					docs.add(temp);
+				}
+			}
+			else{
+				System.out.println("File extension not supported: "+fileName);
+			}
+		}
+	}
+	
+	private static void List(){
+		System.out.println("Listing documents available in the system:");
+		for(int docIdx = 0; docIdx < docs.size(); docIdx++){
+			System.out.println("Printing Doc #"+docIdx+":");
+			System.out.println(docs.get(docIdx).toString());
+		}
+	}
 }
