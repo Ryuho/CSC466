@@ -1,0 +1,7 @@
+
+class Document{
+	
+	Document(){
+		
+	}
+}
