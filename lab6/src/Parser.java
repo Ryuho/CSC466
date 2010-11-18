@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import java.io.*;
-import java.util.*;
+//import java.util.*;
 import org.w3c.dom.*;
 import com.sun.org.apache.xerces.internal.dom.TreeWalkerImpl;
 import org.w3c.dom.Node;
@@ -22,7 +22,7 @@ import javax.xml.parsers.*;
 public class Parser
 {
 	//need to change return valye to document
-	public void Read(String filename)
+	public ArrayList<src.Document> Read(String filename)
 	{
 		ArrayList<TextToken> wrds;
 		//determine file type
@@ -221,7 +221,7 @@ public class Parser
 		}
 	}
 	
-	 static Document parseXMLDomain(String filename){
+	 static org.w3c.dom.Document parseXMLDomain(String filename){
 	        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 	        factory.setIgnoringComments(true);
 	        factory.setCoalescing(true); // Convert CDATA to Text nodes; 
@@ -230,7 +230,7 @@ public class Parser
 	    	factory.setExpandEntityReferences(false); 
 	    	factory.setIgnoringElementContentWhitespace(true);
 	        DocumentBuilder parser = null;
-	        Document document = null;
+	        org.w3c.dom.Document document = null;
 	        
 	        try {
 	            parser = factory.newDocumentBuilder();

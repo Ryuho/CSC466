@@ -1,5 +1,6 @@
 
 public class Words extends TextToken {
+	double weight;
 	Words(String w)
 	{
 		str = w;
