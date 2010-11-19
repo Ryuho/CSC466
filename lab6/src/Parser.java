@@ -39,6 +39,7 @@ public class Parser
 		} else
 		{
 			System.out.println("Internal error. This is a list of files\n");
+			return null;
 		}
 		return output;
 
@@ -58,6 +59,7 @@ public class Parser
 		{
 			e.printStackTrace();
 			System.err.println("File Not Found.");
+			return null;
 		}
 
 		DataInputStream in = new DataInputStream(fstream);
@@ -77,6 +79,7 @@ public class Parser
 		{
 			e.printStackTrace();
 			System.err.println("Exception while reading file.");
+			return null;
 		}
 
 		IRDocument result = new IRDocument();
@@ -90,6 +93,7 @@ public class Parser
 			HashMap<String, Word> tokens)
 	{
 		StringTokenizer st = new StringTokenizer(s, " ");
+		Stemmer stemr = new Stemmer();
 		while (st.hasMoreTokens())
 		{
 			String currChunk = st.nextToken();
@@ -97,13 +101,19 @@ public class Parser
 			for (int i = 0; i < lis.length; i++)
 			{
 				// TODO check for stopword here
-				if (lis[i] != "")
+				// TODO if not a stopword, stem it
+				stemr.add(lis[i].toCharArray(), lis[i].length());
+				stemr.stem();
+				lis[i] = stemr.toString();
+				
+				if (lis[i] != "" && !lis[i].matches("\\s"))
 				{
 					Word ex = tokens.get(lis[i].toLowerCase());
 					if (ex != null)
 					{
 						ex.addOne();
-					} else
+					} 
+					else
 					{
 						tokens.put(lis[i].toLowerCase(), new Word(lis[i].toLowerCase()));
 					}
@@ -118,6 +128,11 @@ public class Parser
 	{
 		HashMap<String, IRDocument> output = new HashMap<String, IRDocument>();
 		DocumentImpl doc = (DocumentImpl) parseXMLDomain(filename);
+		if(doc == null)
+		{
+			//file was not found
+			return null;
+		}
 		Node root = doc.getLastChild();
 		AllElements allelements = new AllElements();
 		TreeWalkerImpl walk = (TreeWalkerImpl) doc.createTreeWalker(root,
@@ -126,18 +141,20 @@ public class Parser
 		NodeList subDocs = root.getChildNodes();
 		Node cur = walk.firstChild();
 		filename = filename.substring(0, filename.indexOf("."));
-		for (int i = 0; i < subDocs.getLength(); i++)
+		int  i = 0;
+		while(cur != null)
 		{
 			// convert each child node into a Document.
 			IRDocument ird = new IRDocument();
 			HashMap<String, Word> doctext = new HashMap<String, Word>();
 
-			System.out.println(cur.getTextContent());
+			//System.out.println(cur.getTextContent());
 			stringToTextTokens(cur.getTextContent(), doctext);
 			ird.hashMap = doctext;
 			ird.id = filename + "-" + i;
 			output.put(filename + "-" + i, ird);
-			walk.nextSibling();
+			cur = walk.nextSibling(); 
+			i++;
 		}
 		return output;
 	}
@@ -161,8 +178,10 @@ public class Parser
 			document = parser.parse(new File(filename));
 		} catch (Exception e)
 		{
-			e.printStackTrace();
-			System.exit(-1);
+			System.out.println("File not found\n");
+			//e.printStackTrace();
+			//System.exit(-1);
+			return null;
 		}
 		return document;
 	}
