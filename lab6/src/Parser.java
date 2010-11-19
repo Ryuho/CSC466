@@ -22,9 +22,10 @@ import javax.xml.parsers.*;
 public class Parser
 {
 	//need to change return valye to document
-	public ArrayList<src.Document> Read(String filename)
+	public static ArrayList<IRDocument> Read(String filename)
 	{
 		ArrayList<TextToken> wrds;
+		ArrayList<IRDocument> output = new ArrayList<IRDocument>();
 		//determine file type
 		
 		if(filename.toLowerCase().contains(".xml"))
@@ -36,6 +37,7 @@ public class Parser
 			//call ParseText()
 			wrds = parseTextFile(filename);
 		}
+		return output;
 		
 	}
 	
