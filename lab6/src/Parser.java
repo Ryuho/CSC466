@@ -81,6 +81,7 @@ public class Parser
 		//TODO make a new IRDocument and add the answer to it and 
 		//return that rather than the answer
 		IRDocument result = new IRDocument();
+		result.id = filename;
 		result.hashMap = werd;
 		output.put(filename, result);
 		return output;
@@ -233,6 +234,7 @@ public class Parser
 			stringToTextTokens(cur.getTextContent(), doctext);
 			//TODO add doctext to a IRDocument and return the list of Document
 			ird.hashMap = doctext;
+			ird.id = filename+"-"+i;
 			output.put(filename+"-"+i, ird);
 			walk.nextSibling();
 		}
