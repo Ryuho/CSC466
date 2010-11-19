@@ -39,10 +39,8 @@ class ir {
 				}
 				//for each fileName, make a list of IRDoc, and add it to the hashmap of docs
 				for(int i = 0; i < tokInput.size(); i++){
-				    ArrayList<IRDocument> temp = Parser.Read(tokInput.get(i));
-				    for(int j = 0; j < temp.size(); j++){
-				        docs.put(temp.get(j).id, temp.get(j));
-				    }
+				    HashMap<String,IRDocument> temp = Parser.Read(tokInput.get(i));
+				    docs.putAll(temp);
 				}
 			}
 			else if(tokInput.get(0).compareToIgnoreCase("LIST") == 0){
