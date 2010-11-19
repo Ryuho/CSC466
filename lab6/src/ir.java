@@ -92,28 +92,14 @@ class ir {
 		while(!fileList.isEmpty()){
 			String fileName = fileList.get(0);
 			fileList.remove(0);
-			if(fileName.endsWith(".xml")){
-				ArrayList<IRDocument> temp = Parser.parseXML(fileName);
-				if(temp != null){
-					docs.add(temp);
-				}
-			}
-			else if(fileName.endsWith(".txt")){
-				IRDocument temp = Parser.parseTXT(fileName);
-				if(temp != null){
-					docs.add(temp);
-				}
-			}
-			else{
-				System.out.println("File extension not supported: "+fileName);
-			}
+			ArrayList<IRDocument> temp = Parser.Read(fileName);
+			
 		}
 	}
 	
 	private static void List(){
 		System.out.println("Listing documents available in the system:");
 		for(int docIdx = 0; docIdx < docs.size(); docIdx++){
-			System.out.println("Printing Doc #"+docIdx+":");
 			System.out.println(docs.get(docIdx).toString());
 		}
 	}

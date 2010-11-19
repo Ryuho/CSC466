@@ -15,6 +15,6 @@ public class Word extends TextToken {
 	
 	public String toString()
 	{
-		return str;
+		return str + " | " + freq;
 	}
 }
