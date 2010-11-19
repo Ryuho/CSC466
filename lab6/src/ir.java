@@ -3,9 +3,9 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 class ir {
-	static ArrayList<Document> docs;
+	static ArrayList<IRDocument> docs;
 	public static void main(String[] args) {
-		docs = new ArrayList<Document>();
+		docs = new ArrayList<IRDocument>();
 		
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -93,13 +93,13 @@ class ir {
 			String fileName = fileList.get(0);
 			fileList.remove(0);
 			if(fileName.endsWith(".xml")){
-				Document temp = Parser.parseXML(fileName);
+				ArrayList<IRDocument> temp = Parser.parseXML(fileName);
 				if(temp != null){
 					docs.add(temp);
 				}
 			}
 			else if(fileName.endsWith(".txt")){
-				Document temp = Parser.parseTXT(fileName);
+				IRDocument temp = Parser.parseTXT(fileName);
 				if(temp != null){
 					docs.add(temp);
 				}

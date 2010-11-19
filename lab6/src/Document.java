@@ -1,6 +1,0 @@
-
-class Document{
-	Document(){
-		
-	}
-}
