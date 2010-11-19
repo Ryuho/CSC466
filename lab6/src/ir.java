@@ -1,12 +1,12 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
 class ir {
-	static ArrayList<IRDocument> docs;
+	static HashMap<String,IRDocument> docs;
 	public static void main(String[] args) {
-		docs = new ArrayList<IRDocument>();
-		
+		docs = new HashMap<String,IRDocument>();
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String input = null;
@@ -37,25 +37,49 @@ class ir {
 				if(tokInput.get(0).compareToIgnoreCase("LIST") == 0){
 					tokInput.remove(0);
 				}
-				Read(tokInput);
+				//for each fileName, make a list of IRDoc, and add it to the hashmap of docs
+				for(int i = 0; i < tokInput.size(); i++){
+				    ArrayList<IRDocument> temp = Parser.Read(tokInput.get(i));
+				    for(int j = 0; j < temp.size(); j++){
+				        docs.put(temp.get(j).id, temp.get(j));
+				    }
+				}
 			}
 			else if(tokInput.get(0).compareToIgnoreCase("LIST") == 0){
 				List();
 			}
 			else if(tokInput.get(0).compareToIgnoreCase("CLEAR") == 0){
-				System.out.println("CLEAR not implemented yet!");
+				System.out.println("Cleared documents");
+				docs.clear();
+				//TODO possibly remove persistant data
 			}
-			else if(tokInput.get(0).compareToIgnoreCase("PRINT") == 0){
-				System.out.println("PRINT not implemented yet!");
+			else if(tokInput.get(0).compareToIgnoreCase("PRINT") == 0 && tokInput.size() == 2){
+				//TODO make a function that seeks to the needed document in a text or xml file
 			}
-			else if(tokInput.get(0).compareToIgnoreCase("SHOW") == 0){
-				System.out.println("SHOW not implemented yet!");
+			else if(tokInput.get(0).compareToIgnoreCase("SHOW") == 0 && tokInput.size() == 2){
+			    if(!docs.containsKey(tokInput.get(1))){
+			        System.out.println("Document ID: " + tokInput.get(1)+" does not exist!");
+			    }
+			    else{
+			        System.out.println(docs.get(tokInput.get(1)).toString());
+			    }
 			}
-			else if(tokInput.get(0).compareToIgnoreCase("SIM") == 0){
+			else if(tokInput.get(0).compareToIgnoreCase("SIM") == 0 && tokInput.size() == 3){
+			    //TODO
 				System.out.println("SIM not implemented yet!");
 			}
 			else if(tokInput.get(0).compareToIgnoreCase("SEARCH") == 0){
-				System.out.println("SEARCH not implemented yet!");
+                tokInput.remove(0);
+                if(tokInput.get(0).compareToIgnoreCase("DOC") == 0){
+                    //TODO
+                    System.out.println("SEARCH DOC <DocId> not implemented yet!");
+                }
+                else if(tokInput.size() == 1){
+                    //TODO
+                }
+                else{
+                    System.out.println("Unrecognized command");
+                }
 			}
 			else{
 				System.out.println("Unrecognized command");
@@ -87,34 +111,11 @@ class ir {
 
         return answer;
     }
-    
-	private static void Read(ArrayList<String> fileList){
-		while(!fileList.isEmpty()){
-			String fileName = fileList.get(0);
-			fileList.remove(0);
-			if(fileName.endsWith(".xml")){
-				ArrayList<IRDocument> temp = Parser.parseXML(fileName);
-				if(temp != null){
-					docs.add(temp);
-				}
-			}
-			else if(fileName.endsWith(".txt")){
-				IRDocument temp = Parser.parseTXT(fileName);
-				if(temp != null){
-					docs.add(temp);
-				}
-			}
-			else{
-				System.out.println("File extension not supported: "+fileName);
-			}
-		}
-	}
 	
 	private static void List(){
-		System.out.println("Listing documents available in the system:");
-		for(int docIdx = 0; docIdx < docs.size(); docIdx++){
-			System.out.println("Printing Doc #"+docIdx+":");
-			System.out.println(docs.get(docIdx).toString());
-		}
+	    System.out.println("Listing documents available in the system:");
+        for (Object value : docs.values()) {
+            System.out.println(value.toString());
+        }
 	}
 }
