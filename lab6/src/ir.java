@@ -105,6 +105,11 @@ class ir {
     private static void Similarity(IRDocument document, IRDocument document2) {
         //TODO
     }
+    
+    private static double TFIDF(IRDocument doc){
+        double TF = 0;
+        return 0.0;
+    }
 
     private static ArrayList<String> stringToStringAL(String s) {
         s = s.replaceAll("^\\s*,", "0,");
@@ -131,8 +136,8 @@ class ir {
 	
 	private static void List(){
 	    System.out.println("Listing documents available in the system:");
-        for (Object value : docs.values()) {
-            System.out.println(value.toString());
+        for (IRDocument value : docs.values()) {
+            System.out.println(value.id);
         }
 	}
 }

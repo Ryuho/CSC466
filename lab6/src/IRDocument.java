@@ -5,6 +5,7 @@ import java.util.Iterator;
 class IRDocument{
     String id;
     HashMap<String, Word> hashMap;
+    int wCount;
     
 	IRDocument(){
 	}
