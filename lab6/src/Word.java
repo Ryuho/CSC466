@@ -1,5 +1,8 @@
+import java.io.Serializable;
 
-public class Word extends TextToken {
+
+public class Word extends TextToken implements Serializable{
+    private static final long serialVersionUID = -7497663920290511180L;
 	double weight;
 	Word(String w)
 	{

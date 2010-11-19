@@ -10,7 +10,7 @@ class ir {
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String input = null;
-		
+		DeserializeDoc();
 		System.out.println("IR System:");
 
 		while(true){
@@ -30,6 +30,7 @@ class ir {
 			}
 			else if(tokInput.get(0).compareToIgnoreCase("QUIT") == 0){
 				System.out.println("Quitting");
+				SerializeDoc();
 				System.exit(0);
 			}
 			else if(tokInput.get(0).compareToIgnoreCase("READ") == 0){
@@ -103,12 +104,25 @@ class ir {
 	}
 	
     private static void Similarity(IRDocument document, IRDocument document2) {
-        //TODO
+        //TODO 
     }
     
-    private static double TFIDF(IRDocument doc){
-        double TF = 0;
-        return 0.0;
+    private static double TFIDF(IRDocument doc, String term){
+        int freq = 0;
+        if(doc.hashMap.containsKey(term)){
+            freq = doc.hashMap.get(term).freq;
+        }
+        double TF = (double)freq/ (double)doc.wCount;
+        
+        int docCount = 0;
+        for (IRDocument value : docs.values()) {
+            if(value.hashMap.containsKey(term)){
+                docCount++;
+            }
+        }
+        double IDF = Math.log((double)docs.size() / (double)docCount)/Math.log(2.0);
+        
+        return TF*IDF;
     }
 
     private static ArrayList<String> stringToStringAL(String s) {
@@ -140,4 +154,32 @@ class ir {
             System.out.println(value.id);
         }
 	}
+
+    private static void SerializeDoc(){
+        try {
+            FileOutputStream fos;
+            fos = new FileOutputStream("hm.save");
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(docs);
+            oos.close();
+        } catch (Exception e) {
+            System.err.println("Error while trying to serialize doc!");
+            e.printStackTrace();
+        }
+    }
+    
+    private static void DeserializeDoc(){
+        if((new File("hm.save")).exists()){
+            try {
+                FileInputStream fis = new FileInputStream("hm.save");
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                docs = (HashMap) ois.readObject();
+                ois.close();
+            } catch (Exception e) {
+                System.err.println("Error while trying to deserialize doc!");
+                e.printStackTrace();
+            }
+        }
+    }
+	
 }
