@@ -17,4 +17,15 @@ public class Word extends TextToken {
 	{
 		return str + " | " + freq;
 	}
+
+	public double getWeight()
+	{
+		return weight;
+	}
+
+	public void setWeight(double weight)
+	{
+		this.weight = weight;
+	}
+	
 }

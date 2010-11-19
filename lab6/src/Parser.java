@@ -25,18 +25,19 @@ public class Parser
 	//need to change return valye to document
 	public static HashMap<String, IRDocument> Read(String filename)
 	{
-		HashMap<String, Word> wrds;
+		//HashMap<String, Word> wrds;
 		HashMap<String, IRDocument> output = new HashMap<String, IRDocument>();
 		//determine file type
 		
 		if(filename.toLowerCase().endsWith(".xml"))
 		{
 			//call parseXML()
+			output = ParseXML(filename);
 		}
 		else if(filename.toLowerCase().endsWith(".txt"))
 		{
 			//call ParseText()
-			wrds = parseTextFile(filename);
+			output = parseTextFile(filename);
 		}
 		else
 		{
@@ -46,9 +47,10 @@ public class Parser
 		
 	}
 	
-	static HashMap<String, Word> parseTextFile(String filename)
+	static HashMap<String, IRDocument> parseTextFile(String filename)
 	{
-		HashMap<String, Word> answer = new HashMap<String, Word>();
+		HashMap<String, Word> werd = new HashMap<String, Word>();
+		HashMap<String, IRDocument> output = new HashMap<String, IRDocument>();
 		//ArrayList<TextToken> tok = new ArrayList<TextToken>();
 		
 		FileInputStream fstream = null;
@@ -62,13 +64,14 @@ public class Parser
 		DataInputStream in = new DataInputStream(fstream);
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		String strLine = null;
+		filename = filename.substring(0, filename.indexOf("."));
 		
 		try {
 			while ((strLine = br.readLine()) != null)
 			{
 				//for each line...
 				//System.out.println("Now processing: "+ strLine);
-				stringToTextTokens(strLine,answer);
+				stringToTextTokens(strLine,werd);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -77,13 +80,14 @@ public class Parser
 		
 		//TODO make a new IRDocument and add the answer to it and 
 		//return that rather than the answer
-		return answer;
+		IRDocument result = new IRDocument();
+		result.hashMap = werd;
+		output.put(filename, result);
+		return output;
 	}
 
 	static HashMap<String, Word> stringToTextTokens(String s, HashMap<String, Word> tokens)
 	{
-		//else
-		//{
 		StringTokenizer st = new StringTokenizer(s, " ");
 		while (st.hasMoreTokens()) 
 		{
@@ -185,11 +189,15 @@ public class Parser
 					else
 					{
 						done = true;
-						if(tokens.get(currChunk) != null)
+						Word ex = tokens.get(currChunk);
+						if(ex != null)
 						{
-							
+							ex.addOne();
 						}
-						tokens.put(currChunk, new Word(currChunk));
+						else
+						{
+							tokens.put(currChunk, new Word(currChunk));
+						}
 						//while(!bufferTokens.isEmpty())
 						//{
 							//tokens.putAll(bufferTokens);
@@ -202,9 +210,9 @@ public class Parser
 		return tokens;
 	}
 	
-	public HashMap<String, Word> ParseXML(String filename)
+	public static HashMap<String, IRDocument> ParseXML(String filename)
 	{
-		HashMap<String, Word> output = new HashMap<String, Word>();
+		HashMap<String, IRDocument> output = new HashMap<String, IRDocument>();
 		DocumentImpl doc = (DocumentImpl) parseXMLDomain(filename);
 		Node root = doc.getLastChild();
 		AllElements allelements = new AllElements();
@@ -214,13 +222,18 @@ public class Parser
 		
 		NodeList subDocs = root.getChildNodes();
 		Node cur = walk.firstChild();
+		filename = filename.substring(0, filename.indexOf("."));
 		for(int i = 0; i < subDocs.getLength(); i++ )
 		{
 			//convert each child node into a Document.
+			IRDocument ird = new IRDocument();
 			HashMap<String, Word> doctext = new HashMap<String, Word>();
+			
 			System.out.println(cur.getTextContent());
 			stringToTextTokens(cur.getTextContent(), doctext);
 			//TODO add doctext to a IRDocument and return the list of Document
+			ird.hashMap = doctext;
+			output.put(filename+"-"+i, ird);
 			walk.nextSibling();
 		}
 		return output;
