@@ -54,7 +54,12 @@ class ir {
 				//TODO possibly remove persistant data
 			}
 			else if(tokInput.get(0).compareToIgnoreCase("PRINT") == 0 && tokInput.size() == 2){
-				//TODO make a function that seeks to the needed document in a text or xml file
+			    if(!docs.containsKey(tokInput.get(1))){
+                    System.out.println("Document ID: " + tokInput.get(1)+" does not exist!");
+                }
+                else{
+                    //TODO make a function that seeks to the needed document in a text or xml file
+                }
 			}
 			else if(tokInput.get(0).compareToIgnoreCase("SHOW") == 0 && tokInput.size() == 2){
 			    if(!docs.containsKey(tokInput.get(1))){
@@ -65,17 +70,27 @@ class ir {
 			    }
 			}
 			else if(tokInput.get(0).compareToIgnoreCase("SIM") == 0 && tokInput.size() == 3){
-			    //TODO
-				System.out.println("SIM not implemented yet!");
+			    if(!docs.containsKey(tokInput.get(1))){
+                    System.out.println("Document ID: " + tokInput.get(1)+" does not exist!");
+                }
+			    else if(!docs.containsKey(tokInput.get(2))){
+			        System.out.println("Document ID: " + tokInput.get(2)+" does not exist!");
+			    }
+                else{
+                    Similarity(docs.get(tokInput.get(1)),docs.get(tokInput.get(2)));
+                }
 			}
 			else if(tokInput.get(0).compareToIgnoreCase("SEARCH") == 0){
-                tokInput.remove(0);
-                if(tokInput.get(0).compareToIgnoreCase("DOC") == 0){
-                    //TODO
-                    System.out.println("SEARCH DOC <DocId> not implemented yet!");
+                if(tokInput.get(1).compareToIgnoreCase("DOC") == 0){
+                    if(!docs.containsKey(tokInput.get(2))){
+                        System.out.println("Document ID: " + tokInput.get(1)+" does not exist!");
+                    }
+                    else{
+                        //TODO search for documents similar to given document
+                    }
                 }
                 else if(tokInput.size() == 1){
-                    //TODO
+                    //TODO take in a string, search for documents relevant to the query string
                 }
                 else{
                     System.out.println("Unrecognized command");
@@ -89,6 +104,10 @@ class ir {
 
 	}
 	
+    private static void Similarity(IRDocument document, IRDocument document2) {
+        //TODO
+    }
+
     private static ArrayList<String> stringToStringAL(String s) {
         s = s.replaceAll("^\\s*,", "0,");
         s = s.replaceAll(",{2}", ",0,");
