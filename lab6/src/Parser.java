@@ -28,14 +28,18 @@ public class Parser
 		ArrayList<IRDocument> output = new ArrayList<IRDocument>();
 		//determine file type
 		
-		if(filename.toLowerCase().contains(".xml"))
+		if(filename.toLowerCase().endsWith(".xml"))
 		{
 			//call parseXML()
 		}
-		else
+		else if(filename.toLowerCase().endsWith(".txt"))
 		{
 			//call ParseText()
 			wrds = parseTextFile(filename);
+		}
+		else
+		{
+			System.out.println("Internal error. This is a list of files\n");
 		}
 		return output;
 		
@@ -188,7 +192,7 @@ public class Parser
 					else
 					{
 						done = true;
-						tokens.add(new Words(currChunk));
+						tokens.add(new Word(currChunk));
 						while(!bufferTokens.isEmpty())
 						{
 							tokens.add(bufferTokens.get(0));
