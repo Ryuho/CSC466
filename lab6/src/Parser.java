@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import java.io.*;
@@ -22,10 +23,10 @@ import javax.xml.parsers.*;
 public class Parser
 {
 	//need to change return valye to document
-	public static ArrayList<IRDocument> Read(String filename)
+	public static HashMap<String, IRDocument> Read(String filename)
 	{
-		ArrayList<TextToken> wrds;
-		ArrayList<IRDocument> output = new ArrayList<IRDocument>();
+		HashMap<String, Word> wrds;
+		HashMap<String, IRDocument> output = new HashMap<String, IRDocument>();
 		//determine file type
 		
 		if(filename.toLowerCase().endsWith(".xml"))
@@ -45,9 +46,10 @@ public class Parser
 		
 	}
 	
-	static ArrayList<TextToken> parseTextFile(String filename)
+	static HashMap<String, Word> parseTextFile(String filename)
 	{
-		ArrayList<TextToken> answer = new ArrayList<TextToken>();
+		HashMap<String, Word> answer = new HashMap<String, Word>();
+		//ArrayList<TextToken> tok = new ArrayList<TextToken>();
 		
 		FileInputStream fstream = null;
 		try {
@@ -74,28 +76,19 @@ public class Parser
 		}
 		
 		//TODO make a new IRDocument and add the answer to it and 
-		//return that rahter than answer
+		//return that rather than the answer
 		return answer;
 	}
 
-	static ArrayList<TextToken> stringToTextTokens(String s, ArrayList<TextToken> tokens){
-		if(s.isEmpty() && !(tokens.get(tokens.size()-1) instanceof EOP)){
-			if(!(tokens.get(tokens.size()-1) instanceof EOS))
-			{
-				tokens.add(new EOS());
-				tokens.add(new EOP());
-			}
-			else
-			{
-				tokens.add(new EOP());
-			}
-		}
-		else
+	static HashMap<String, Word> stringToTextTokens(String s, HashMap<String, Word> tokens)
+	{
+		//else
+		//{
+		StringTokenizer st = new StringTokenizer(s, " ");
+		while (st.hasMoreTokens()) 
 		{
-			StringTokenizer st = new StringTokenizer(s, " ");
-			while (st.hasMoreTokens()) {
 				String currChunk = st.nextToken();
-				ArrayList<TextToken> bufferTokens = new ArrayList<TextToken>();
+				//HashMap<String, Word> bufferTokens = new HashMap<String, Word>();
 				boolean done = false;
 				while(!done)
 				{
@@ -106,107 +99,112 @@ public class Parser
 					else if(currChunk.length() >= 4 && 
 							currChunk.substring(currChunk.length()-4, currChunk.length()).compareTo("....") == 0)
 					{
-						bufferTokens.add(new Chars("..."));
-						bufferTokens.add(new Chars("."));
+						//bufferTokens.add(new Chars("..."));
+						//bufferTokens.add(new Chars("."));
 						currChunk = currChunk.substring(0,currChunk.length()-4);
 					}
 					else if(currChunk.length() >= 3 && 
 							currChunk.substring(currChunk.length()-3, currChunk.length()).compareTo("...") == 0)
 					{
-						bufferTokens.add(new Chars("..."));
+						//bufferTokens.add(new Chars("..."));
 						currChunk = currChunk.substring(0,currChunk.length()-3);
 					}
 					else if(currChunk.length() == 1 && currChunk.charAt(0) == '-')
 					{
-						tokens.add(new Chars("-"));
+						//tokens.add(new Chars("-"));
 						break;
 					}
 					else if(currChunk.charAt(0) == ':')
 					{
-						tokens.add(new Chars(":"));
+						//tokens.add(new Chars(":"));
 						currChunk = currChunk.substring(1,currChunk.length());
 					}
 					else if(currChunk.charAt(0) == '(')
 					{
-						tokens.add(new Chars("("));
+						//tokens.add(new Chars("("));
 						currChunk = currChunk.substring(1,currChunk.length());
 					}
 					else if(currChunk.charAt(0) == '’')
 					{
-						tokens.add(new Chars("\'"));
+						//tokens.add(new Chars("\'"));
 						currChunk = currChunk.substring(1,currChunk.length());
 					}
 					else if(currChunk.charAt(0) == '"')
 					{
-						tokens.add(new Chars("\""));
+						//tokens.add(new Chars("\""));
 						currChunk = currChunk.substring(1,currChunk.length());
 					}
 					else if(currChunk.charAt(currChunk.length()-1) == '"')
 					{
-						bufferTokens.add(new Chars("\""));
+						//bufferTokens.add(new Chars("\""));
 						currChunk = currChunk.substring(0,currChunk.length()-1);
 					}
 					else if(currChunk.charAt(currChunk.length()-1) == '’')
 					{
-						bufferTokens.add(new Chars("’"));
+						//bufferTokens.add(new Chars("’"));
 						currChunk = currChunk.substring(0,currChunk.length()-1);
 					}
 					else if(currChunk.charAt(currChunk.length()-1) == ')')
 					{
-						bufferTokens.add(new Chars(")"));
+						//bufferTokens.add(new Chars(")"));
 						currChunk = currChunk.substring(0,currChunk.length()-1);
 					}
 					else if(currChunk.charAt(currChunk.length()-1) == ':')
 					{
-						bufferTokens.add(new Chars(":"));
+						//bufferTokens.add(new Chars(":"));
 						currChunk = currChunk.substring(0,currChunk.length()-1);
 					}
 					else if(currChunk.charAt(currChunk.length()-1) == ';')
 					{
-						bufferTokens.add(new Chars(";"));
+						//bufferTokens.add(new Chars(";"));
 						currChunk = currChunk.substring(0,currChunk.length()-1);
 					}
 					else if(currChunk.charAt(currChunk.length()-1) == ',')
 					{
-						bufferTokens.add(new Chars(","));
+						//bufferTokens.add(new Chars(","));
 						currChunk = currChunk.substring(0,currChunk.length()-1);
 					}
 					else if(currChunk.charAt(currChunk.length()-1) == '.')
 					{
-						bufferTokens.add(new Chars("."));
-						bufferTokens.add(new EOS());
+						//bufferTokens.add(new Chars("."));
+						//bufferTokens.add(new EOS());
 						currChunk = currChunk.substring(0,currChunk.length()-1);
 					}
 					else if(currChunk.charAt(currChunk.length()-1) == '?')
 					{
-						bufferTokens.add(new Chars("?"));
-						bufferTokens.add(new EOS());
+						//bufferTokens.add(new Chars("?"));
+						//bufferTokens.add(new EOS());
 						currChunk = currChunk.substring(0,currChunk.length()-1);
 					}
 					else if(currChunk.charAt(currChunk.length()-1) == '!')
 					{
-						bufferTokens.add(new Chars("!"));
-						bufferTokens.add(new EOS());
+						//bufferTokens.add(new Chars("!"));
+						//bufferTokens.add(new EOS());
 						currChunk = currChunk.substring(0,currChunk.length()-1);
 					}
 					else
 					{
 						done = true;
-						tokens.add(new Word(currChunk));
-						while(!bufferTokens.isEmpty())
+						if(tokens.get(currChunk) != null)
 						{
-							tokens.add(bufferTokens.get(0));
-							bufferTokens.remove(0);
+							
 						}
+						tokens.put(currChunk, new Word(currChunk));
+						//while(!bufferTokens.isEmpty())
+						//{
+							//tokens.putAll(bufferTokens);
+							//bufferTokens.clear();
+						//}
 					}
 				}				
 			}
-		}
+		//}
 		return tokens;
 	}
 	
-	public void ParseXML(String filename)
+	public HashMap<String, Word> ParseXML(String filename)
 	{
+		HashMap<String, Word> output = new HashMap<String, Word>();
 		DocumentImpl doc = (DocumentImpl) parseXMLDomain(filename);
 		Node root = doc.getLastChild();
 		AllElements allelements = new AllElements();
@@ -219,12 +217,13 @@ public class Parser
 		for(int i = 0; i < subDocs.getLength(); i++ )
 		{
 			//convert each child node into a Document.
-			ArrayList<TextToken> doctext = new ArrayList<TextToken>();
+			HashMap<String, Word> doctext = new HashMap<String, Word>();
 			System.out.println(cur.getTextContent());
 			stringToTextTokens(cur.getTextContent(), doctext);
 			//TODO add doctext to a IRDocument and return the list of Document
 			walk.nextSibling();
 		}
+		return output;
 	}
 	
 	 static org.w3c.dom.Document parseXMLDomain(String filename){
