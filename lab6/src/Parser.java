@@ -74,7 +74,6 @@ public class Parser
 				while (st.hasMoreTokens())
 				{
 					String currChunk = st.nextToken();
-					System.out.println(currChunk);
 						if(!currChunk.isEmpty())
 						{
 							stopwords.put(currChunk, currChunk);
