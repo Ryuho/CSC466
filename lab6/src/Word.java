@@ -1,5 +1,5 @@
 import java.io.Serializable;
-import java.util.Set;
+import java.util.HashSet;
 
 
 public class Word extends TextToken implements Serializable{
@@ -7,13 +7,14 @@ public class Word extends TextToken implements Serializable{
 	double weight;
 	
 	//vocabulary terms
-	Set<Integer> documentFreq;
+	HashSet<Integer> documentFreq;
 	
 	
 	Word(String w)
 	{
 		str = w;
 		freq = 1;
+		documentFreq = new HashSet<Integer>();
 	}
 	
 	/* increment word count*/
