@@ -158,13 +158,15 @@ public class Parser
 						if (ex != null)
 						{
 							ex.incrementDocumentFreq();
+							//Vocabulary.vocab.
 							ex.addOne();
 						} else
 						{
 							Word testWord = new Word(lis[i].toLowerCase());
 							testWord.incrementDocumentFreq();
 							tokens.put(lis[i].toLowerCase(), testWord);
-							Vocabulary.vocab.add(testWord);
+							//Vocabulary.vocab.add(new Word(lis[i].toLowerCase()));
+							
 						}
 						
 						
