@@ -47,7 +47,7 @@ public class Parser
 
 	}
 
-	public HashMap<String, String> loadStopwords()
+	public static HashMap<String, String> loadStopwords()
 	{
 		String filename = "data/stopwords-onix.txt";
 
