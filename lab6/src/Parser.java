@@ -107,7 +107,7 @@ public class Parser
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		String strLine = null;
 		filename = filename.substring(0, filename.indexOf("."));
-
+		Vocabulary.docNumber++;
 		try
 		{
 			while ((strLine = br.readLine()) != null)
@@ -141,7 +141,7 @@ public class Parser
 			String[] lis = currChunk.split("[^0-9A-Za-z'-]");
 			for (int i = 0; i < lis.length; i++)
 			{
-				// TODO check for stopword here
+				// check for stopword here
 				if (!stopwords.containsKey(lis[i].toLowerCase()))
 				{
 					// if not a stopword, stem it
@@ -153,15 +153,21 @@ public class Parser
 
 					if (!lis[i].isEmpty() && !lis[i].equalsIgnoreCase("'"))
 					{
+						//document word list maintenance
 						Word ex = tokens.get(lis[i].toLowerCase());
 						if (ex != null)
 						{
+							ex.incrementDocumentFreq();
 							ex.addOne();
 						} else
 						{
-							tokens.put(lis[i].toLowerCase(), new Word(lis[i]
-									.toLowerCase()));
+							Word testWord = new Word(lis[i].toLowerCase());
+							testWord.incrementDocumentFreq();
+							tokens.put(lis[i].toLowerCase(), testWord);
+							Vocabulary.vocab.add(testWord);
 						}
+						
+						
 					}
 				} 
 			}
@@ -184,7 +190,7 @@ public class Parser
 		TreeWalkerImpl walk = (TreeWalkerImpl) doc.createTreeWalker(root,
 				NodeFilter.SHOW_ELEMENT, (NodeFilter) allelements, true);
 
-		NodeList subDocs = root.getChildNodes();
+//		NodeList subDocs = root.getChildNodes();
 		Node cur = walk.firstChild();
 		filename = filename.substring(0, filename.indexOf("."));
 		int i = 0;
@@ -193,7 +199,7 @@ public class Parser
 			// convert each child node into a Document.
 			IRDocument ird = new IRDocument();
 			HashMap<String, Word> doctext = new HashMap<String, Word>();
-
+			Vocabulary.docNumber++;
 			// System.out.println(cur.getTextContent());
 			stringToTextTokens(cur.getTextContent(), doctext);
 			ird.hashMap = doctext;
