@@ -1,10 +1,9 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.StringTokenizer;
+import java.util.*;
 
 class ir {
 	static HashMap<String,IRDocument> docs;
+	static Vocabulary vocab;
 	public static void main(String[] args) {
 		docs = new HashMap<String,IRDocument>();
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -29,12 +28,14 @@ class ir {
 			if(tokInput.size() == 0){
 				continue;
 			}
-			else if(tokInput.get(0).compareToIgnoreCase("QUIT") == 0){
+			else if(tokInput.get(0).compareToIgnoreCase("QUIT") == 0 &&
+			        tokInput.size() == 1){
 				System.out.println("Quitting");
 				SerializeDoc();
 				System.exit(0);
 			}
-			else if(tokInput.get(0).compareToIgnoreCase("READ") == 0){
+			else if(tokInput.get(0).compareToIgnoreCase("READ") == 0 &&
+                    tokInput.size() >= 1){
 				tokInput.remove(0);
 				if(tokInput.get(0).compareToIgnoreCase("LIST") == 0){
 					tokInput.remove(0);
@@ -49,16 +50,20 @@ class ir {
 				        System.out.println("Could not read in "+ tokInput.get(i));
 				    }
 				}
+				SerializeDoc();
 			}
-			else if(tokInput.get(0).compareToIgnoreCase("LIST") == 0){
+			else if(tokInput.get(0).compareToIgnoreCase("LIST") == 0 &&
+                    tokInput.size() == 1){
 				List();
 			}
-			else if(tokInput.get(0).compareToIgnoreCase("CLEAR") == 0){
+			else if(tokInput.get(0).compareToIgnoreCase("CLEAR") == 0 &&
+                    tokInput.size() == 1){
 				System.out.println("Cleared documents");
 				docs.clear();
-				//TODO possibly remove persistant data
+				SerializeDoc();
 			}
-			else if(tokInput.get(0).compareToIgnoreCase("PRINT") == 0 && tokInput.size() == 2){
+			else if(tokInput.get(0).compareToIgnoreCase("PRINT") == 0 
+			        && tokInput.size() == 2){
 			    if(!docs.containsKey(tokInput.get(1))){
                     System.out.println("Document ID: " + tokInput.get(1)+" does not exist!");
                 }
@@ -66,7 +71,8 @@ class ir {
                     //System.out.println(Parser.printDoc(tokInput.get(1)));
                 }
 			}
-			else if(tokInput.get(0).compareToIgnoreCase("SHOW") == 0 && tokInput.size() == 2){
+			else if(tokInput.get(0).compareToIgnoreCase("SHOW") == 0 
+			        && tokInput.size() == 2){
 			    if(!docs.containsKey(tokInput.get(1))){
 			        System.out.println("Document ID: " + tokInput.get(1)+" does not exist!");
 			    }
@@ -74,7 +80,8 @@ class ir {
 			        System.out.println(docs.get(tokInput.get(1)).toString());
 			    }
 			}
-			else if(tokInput.get(0).compareToIgnoreCase("SIM") == 0 && tokInput.size() == 3){
+			else if(tokInput.get(0).compareToIgnoreCase("SIM") == 0 
+			        && tokInput.size() == 3){
 			    if(!docs.containsKey(tokInput.get(1))){
                     System.out.println("Document ID: " + tokInput.get(1)+" does not exist!");
                 }
@@ -85,8 +92,10 @@ class ir {
                     Similarity(docs.get(tokInput.get(1)),docs.get(tokInput.get(2)));
                 }
 			}
-			else if(tokInput.get(0).compareToIgnoreCase("SEARCH") == 0){
-                if(tokInput.get(1).compareToIgnoreCase("DOC") == 0){
+			else if(tokInput.get(0).compareToIgnoreCase("SEARCH") == 0 &&
+                    tokInput.size() >= 2){
+                if(tokInput.get(1).compareToIgnoreCase("DOC") == 0 &&
+                        tokInput.size() >= 3){
                     if(!docs.containsKey(tokInput.get(2))){
                         System.out.println("Document ID: " + tokInput.get(1)+" does not exist!");
                     }
@@ -94,7 +103,7 @@ class ir {
                         //TODO search for documents similar to given document
                     }
                 }
-                else if(tokInput.size() == 1){
+                else if(tokInput.size() == 2){
                     //TODO take in a string, search for documents relevant to the query string
                 }
                 else{
@@ -173,7 +182,15 @@ class ir {
             oos.close();
         } catch (Exception e) {
             System.err.println("Error while trying to serialize doc!");
-            e.printStackTrace();
+        }
+        try {
+            FileOutputStream fos;
+            fos = new FileOutputStream("voc.save");
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(vocab);
+            oos.close();
+        } catch (Exception e) {
+            System.err.println("Error while trying to serialize vocabulary!");
         }
     }
     
@@ -186,11 +203,24 @@ class ir {
                 ois.close();
             } catch (Exception e) {
                 System.err.println("Error while trying to deserialize doc!");
-                e.printStackTrace();
             }
         }
+        if((new File("voc.save")).exists()){
+            try {
+                FileInputStream fis = new FileInputStream("voc.save");
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                vocab = (Vocabulary) ois.readObject();
+                ois.close();
+            } catch (Exception e) {
+                System.err.println("Error while trying to deserialize vocabulary!");
+                vocab = new Vocabulary();
+            }
+        }
+        else{
+            vocab = new Vocabulary();
+        }
     }
-	
+    
     private static void printHelp(){
         System.out.println("Available commands are:");
         System.out.println("READ <file.xml>       Read text document(s) from an XML file");
