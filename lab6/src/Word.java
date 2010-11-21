@@ -7,14 +7,15 @@ public class Word extends TextToken implements Serializable{
 	double weight;
 	
 	//vocabulary terms
-	HashSet<Integer> documentFreq;
+	//HashSet<Integer> documentFreq;
+	int documentFreq;
 	
 	
 	Word(String w)
 	{
 		str = w;
 		freq = 1;
-		documentFreq = new HashSet<Integer>();
+		documentFreq = 0;//= new HashSet<Integer>();
 	}
 	
 	/* increment word count*/
@@ -40,12 +41,13 @@ public class Word extends TextToken implements Serializable{
 	
 	public void incrementDocumentFreq()
 	{
-		documentFreq.add(Vocabulary.docNumber);
+		//documentFreq.add(Vocabulary.docNumber);
+		documentFreq++;
 	}
 	
 	public int documentFreq()
 	{
-		return documentFreq.size();
+		return documentFreq;
 	}
 	
 	public boolean equals(Object o)
