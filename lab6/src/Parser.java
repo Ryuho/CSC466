@@ -21,6 +21,8 @@ import javax.xml.parsers.*;
 
 public class Parser
 {
+	static HashMap<String, String> stopwords;
+	
 	// need to change return valye to document
 	public static HashMap<String, IRDocument> Read(String filename)
 	{
@@ -43,6 +45,54 @@ public class Parser
 		}
 		return output;
 
+	}
+
+	public HashMap<String, String> loadStopwords()
+	{
+		String filename = "data/stopwords-onix.txt";
+
+		FileInputStream fstream = null;
+		try
+		{
+			fstream = new FileInputStream(filename);
+		} catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+			System.err.println("Stopword File Onix Not Found.");
+			return null;
+		}
+
+		DataInputStream in = new DataInputStream(fstream);
+		BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		String strLine = null;
+
+		try
+		{
+			while ((strLine = br.readLine()) != null)
+			{
+
+				StringTokenizer st = new StringTokenizer(strLine, " ");
+				while (st.hasMoreTokens())
+				{
+					String currChunk = st.nextToken().trim();
+					String[] lis = currChunk.split("[^0-9A-Za-z'-]");
+					for (int i = 0; i < lis.length; i++)
+					{
+						if (!lis[i].isEmpty())
+						{
+							stopwords.put(lis[i].toLowerCase(),
+										lis[i].toLowerCase());
+						}
+					}
+				}
+			}
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+			System.err.println("Exception while reading Onix Stopword file.");
+			return null;
+		}
+		return stopwords;
 	}
 
 	static HashMap<String, IRDocument> parseTextFile(String filename)
@@ -102,20 +152,21 @@ public class Parser
 			{
 				// TODO check for stopword here
 				// TODO if not a stopword, stem it
-				stemr.add(lis[i].toCharArray(), lis[i].length());
+				char[] tmp = lis[i].trim().toCharArray();
+				stemr.add(tmp, lis[i].length());
 				stemr.stem();
 				lis[i] = stemr.toString();
-				
-				if (lis[i] != "" && !lis[i].matches("\\s"))
+
+				if (!lis[i].isEmpty())
 				{
 					Word ex = tokens.get(lis[i].toLowerCase());
 					if (ex != null)
 					{
 						ex.addOne();
-					} 
-					else
+					} else
 					{
-						tokens.put(lis[i].toLowerCase(), new Word(lis[i].toLowerCase()));
+						tokens.put(lis[i].toLowerCase(), new Word(lis[i]
+								.toLowerCase()));
 					}
 				}
 			}
@@ -128,9 +179,9 @@ public class Parser
 	{
 		HashMap<String, IRDocument> output = new HashMap<String, IRDocument>();
 		DocumentImpl doc = (DocumentImpl) parseXMLDomain(filename);
-		if(doc == null)
+		if (doc == null)
 		{
-			//file was not found
+			// file was not found
 			return null;
 		}
 		Node root = doc.getLastChild();
@@ -141,19 +192,19 @@ public class Parser
 		NodeList subDocs = root.getChildNodes();
 		Node cur = walk.firstChild();
 		filename = filename.substring(0, filename.indexOf("."));
-		int  i = 0;
-		while(cur != null)
+		int i = 0;
+		while (cur != null)
 		{
 			// convert each child node into a Document.
 			IRDocument ird = new IRDocument();
 			HashMap<String, Word> doctext = new HashMap<String, Word>();
 
-			//System.out.println(cur.getTextContent());
+			// System.out.println(cur.getTextContent());
 			stringToTextTokens(cur.getTextContent(), doctext);
 			ird.hashMap = doctext;
 			ird.id = filename + "-" + i;
 			output.put(filename + "-" + i, ird);
-			cur = walk.nextSibling(); 
+			cur = walk.nextSibling();
 			i++;
 		}
 		return output;
@@ -179,11 +230,17 @@ public class Parser
 		} catch (Exception e)
 		{
 			System.out.println("File not found\n");
-			//e.printStackTrace();
-			//System.exit(-1);
+			// e.printStackTrace();
+			// System.exit(-1);
 			return null;
 		}
 		return document;
+	}
+	
+	public String printDoc(String dname)
+	{
+		String output = "";
+		return output;
 	}
 }
 
