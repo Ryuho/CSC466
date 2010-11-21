@@ -1,8 +1,10 @@
+import java.io.Serializable;
+
 
 @SuppressWarnings("unchecked")
-public abstract class TextToken implements java.lang.Comparable {
-	
-	java.lang.String str;
+public abstract class TextToken implements java.lang.Comparable, Serializable {
+    private static final long serialVersionUID = 4563484328421615478L;
+    java.lang.String str;
 	java.lang.Integer freq;
 	static boolean isStrSorted;
 	
