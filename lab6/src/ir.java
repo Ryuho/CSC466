@@ -7,12 +7,13 @@ class ir {
 	static HashMap<String,IRDocument> docs;
 	public static void main(String[] args) {
 		docs = new HashMap<String,IRDocument>();
-		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String input = null;
+		
 		DeserializeDoc();
 		System.out.println("IR System:");
-
+		Parser.loadStopwords();
+		
 		while(true){
 			System.out.print("Core: ");
 			try {
