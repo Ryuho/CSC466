@@ -41,7 +41,12 @@ class ir {
 				//for each fileName, make a list of IRDoc, and add it to the hashmap of docs
 				for(int i = 0; i < tokInput.size(); i++){
 				    HashMap<String,IRDocument> temp = Parser.Read(tokInput.get(i));
-				    docs.putAll(temp);
+				    if(temp != null){
+				        docs.putAll(temp);
+				    }
+				    else{
+				        System.out.println("Could not read in "+ tokInput.get(i));
+				    }
 				}
 			}
 			else if(tokInput.get(0).compareToIgnoreCase("LIST") == 0){
@@ -57,7 +62,7 @@ class ir {
                     System.out.println("Document ID: " + tokInput.get(1)+" does not exist!");
                 }
                 else{
-                    //TODO make a function that seeks to the needed document in a text or xml file
+                    //System.out.println(Parser.printDoc(tokInput.get(1)));
                 }
 			}
 			else if(tokInput.get(0).compareToIgnoreCase("SHOW") == 0 && tokInput.size() == 2){
@@ -93,10 +98,13 @@ class ir {
                 }
                 else{
                     System.out.println("Unrecognized command");
+                    printHelp();
                 }
 			}
+			
 			else{
 				System.out.println("Unrecognized command");
+				printHelp();
 			}
 			
 		}
@@ -112,7 +120,7 @@ class ir {
         if(doc.hashMap.containsKey(term)){
             freq = doc.hashMap.get(term).freq;
         }
-        double TF = (double)freq/ (double)doc.wCount;
+        double TF = (double)freq / (double)doc.wCount;
         
         int docCount = 0;
         for (IRDocument value : docs.values()) {
@@ -182,4 +190,19 @@ class ir {
         }
     }
 	
+    private static void printHelp(){
+        System.out.println("Available commands are:");
+        System.out.println("READ <file.xml>       Read text document(s) from an XML file");
+        System.out.println("READ <file.txt>       Read text document from a text file");
+        System.out.println("READ LIST <file>      Read text documents from files listed in <file>");
+        System.out.println("LIST                  Output the list of documents available in the system");
+        System.out.println("CLEAR                 Remove all documents from the system");
+        System.out.println("PRINT <DocID>         Print the content of the document to screen");
+        System.out.println("SHOW <DocID>          Show the internal representation of the document");
+        System.out.println("SIM <Doc1> <Doc2>     Compute and output the similarity between two documents");
+        System.out.println("SEARCH DOC <DocId>    Search for documents similar to given document");
+        System.out.println("SEARCH \"string\"       Search for documents relevant to the query string");
+        System.out.println("QUIT                  Quit the proram");
+    }
+    
 }
