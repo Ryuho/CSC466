@@ -157,13 +157,13 @@ public class Parser
 						Word ex = tokens.get(lis[i].toLowerCase());
 						if (ex != null)
 						{
-							ex.incrementDocumentFreq();
+							//ex.incrementDocumentFreq();
 							//Vocabulary.vocab.
 							ex.addOne();
 						} else
 						{
 							Word testWord = new Word(lis[i].toLowerCase());
-							testWord.incrementDocumentFreq();
+							//testWord.incrementDocumentFreq();
 							tokens.put(lis[i].toLowerCase(), testWord);
 							//Vocabulary.vocab.add(new Word(lis[i].toLowerCase()));
 							
@@ -244,6 +244,39 @@ public class Parser
 	{
 		String output = "";
 		return output;
+	}
+	
+	public ArrayList<Word> parseQuery(String query)
+	{
+		ArrayList<Word> qvec = new ArrayList<Word>();
+		StringTokenizer st = new StringTokenizer(query, " ");
+		Stemmer stemr = new Stemmer();
+		while (st.hasMoreTokens())
+		{
+			String currChunk = st.nextToken();
+			String[] lis = currChunk.split("[^0-9A-Za-z'-]");
+			for (int i = 0; i < lis.length; i++)
+			{
+				// check for stopword here
+				if (!stopwords.containsKey(lis[i].toLowerCase()))
+				{
+					// if not a stopword, stem it
+					char[] tmp = lis[i].trim().toCharArray();
+
+					stemr.add(tmp, lis[i].length());
+					stemr.stem();
+					lis[i] = stemr.toString();
+
+					if (!lis[i].isEmpty() && !lis[i].equalsIgnoreCase("'"))
+					{
+						Word testWord = new Word(lis[i].toLowerCase());
+						qvec.add(testWord);
+					}
+				} 
+			}
+		}
+
+		return qvec;
 	}
 }
 
