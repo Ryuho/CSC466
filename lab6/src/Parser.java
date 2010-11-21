@@ -21,7 +21,7 @@ import javax.xml.parsers.*;
 
 public class Parser
 {
-	static HashMap<String, String> stopwords;
+	static HashMap<String, String> stopwords = new HashMap<String, String>();
 	
 	// need to change return valye to document
 	public static HashMap<String, IRDocument> Read(String filename)
@@ -59,7 +59,6 @@ public class Parser
 		{
 			e.printStackTrace();
 			System.err.println("Stopword File Onix Not Found.");
-			return null;
 		}
 
 		DataInputStream in = new DataInputStream(fstream);
@@ -74,16 +73,12 @@ public class Parser
 				StringTokenizer st = new StringTokenizer(strLine, " ");
 				while (st.hasMoreTokens())
 				{
-					String currChunk = st.nextToken().trim();
-					String[] lis = currChunk.split("[^0-9A-Za-z'-]");
-					for (int i = 0; i < lis.length; i++)
-					{
-						if (!lis[i].isEmpty())
+					String currChunk = st.nextToken();
+					System.out.println(currChunk);
+						if(!currChunk.isEmpty())
 						{
-							stopwords.put(lis[i].toLowerCase(),
-										lis[i].toLowerCase());
+							stopwords.put(currChunk, currChunk);
 						}
-					}
 				}
 			}
 		} catch (IOException e)
