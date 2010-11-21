@@ -1,5 +1,6 @@
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Iterator;
 
 
 public class Vocabulary implements Serializable
@@ -14,5 +15,12 @@ public class Vocabulary implements Serializable
 		docNumber = 0;
 	}
 	
-	
+	public String toString(){
+	    String answer = "";
+	    Iterator iter = vocab.iterator();
+	    while(iter.hasNext()){
+	        answer += iter.next().toString() + "\n";
+	    }
+        return answer;
+	}
 }

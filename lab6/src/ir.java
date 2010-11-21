@@ -210,6 +210,9 @@ class ir {
                 FileInputStream fis = new FileInputStream("voc.save");
                 ObjectInputStream ois = new ObjectInputStream(fis);
                 vocab = (Vocabulary) ois.readObject();
+                System.out.println("---------");
+                System.out.println(vocab.toString());
+                System.out.println("---------");
                 ois.close();
             } catch (Exception e) {
                 System.err.println("Error while trying to deserialize vocabulary!");
