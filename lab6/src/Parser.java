@@ -22,7 +22,7 @@ import javax.xml.parsers.*;
 public class Parser
 {
 	static HashMap<String, String> stopwords = new HashMap<String, String>();
-	
+
 	// need to change return valye to document
 	public static HashMap<String, IRDocument> Read(String filename)
 	{
@@ -50,7 +50,6 @@ public class Parser
 	public static HashMap<String, String> loadStopwords()
 	{
 		String filename = "data/stopwords-onix.txt";
-
 		FileInputStream fstream = null;
 		try
 		{
@@ -60,24 +59,22 @@ public class Parser
 			e.printStackTrace();
 			System.err.println("Stopword File Onix Not Found.");
 		}
-
 		DataInputStream in = new DataInputStream(fstream);
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		String strLine = null;
-
 		try
 		{
 			while ((strLine = br.readLine()) != null)
 			{
-
 				StringTokenizer st = new StringTokenizer(strLine, " ");
 				while (st.hasMoreTokens())
 				{
 					String currChunk = st.nextToken();
-						if(!currChunk.isEmpty())
-						{
-							stopwords.put(currChunk, currChunk);
-						}
+					// System.out.println(currChunk);
+					// //if(!currChunk.isEmpty())
+					// {
+					stopwords.put(currChunk, currChunk);
+					// }
 				}
 			}
 		} catch (IOException e)
@@ -145,24 +142,28 @@ public class Parser
 			for (int i = 0; i < lis.length; i++)
 			{
 				// TODO check for stopword here
-				// TODO if not a stopword, stem it
-				char[] tmp = lis[i].trim().toCharArray();
-				stemr.add(tmp, lis[i].length());
-				stemr.stem();
-				lis[i] = stemr.toString();
-
-				if (!lis[i].isEmpty())
+				if (!stopwords.containsKey(lis[i].toLowerCase()))
 				{
-					Word ex = tokens.get(lis[i].toLowerCase());
-					if (ex != null)
+					// if not a stopword, stem it
+					char[] tmp = lis[i].trim().toCharArray();
+
+					stemr.add(tmp, lis[i].length());
+					stemr.stem();
+					lis[i] = stemr.toString();
+
+					if (!lis[i].isEmpty() && !lis[i].equalsIgnoreCase("'"))
 					{
-						ex.addOne();
-					} else
-					{
-						tokens.put(lis[i].toLowerCase(), new Word(lis[i]
-								.toLowerCase()));
+						Word ex = tokens.get(lis[i].toLowerCase());
+						if (ex != null)
+						{
+							ex.addOne();
+						} else
+						{
+							tokens.put(lis[i].toLowerCase(), new Word(lis[i]
+									.toLowerCase()));
+						}
 					}
-				}
+				} 
 			}
 		}
 
@@ -230,7 +231,7 @@ public class Parser
 		}
 		return document;
 	}
-	
+
 	public String printDoc(String dname)
 	{
 		String output = "";
