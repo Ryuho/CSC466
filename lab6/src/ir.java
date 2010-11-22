@@ -17,7 +17,7 @@ class ir {
 		Parser.loadStopwords();
 		
 		while(true){
-			System.out.print("Core: ");
+			System.out.print("IR: ");
 			try {
 				input = br.readLine();
 			} catch (IOException ioe) {
@@ -104,7 +104,17 @@ class ir {
                 if(tokInput.get(1).compareToIgnoreCase("DOC") == 0 &&
                         tokInput.size() == 3){
                     if(docs.containsKey(tokInput.get(2))){
-                        searchDoc(docs.get(tokInput.get(2)));
+                        searchDoc(docs.get(tokInput.get(2)),docs.size()-1);
+                    }
+                    else{
+                        System.out.println("Document ID: " + tokInput.get(1)+" does not exist!");
+                    }
+                }
+                else if(tokInput.get(1).compareToIgnoreCase("DOC") == 0 &&
+                        tokInput.size() == 4){
+                    if(docs.containsKey(tokInput.get(2))){
+                        int size = Integer.valueOf(tokInput.get(3));
+                        searchDoc(docs.get(tokInput.get(2)), size);
                     }
                     else{
                         System.out.println("Document ID: " + tokInput.get(1)+" does not exist!");
@@ -112,17 +122,31 @@ class ir {
                 }
                 else if(tokInput.size() >= 2){
                     tokInput.remove(0);
-                    searchString(tokInput);
+                    int size = docs.size()-1;
                     if(tokInput.get(0).startsWith("\"")){
                         tokInput.set(0, tokInput.get(0).substring(1));
                     }
                     else{
                         System.out.println("Usage: SEARCH \"string\"");
+                        System.out.println("Usage: SEARCH \"string\" (<number>)");
+                        continue;
                     }
+                    if(tokInput.get(tokInput.size()-1).endsWith("\"")){
+                        String temp = tokInput.get(tokInput.size()-1);
+                        tokInput.set(tokInput.size()-1, temp.substring(0, temp.length()-1));
+                    }
+                    else{
+                        System.out.println("Usage: SEARCH \"string\"");
+                        System.out.println("Usage: SEARCH \"string\" (<number>)");
+                        continue;
+                    }
+                    searchString(tokInput,size);
                 }
                 else{
                     System.out.println("Usage: SEARCH DOC <DocId>");
+                    System.out.println("Usage: SEARCH DOC <DocId> (<number>)");
                     System.out.println("Usage: SEARCH \"string\"");
+                    System.out.println("Usage: SEARCH \"string\" (<number>)");
                     printHelp();
                 }
 			}
@@ -136,24 +160,38 @@ class ir {
 
 	}
 	
-	private static void searchDoc(IRDocument d){
-	    IRDocument answer = null;
-	    double currSimValue = 0;
+	private static void searchDoc(IRDocument d, int size){
+	    ArrayList<Pair> list = new ArrayList<Pair>();
         for(IRDocument tempDoc : docs.values()){
             if(tempDoc.id.compareTo(d.id) != 0){
                 double tempSim = Similarity(d,tempDoc);
-                if(currSimValue < tempSim){
-                    answer = tempDoc;
-                    currSimValue = tempSim;
+                if(tempSim != 0){
+                    list.add(new Pair(tempSim,tempDoc.id));
                 }
             }
         }
-        System.out.println("Most similar document is: "+answer.id);
+        Collections.sort(list);
+        
+        int i = 0;
+        while(i < list.size() && i < size){
+            System.out.println("DocID: "+list.get(i).getStr()+ "\t" +list.get(i).getSimValue());
+            i++;
+        }
     }
 
-    private static void searchString(ArrayList<String> strList){
+	private static void searchString(ArrayList<String> strList, int size){
+        String input = concactALString(strList);
+        IRDocument fakeDoc = Parser.parseQuery(input);
         
-        
+        searchDoc(fakeDoc,size);
+    }
+	
+	private static String concactALString(ArrayList<String> strList){
+	    String answer = "";
+	    for(int i = 0; i < strList.size(); i++){
+	        answer += strList.get(i) + " ";
+	    }
+        return answer;
     }
     
     private static double Similarity(IRDocument doc1, IRDocument doc2) {
