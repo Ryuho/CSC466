@@ -40,8 +40,34 @@ public class Parser
 			output = parseTextFile(filename);
 		} else
 		{
-			System.out.println("Internal error. This is a list of files\n");
-			return null;
+			//read in the file and then call per line
+			FileInputStream fstream = null;
+			try
+			{
+				fstream = new FileInputStream(filename);
+			} catch (FileNotFoundException e)
+			{
+				e.printStackTrace();
+				System.err.println("File List File Not Found.");
+				return null;
+			}
+
+			DataInputStream in = new DataInputStream(fstream);
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			String strLine = null;
+			//filename = filename.substring(0, filename.indexOf("."));
+			try
+			{
+				while ((strLine = br.readLine()) != null)
+				{
+					output.putAll(Read(strLine));
+				}
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+				System.err.println("Exception while reading file.");
+				return null;
+			}
 		}
 		return output;
 
@@ -265,10 +291,28 @@ public class Parser
 				return null;
 			}
 			Node root = doc.getLastChild();
-			NodeList subDocs = root.getChildNodes();
-			//Node cur = walk.firstChild();
-			Node cur = subDocs.item(Integer.parseInt(lis[1]));
-			output = cur.getTextContent();
+			AllElements allelements = new AllElements();
+			TreeWalkerImpl walk = (TreeWalkerImpl) doc.createTreeWalker(root,
+					NodeFilter.SHOW_ELEMENT, (NodeFilter) allelements, true);
+			//NodeList subDocs = root.getChildNodes();
+			//System.out.println(lis[1] + " " + subDocs.getLength());
+			Node cur = walk.firstChild();
+			//Node cur = subDocs.item(Integer.parseInt(lis[1]));
+			int i = 0;
+			while(cur != null)
+			{
+				if(i == Integer.parseInt(lis[1]))
+				{
+					output = cur.getTextContent();
+					cur = null;
+				}
+				else
+				{
+					cur = walk.nextSibling();
+					i++;
+				}
+			}
+			
 		}
 		else
 		{
