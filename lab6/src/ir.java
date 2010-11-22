@@ -130,21 +130,31 @@ class ir {
 	}
 	
 	private static void searchDoc(IRDocument d){
-	    IRDocument answer;
+	    IRDocument answer = null;
 	    double currSimValue = 0;
         for(IRDocument tempDoc : docs.values()){
-            if(){
-                
+            if(tempDoc.id.compareTo(d.id) != 0){
+                double tempSim = Similarity(d,tempDoc);
+                if(currSimValue < tempSim){
+                    answer = tempDoc;
+                    currSimValue = tempSim;
+                }
             }
         }
+        System.out.println("Most similar document is: "+answer.id);
     }
 
     private static void searchString(ArrayList<String> strList){
         
+        
     }
     
     private static double Similarity(IRDocument doc1, IRDocument doc2) {
+        double answer = 0;
         double sum1 = 0;
+        double sum2 = 0;
+        double sum3 = 0;
+        
         int size = 0;
         HashMap<String,Word> temp;
         if(doc1.hashMap.size() < doc2.hashMap.size()){
@@ -158,22 +168,24 @@ class ir {
         for(Word w : temp.values()){
             sum1 += TFIDF(doc1,w) * TFIDF(doc2,w);
         }
-        System.out.println("sim1="+sum1);
         
-        double sum2 = 0;
-        double sum3 = 0;
+
         for(Word w : temp.values()){
-            sum2 += TFIDF(doc1,w);
-            sum3 += TFIDF(doc2,w);
+            sum2 += Math.pow(TFIDF(doc1,w),2);
+            sum3 += Math.pow(TFIDF(doc2,w),2);
         }
         
-        //square sum2 and sum3
-        sum2 = Math.pow(sum2, 2);
-        sum3 = Math.pow(sum3, 2);
-        System.out.println("sim2="+sum2);
-        System.out.println("sim3="+sum3);
+        //System.out.println("sim1="+sum1);
+        //System.out.println("sim2="+sum2);
+        //System.out.println("sim3="+sum3);
         
-        return sum1 / Math.sqrt(sum2*sum3);
+        answer = sum1 / Math.sqrt(sum2*sum3);
+        
+        if(Double.isInfinite(answer) || Double.isNaN(answer)){
+            answer = 0;
+        }
+        
+        return answer;
     }
     
     private static double TFIDF(IRDocument doc, Word w){

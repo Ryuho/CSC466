@@ -29,7 +29,7 @@ public class Vocabulary implements Serializable
 	
 	public void addDocument(IRDocument d){
 	    for(Word w : d.hashMap.values()){
-	        System.out.println("doing vocab stuff for "+w.str);
+	        //System.out.println("doing vocab stuff for "+w.str);
 	        if(vocab.containsKey(w.str)){
 	            vocab.put(w.str, vocab.get(w.str)+1);
 	        }
