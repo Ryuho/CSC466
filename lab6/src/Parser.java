@@ -126,6 +126,11 @@ public class Parser
 		IRDocument result = new IRDocument();
 		result.id = filename;
 		result.hashMap = werd;
+		for(Word w : werd.values() )
+		{
+			result.wCount += w.freq;
+		}
+		//result.wCount = 
 		output.put(filename, result);
 		return output;
 	}
