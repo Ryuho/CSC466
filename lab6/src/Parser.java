@@ -211,6 +211,11 @@ public class Parser
 			stringToTextTokens(cur.getTextContent(), doctext);
 			ird.hashMap = doctext;
 			ird.id = filename + "-" + i;
+			for(Word w : doctext.values() )
+			{
+				ird.wCount += w.freq;
+			}
+			
 			output.put(filename + "-" + i, ird);
 			cur = walk.nextSibling();
 			i++;
