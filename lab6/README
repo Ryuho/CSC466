@@ -14,3 +14,5 @@ javac ir.java *.java
 
 TO RUN
 java ir
+
+IMPORTANT: avoid using .. directory when specifying a file to read 
