@@ -122,7 +122,6 @@ class ir {
                     }
                     else{
                         System.out.println("Usage: SEARCH \"string\"");
-                        System.out.println("Usage: SEARCH \"string\" (<number>)");
                         continue;
                     }
                     if(tokInput.get(tokInput.size()-1).endsWith("\"")){
