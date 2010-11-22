@@ -222,7 +222,8 @@ public class Parser
 
 //		NodeList subDocs = root.getChildNodes();
 		Node cur = walk.firstChild();
-		filename = filename.substring(0, filename.indexOf("."));
+
+		filename = filename.substring(0, filename.indexOf(".xml"));
 		int i = 0;
 		while (cur != null)
 		{
