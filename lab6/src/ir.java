@@ -137,7 +137,6 @@ class ir {
                     }
                     else{
                         System.out.println("Usage: SEARCH \"string\"");
-                        System.out.println("Usage: SEARCH \"string\" (<number>)");
                         continue;
                     }
                     searchString(tokInput,size);
@@ -264,10 +263,10 @@ class ir {
         double answer = TF*IDF;
         
         if(Double.isInfinite(answer)){
-            System.out.println("isInfinite TFIDF!");
+            return 0;
         }
         else if(Double.isNaN(answer)){
-            System.out.println("isNaN TFIDF!");
+            return 0;
         }
         //System.out.println("==============================");
         return TF*IDF;
