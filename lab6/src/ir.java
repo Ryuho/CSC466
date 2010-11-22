@@ -3,9 +3,6 @@ import java.util.*;
 
 class ir {
 	static HashMap<String,IRDocument> docs;
-	static Vocabulary library;
-	
-	
 	
 	public static void main(String[] args) {
 		docs = new HashMap<String,IRDocument>();
@@ -47,9 +44,6 @@ class ir {
 				for(int i = 0; i < tokInput.size(); i++){
 				    HashMap<String,IRDocument> temp = Parser.Read(tokInput.get(i));
 				    if(temp != null){
-	                    for(IRDocument d : temp.values()){
-	                        library.addDocument(d);
-	                    }
 				        docs.putAll(temp);
 				    }
 				    else{
@@ -122,7 +116,7 @@ class ir {
                 }
                 else if(tokInput.size() >= 2){
                     tokInput.remove(0);
-                    int size = docs.size()-1;
+                    int size = docs.size();
                     if(tokInput.get(0).startsWith("\"")){
                         tokInput.set(0, tokInput.get(0).substring(1));
                     }
@@ -159,6 +153,14 @@ class ir {
 
 	}
 	
+
+    private static void searchString(ArrayList<String> strList, int size){
+        String input = concactALString(strList);
+        IRDocument fakeDoc = Parser.parseQuery(input);
+        
+        searchDoc(fakeDoc,size);
+    }
+    
 	private static void searchDoc(IRDocument d, int size){
 	    ArrayList<Pair> list = new ArrayList<Pair>();
         for(IRDocument tempDoc : docs.values()){
@@ -176,13 +178,6 @@ class ir {
             System.out.println("DocID: "+list.get(i).getStr()+ "\t" +list.get(i).getSimValue());
             i++;
         }
-    }
-
-	private static void searchString(ArrayList<String> strList, int size){
-        String input = concactALString(strList);
-        IRDocument fakeDoc = Parser.parseQuery(input);
-        
-        searchDoc(fakeDoc,size);
     }
 	
 	private static String concactALString(ArrayList<String> strList){
@@ -315,15 +310,6 @@ class ir {
         } catch (Exception e) {
             System.err.println("Error while trying to serialize doc!");
         }
-        try {
-            FileOutputStream fos;
-            fos = new FileOutputStream("voc.save");
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(library);
-            oos.close();
-        } catch (Exception e) {
-            System.err.println("Error while trying to serialize vocabulary!");
-        }
     }
     
     private static void DeserializeDoc(){
@@ -336,20 +322,6 @@ class ir {
             } catch (Exception e) {
                 System.err.println("Error while trying to deserialize doc!");
             }
-        }
-        if((new File("voc.save")).exists()){
-            try {
-                FileInputStream fis = new FileInputStream("voc.save");
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                library = (Vocabulary) ois.readObject();
-                ois.close();
-            } catch (Exception e) {
-                System.err.println("Error while trying to deserialize vocabulary!");
-                library = new Vocabulary();
-            }
-        }
-        else{
-            library = new Vocabulary();
         }
     }
     

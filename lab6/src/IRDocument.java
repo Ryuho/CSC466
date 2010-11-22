@@ -15,6 +15,7 @@ class IRDocument implements Serializable{
 	public String toString(){
 	    String answer = "";
 	    answer += "Document ID: " + id + "\n";
+	    answer += "Document wCount: " + wCount + "\n";
 	    for (Word value : hashMap.values()) {
 	        answer += value.toString() + "\n";
 	    }
