@@ -74,7 +74,7 @@ class ir {
                     System.out.println("Document ID: " + tokInput.get(1)+" does not exist!");
                 }
                 else{
-                    //System.out.println(Parser.printDoc(tokInput.get(1)));
+                    System.out.println(Parser.printDoc(tokInput.get(1)));
                 }
 			}
 			else if(tokInput.get(0).compareToIgnoreCase("SHOW") == 0 
@@ -102,20 +102,27 @@ class ir {
 			else if(tokInput.get(0).compareToIgnoreCase("SEARCH") == 0 &&
                     tokInput.size() >= 2){
                 if(tokInput.get(1).compareToIgnoreCase("DOC") == 0 &&
-                        tokInput.size() >= 3){
-                    if(!docs.containsKey(tokInput.get(2))){
-                        System.out.println("Document ID: " + tokInput.get(1)+" does not exist!");
-                    }
-                    else{
+                        tokInput.size() == 3){
+                    if(docs.containsKey(tokInput.get(2))){
                         searchDoc(docs.get(tokInput.get(2)));
                     }
+                    else{
+                        System.out.println("Document ID: " + tokInput.get(1)+" does not exist!");
+                    }
                 }
-                else if(tokInput.size() == 2){
+                else if(tokInput.size() >= 2){
                     tokInput.remove(0);
                     searchString(tokInput);
+                    if(tokInput.get(0).startsWith("\"")){
+                        tokInput.set(0, tokInput.get(0).substring(1));
+                    }
+                    else{
+                        System.out.println("Usage: SEARCH \"string\"");
+                    }
                 }
                 else{
-                    System.out.println("Unrecognized command");
+                    System.out.println("Usage: SEARCH DOC <DocId>");
+                    System.out.println("Usage: SEARCH \"string\"");
                     printHelp();
                 }
 			}
