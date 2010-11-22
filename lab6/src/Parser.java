@@ -253,10 +253,11 @@ public class Parser
 	public String printDoc(String dname)
 	{
 		String output = "";
+		
 		return output;
 	}
 	
-	public ArrayList<Word> parseQuery(String query)
+	public static ArrayList<Word> parseQuery(String query)
 	{
 		ArrayList<Word> qvec = new ArrayList<Word>();
 		StringTokenizer st = new StringTokenizer(query, " ");
