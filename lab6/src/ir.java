@@ -3,7 +3,7 @@ import java.util.*;
 
 class ir {
 	static HashMap<String,IRDocument> docs;
-	static Vocabulary vocab;
+	static Vocabulary library;
 	public static void main(String[] args) {
 		docs = new HashMap<String,IRDocument>();
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -44,6 +44,9 @@ class ir {
 				for(int i = 0; i < tokInput.size(); i++){
 				    HashMap<String,IRDocument> temp = Parser.Read(tokInput.get(i));
 				    if(temp != null){
+	                    for(IRDocument d : temp.values()){
+	                        library.addDocument(d);
+	                    }
 				        docs.putAll(temp);
 				    }
 				    else{
@@ -89,7 +92,8 @@ class ir {
 			        System.out.println("Document ID: " + tokInput.get(2)+" does not exist!");
 			    }
                 else{
-                    Similarity(docs.get(tokInput.get(1)),docs.get(tokInput.get(2)));
+                    double sim = Similarity(docs.get(tokInput.get(1)),docs.get(tokInput.get(2)));
+                    System.out.println("Sim="+sim);
                 }
 			}
 			else if(tokInput.get(0).compareToIgnoreCase("SEARCH") == 0 &&
@@ -121,8 +125,24 @@ class ir {
 
 	}
 	
-    private static void Similarity(IRDocument document, IRDocument document2) {
-        //TODO 
+    private static double Similarity(IRDocument doc1, IRDocument doc2) {
+        double sum1 = 0;
+        for(String term : library.vocab.keySet()){
+            sum1 += TFIDF(doc1,term) * TFIDF(doc2,term);
+        }
+        
+        double sum2 = 0;
+        double sum3 = 0;
+        for(String term : library.vocab.keySet()){
+            sum2 += TFIDF(doc1,term);
+            sum3 += TFIDF(doc2,term);
+        }
+        
+        //square sum2 and sum3
+        sum2 = Math.pow(sum2, 2);
+        sum3 = Math.pow(sum3, 2);
+        
+        return sum1 / Math.sqrt(sum2*sum3);
     }
     
     private static double TFIDF(IRDocument doc, String term){
@@ -140,6 +160,9 @@ class ir {
         }
         double IDF = Math.log((double)docs.size() / (double)docCount)/Math.log(2.0);
         
+        if(TF*IDF <= 0){
+            System.out.println("negative TFIDF!");
+        }
         return TF*IDF;
     }
 
@@ -187,7 +210,7 @@ class ir {
             FileOutputStream fos;
             fos = new FileOutputStream("voc.save");
             ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(vocab);
+            oos.writeObject(library);
             oos.close();
         } catch (Exception e) {
             System.err.println("Error while trying to serialize vocabulary!");
@@ -209,18 +232,15 @@ class ir {
             try {
                 FileInputStream fis = new FileInputStream("voc.save");
                 ObjectInputStream ois = new ObjectInputStream(fis);
-                vocab = (Vocabulary) ois.readObject();
-                System.out.println("---------");
-                System.out.println(vocab.toString());
-                System.out.println("---------");
+                library = (Vocabulary) ois.readObject();
                 ois.close();
             } catch (Exception e) {
                 System.err.println("Error while trying to deserialize vocabulary!");
-                vocab = new Vocabulary();
+                library = new Vocabulary();
             }
         }
         else{
-            vocab = new Vocabulary();
+            library = new Vocabulary();
         }
     }
     
