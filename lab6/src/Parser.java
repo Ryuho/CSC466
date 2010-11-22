@@ -47,8 +47,8 @@ public class Parser
 				fstream = new FileInputStream(filename);
 			} catch (FileNotFoundException e)
 			{
-				e.printStackTrace();
-				System.err.println("File List File Not Found.");
+				//e.printStackTrace();
+				//System.err.println("File List File Not Found.");
 				return null;
 			}
 
@@ -75,7 +75,7 @@ public class Parser
 
 	public static HashMap<String, String> loadStopwords()
 	{
-		String filename = "data/stopwords-onix.txt";
+		String filename = "stopwords-onix.txt";
 		FileInputStream fstream = null;
 		try
 		{
@@ -133,7 +133,6 @@ public class Parser
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		String strLine = null;
 		filename = filename.substring(0, filename.indexOf("."));
-		Vocabulary.docNumber++;
 		try
 		{
 			while ((strLine = br.readLine()) != null)
@@ -189,14 +188,12 @@ public class Parser
 						if (ex != null)
 						{
 							//ex.incrementDocumentFreq();
-							//Vocabulary.vocab.
 							ex.addOne();
 						} else
 						{
 							Word testWord = new Word(lis[i].toLowerCase());
 							//testWord.incrementDocumentFreq();
 							tokens.put(lis[i].toLowerCase(), testWord);
-							//Vocabulary.vocab.add(new Word(lis[i].toLowerCase()));
 							
 						}
 						
@@ -232,7 +229,6 @@ public class Parser
 			// convert each child node into a Document.
 			IRDocument ird = new IRDocument();
 			HashMap<String, Word> doctext = new HashMap<String, Word>();
-			Vocabulary.docNumber++;
 			// System.out.println(cur.getTextContent());
 			stringToTextTokens(cur.getTextContent(), doctext);
 			ird.hashMap = doctext;
@@ -335,7 +331,6 @@ public class Parser
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			String strLine = null;
 			dname = dname.substring(0, dname.indexOf("."));
-			Vocabulary.docNumber++;
 			try
 			{
 				while ((strLine = br.readLine()) != null)
