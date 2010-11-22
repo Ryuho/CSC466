@@ -352,13 +352,16 @@ public class Parser
 		return output;
 	}
 	
-	public static ArrayList<Word> parseQuery(String query)
+	public static IRDocument parseQuery(String query)
 	{
-		ArrayList<Word> qvec = new ArrayList<Word>();
+		HashMap<String, Word> qvec = new HashMap<String, Word>();
 		StringTokenizer st = new StringTokenizer(query, " ");
 		Stemmer stemr = new Stemmer();
+		int wcount = 0;
+		
 		while (st.hasMoreTokens())
 		{
+			wcount++;
 			String currChunk = st.nextToken();
 			String[] lis = currChunk.split("[^0-9A-Za-z'-]");
 			for (int i = 0; i < lis.length; i++)
@@ -376,14 +379,19 @@ public class Parser
 					if (!lis[i].isEmpty() && !lis[i].equalsIgnoreCase("'"))
 					{
 						Word testWord = new Word(lis[i].toLowerCase());
-						qvec.add(testWord);
+						qvec.put(lis[i].toLowerCase(), testWord);
 					}
 				} 
 			}
 		}
 
-		return qvec;
+		IRDocument result = new IRDocument();
+		result.id = "query";
+		result.hashMap = qvec;
+		result.wCount = wcount;
+		return result;
 	}
+	
 }
 
 // filters the elements of the XML document
