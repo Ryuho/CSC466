@@ -11,8 +11,5 @@ stopwords-onix.txt must be in teh same directory as the source folders
 TO COMPILE
 javac ir.java *.java
 
-
 TO RUN
 java ir
-
-IMPORTANT: avoid using .. directory when specifying a file to read 
