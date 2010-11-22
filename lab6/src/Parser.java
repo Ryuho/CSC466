@@ -253,7 +253,58 @@ public class Parser
 	public String printDoc(String dname)
 	{
 		String output = "";
-		
+		String[] lis = dname.split("-");
+		if(lis.length > 1)
+		{
+			//XML file, pull out relevant XML joke
+			
+			DocumentImpl doc = (DocumentImpl) parseXMLDomain(lis[0]+".xml");
+			if (doc == null)
+			{
+				System.out.println("can't reopen xml file");
+				return null;
+			}
+			Node root = doc.getLastChild();
+			NodeList subDocs = root.getChildNodes();
+			//Node cur = walk.firstChild();
+			Node cur = subDocs.item(Integer.parseInt(lis[1]));
+			output = cur.getTextContent();
+		}
+		else
+		{
+			//text file
+			lis[0] += ".txt";
+			dname = lis[0];
+			
+			FileInputStream fstream = null;
+			try
+			{
+				fstream = new FileInputStream(dname);
+			} catch (FileNotFoundException e)
+			{
+				e.printStackTrace();
+				System.err.println("File Not Found.");
+				return null;
+			}
+
+			DataInputStream in = new DataInputStream(fstream);
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			String strLine = null;
+			dname = dname.substring(0, dname.indexOf("."));
+			Vocabulary.docNumber++;
+			try
+			{
+				while ((strLine = br.readLine()) != null)
+				{
+					output += strLine;
+				}
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+				System.err.println("Exception while reading file.");
+				return null;
+			}
+		}
 		return output;
 	}
 	
