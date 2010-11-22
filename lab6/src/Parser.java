@@ -250,7 +250,7 @@ public class Parser
 		return document;
 	}
 
-	public String printDoc(String dname)
+	public static String printDoc(String dname)
 	{
 		String output = "";
 		String[] lis = dname.split("-");
