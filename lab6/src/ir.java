@@ -308,7 +308,7 @@ class ir {
         return answer;
     }
     
-    private static double TFIDF(IRDocument doc, Word w){
+    public static double TFIDF(IRDocument doc, Word w){
         //System.out.println("==============================");
         //System.out.println(doc.toString());
         //System.out.println("Word="+w.str);

@@ -13,3 +13,7 @@ javac ir.java *.java
 
 TO RUN
 java ir
+
+Extra Credit:
+We implemented Okapi as well as TFIDF, both the functions
+will be run automatically without any extra arguments.

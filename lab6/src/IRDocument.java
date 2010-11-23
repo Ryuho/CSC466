@@ -18,7 +18,9 @@ class IRDocument implements Serializable{
 	    answer += "Document ID: " + id + "\n";
 	    answer += "Document wCount: " + wCount + "\n";
 	    for (Word value : hashMap.values()) {
-	        answer += value.toString() + "\n";
+	        double weight = ir.TFIDF(this,value);
+	        
+	        answer += value.str + "\t" + weight +"\n";
 	    }
 
         return answer;
