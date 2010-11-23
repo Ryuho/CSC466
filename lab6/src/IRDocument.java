@@ -7,6 +7,7 @@ class IRDocument implements Serializable{
     String id;
     HashMap<String, Word> hashMap;
     int wCount;
+    int bytelength;
     
 	IRDocument(){
 	    

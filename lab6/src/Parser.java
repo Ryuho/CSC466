@@ -154,6 +154,7 @@ public class Parser
 		for(Word w : werd.values() )
 		{
 			result.wCount += w.freq;
+			result.bytelength += w.str.length() * 8;
 		}
 		//result.wCount = 
 		output.put(filename, result);
@@ -237,6 +238,7 @@ public class Parser
 			for(Word w : doctext.values() )
 			{
 				ird.wCount += w.freq;
+				ird.bytelength += w.str.length() * 8;
 			}
 			
 			output.put(filename + "-" + i, ird);

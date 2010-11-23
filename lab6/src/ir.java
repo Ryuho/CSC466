@@ -3,7 +3,9 @@ import java.util.*;
 
 class ir {
 	static HashMap<String,IRDocument> docs;
-	
+    final static double k1 = 1.5;
+    final static double b = 0.75;
+    final static double k2 = 500;
 	public static void main(String[] args) {
 		docs = new HashMap<String,IRDocument>();
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -90,7 +92,9 @@ class ir {
 			    }
                 else{
                     double sim = Similarity(docs.get(tokInput.get(1)),docs.get(tokInput.get(2)));
-                    System.out.println("Similarity Value: "+sim);
+                    System.out.println("TFIDF similarity Value: "+sim);
+                    double simOka = Okapi(docs.get(tokInput.get(1)),docs.get(tokInput.get(2)));
+                    System.out.println("Okapi similarity Value: "+simOka);
                 }
 			}
 			else if(tokInput.get(0).compareToIgnoreCase("SEARCH") == 0 &&
@@ -161,7 +165,7 @@ class ir {
     }
     
 	private static void searchDoc(IRDocument d, int size){
-	    ArrayList<Pair> list = new ArrayList<Pair>();
+        ArrayList<Pair> list = new ArrayList<Pair>();
         for(IRDocument tempDoc : docs.values()){
             if(tempDoc.id.compareTo(d.id) != 0){
                 double tempSim = Similarity(d,tempDoc);
@@ -172,7 +176,26 @@ class ir {
         }
         Collections.sort(list);
         
+        System.out.println("Using TFIDF for comparison:");
         int i = 0;
+        while(i < list.size() && i < size){
+            System.out.println("DocID: "+list.get(i).getStr()+ "\t" +list.get(i).getSimValue());
+            i++;
+        }
+        
+        System.out.println("Using Okapi for comparison:");
+        list = new ArrayList<Pair>();
+        for(IRDocument tempDoc : docs.values()){
+            if(tempDoc.id.compareTo(d.id) != 0){
+                double tempSim = Okapi(d,tempDoc);
+                if(tempSim != 0){
+                    list.add(new Pair(tempSim,tempDoc.id));
+                }
+            }
+        }
+        Collections.sort(list);
+        
+        i = 0;
         while(i < list.size() && i < size){
             System.out.println("DocID: "+list.get(i).getStr()+ "\t" +list.get(i).getSimValue());
             i++;
@@ -187,6 +210,58 @@ class ir {
         return answer;
     }
     
+    private static double Okapi(IRDocument doc1, IRDocument doc2){
+        double answer = 0;
+        double sum1 = 0;
+        double sum2 = 0;
+        double sum3 = 0;
+        int docFreq = 0;
+        int size = 0;
+        HashMap<String,Word> bigHM;
+        HashMap<String,Word> smallHM;
+        if(doc1.hashMap.size() >= doc2.hashMap.size()){
+            bigHM = doc1.hashMap;
+            smallHM = doc2.hashMap;
+        }
+        else{
+            bigHM = doc2.hashMap;
+            smallHM = doc1.hashMap;
+        }
+        
+        //figure out the avgByteLength
+        double avgByteLength = 0;
+        for (IRDocument value : docs.values()) {
+            avgByteLength += value.bytelength;
+        }
+        avgByteLength /= (double)docs.size();
+        
+        
+        for(Word w : bigHM.values()){
+            if(smallHM.containsKey(w.str)){
+                docFreq = 0;
+                for (IRDocument value : docs.values()) {
+                    if(value.hashMap.containsKey(w.str)){
+                        docFreq++;
+                    }
+                }
+                
+                sum1 = ((double)docs.size()-((double)docFreq)+0.5);
+                sum1 /= ((double)docFreq)+0.5;
+                
+                sum1 = Math.log(sum1)/Math.log(Math.E);
+                
+                sum2 = (k1+1.0)*(doc1.hashMap.get(w.str).freq);
+                sum2 /= k1*(1.0 - b + b*((double)doc1.bytelength)/(avgByteLength)) + (doc1.hashMap.get(w.str).freq);
+                
+                sum3 = (k2 + 1.0)*(doc2.hashMap.get(w.str).freq);
+                sum3 /= k2 + (doc2.hashMap.get(w.str).freq);
+                
+                answer += sum1*sum2*sum3;
+            }
+        }
+        return answer;        
+    }
+	
     private static double Similarity(IRDocument doc1, IRDocument doc2) {
         double answer = 0;
         double sum1 = 0;
@@ -205,12 +280,19 @@ class ir {
         }
         for(Word w : temp.values()){
             sum1 += TFIDF(doc1,w) * TFIDF(doc2,w);
+            //System.out.print(w.str+" "+TFIDF(doc1,w)+"\t"+TFIDF(doc2,w));
+            //System.out.println();
         }
         
-
-        for(Word w : temp.values()){
+        
+        for(Word w : doc1.hashMap.values())
+        {
             sum2 += Math.pow(TFIDF(doc1,w),2);
-            sum3 += Math.pow(TFIDF(doc2,w),2);
+        }
+        
+        for(Word w : doc2.hashMap.values())
+        {
+            sum3 += Math.pow(TFIDF(doc1,w),2);
         }
         
         //System.out.println("sim1="+sum1);
@@ -245,14 +327,14 @@ class ir {
         double TF = ((double)freq) / ((double)maxFreq);
         //System.out.println("TF="+TF);
         
-        int docCount = 0;
+        int docFreq = 0;
         for (IRDocument value : docs.values()) {
             if(value.hashMap.containsKey(w.str)){
-                docCount++;
+                docFreq++;
                 //System.out.println(w.str+" in "+ "documentID "+value.id);
             }
         }
-        double IDF = Math.log((double)docs.size() / (double)docCount) / Math.log(2.0);
+        double IDF = Math.log((double)docs.size() / (double)docFreq) / Math.log(2.0);
         
         double answer = TF*IDF;
         
