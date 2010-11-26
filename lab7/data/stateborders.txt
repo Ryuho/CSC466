@@ -1,0 +1,18 @@
+The StateNeighbors dataset contains data on which states boarder each state.
+
+The format of the data is as follows:
+
+CA 0 , AZ 0
+
+The above means that CA and AZ share a boarder, all the numbers will be 0.
+
+The format is meant to be similar to the NCAAFootball.txt so that you only need to write one parser.
+
+You may download this dataset  here
+
+Source
+
+This dataset is adapted from  the collection of datasets for Hartigan's clustering textbook. [1]
+
+ file28.txt: download the original file.
+[1] John Hartigan, Clustering Algorithms, Wiley, 1975, LC: QA278.H36, ISBN: 0-471-35645-X

@@ -1,0 +1,10 @@
+NCAAFootball Dataset
+The NCAAFootball dataset contains a collection of NCAA Football games, including the teams that played and their scores.
+
+The format of the data is as follows:
+
+Team name score , Team name score
+
+Each line represents one game played, the teams that played as well as the scores they earned that game.
+
+You may download this dataset  here
