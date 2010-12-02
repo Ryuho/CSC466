@@ -2,13 +2,16 @@
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
 public class CSV {
 	static int idCount = 0;
+	ArrayList<String> rows;
     ArrayList<ArrayList<String>> data;
 
 	CSV(String fileName) {
+	    rows = new ArrayList<String>();
         data = new ArrayList<ArrayList<String>>();
         FileInputStream fstream = null;
         
@@ -37,6 +40,20 @@ public class CSV {
             e.printStackTrace();
             System.err.println("Exception while reading file.");
         }
+        
+        for(int i = 0; i < data.size(); i++){
+            String temp = data.get(i).get(0);
+            boolean newValue = true;
+            for(int j = 0; j < rows.size(); j++){
+                if(temp.compareTo(rows.get(j)) == 0){
+                    newValue = false;
+                }
+            }
+            if(newValue){
+                rows.add(temp);
+            }
+        }
+        
     }
     
     private static ArrayList<String> stringToStringAL(String s){
