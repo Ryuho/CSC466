@@ -19,7 +19,9 @@ public class Row
 	int incoming;
 	int id;
 	
-	
+	double pageRank;
+	double newPageRank;
+
 	
 	
 	Row(String name)
@@ -87,6 +89,10 @@ public class Row
 			}
 		}
 		return null;
+	}
+	static int matrixSize()
+	{
+		return matrix.size();
 	}
 	
 	static void calcOutInMatrix()
@@ -161,4 +167,6 @@ public class Row
 	{
 		return values.get(valId).rank;
 	}
+	
+	
 }
