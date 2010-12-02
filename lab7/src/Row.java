@@ -142,4 +142,19 @@ public class Row
 	{
 		return rowName;
 	}
+	
+	public void addValue(Link newVal)
+	{
+		this.values.add(newVal);
+	}
+	
+	public int getLinkValue(int valId)
+	{
+		return values.get(valId).value;
+	}
+	
+	public int getLinkRank(int valId)
+	{
+		return values.get(valId).rank;
+	}
 }
