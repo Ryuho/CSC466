@@ -22,18 +22,12 @@ public class Row
 		outgoing = 0;
 		incoming = 0;
 		values = new ArrayList<Link>(matrixSize);
+		for(int i = 0 ; i < matrixSize; i++)
+		{
+			values.add(new Link(-9));
+		}
 		id = -1;
 	}
-	
-	Row()
-	{
-		rowName = "";
-		outgoing = 0;
-		incoming = 0;
-		values = new ArrayList<Link>();
-		id = -1;
-	}
-	
 	
 	public void calcOutgoing()
 	{
@@ -87,7 +81,7 @@ public class Row
 	
 	public void addValue(Link newVal, int index)
 	{
-		this.values.add(index, newVal);
+		this.values.set(index, newVal);
 	}
 
 	
