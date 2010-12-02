@@ -112,6 +112,7 @@ public class Row
 				{
 					outgoing++;
 					incoming++;
+					this.values.get(i).setOutgoing(true);
 				}
 				else if(othval < 0)
 				{
@@ -125,6 +126,7 @@ public class Row
 				else if(thisval < othval)
 				{
 					outgoing++;
+					this.values.get(i).setOutgoing(true);
 				}
 			}
 		}
