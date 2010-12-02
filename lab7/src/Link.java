@@ -4,6 +4,12 @@ public class Link
 	int value;
 	int rank;
 	
+	public Link(int val)
+	{
+		this.value = val;
+		rank = -1;
+	}
+	
 	public int getValue()
 	{
 		return value;

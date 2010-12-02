@@ -56,10 +56,7 @@ public class Row
 		val.id = matrix.size();
 	}
 	
-	static Row getRowbyId(int i)
-	{
-		return matrix.get(i);
-	}
+	
 	
 	static boolean checkIfSquare()
 	{
@@ -73,6 +70,11 @@ public class Row
 			lastval = r.values.size();
 		}
 		return matrix.size() == lastval;
+	}
+	
+	static Row getRowbyId(int i)
+	{
+		return matrix.get(i);
 	}
 	
 	static Row getRowbyName(String name)
@@ -143,9 +145,9 @@ public class Row
 		return rowName;
 	}
 	
-	public void addValue(Link newVal)
+	public void addValue(Link newVal, int index)
 	{
-		this.values.add(newVal);
+		this.values.add(index, newVal);
 	}
 	
 	public int getLinkValue(int valId)
