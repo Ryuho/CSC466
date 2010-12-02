@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class Matrix
 {
-	public static ArrayList<Row> matrix;
+	private static ArrayList<Row> matrix;
 	
 	static void initMatrix()
 	{
