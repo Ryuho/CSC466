@@ -1,0 +1,13 @@
+Katherine Blizard, Ryuho Kudo
+kblizard,          rkudo
+
+Design Decisions:
+We chose to ignore self referencing nodes in the calculation for page rank.
+
+
+To compile:
+javac pageRank.java *.java
+
+To run:
+java pageRank <fileName> <(-d)>
+// The -d flag is for directed

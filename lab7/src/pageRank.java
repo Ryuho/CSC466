@@ -13,7 +13,6 @@ public class pageRank
 	{
 		boolean isDirected = true;
 		pageRank ranker = new pageRank();
-		file = new CSV("data/dolphins.csv");
 
 		if (args.length == 1)
 		{
@@ -22,6 +21,10 @@ public class pageRank
 		{
 			file = new CSV(args[0]);
 			isDirected = true;
+		}
+		else{
+		    System.out.println("Usage: java pageRank <fileName> <(-d)>");
+		    System.exit(-1);
 		}
 
 		Matrix.initMatrix(isDirected);
