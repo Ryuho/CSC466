@@ -4,12 +4,14 @@ public class Link
 	int value;
 	int rank;
 	boolean isOutgoing;
+	boolean isIncoming;
 	
 	public Link(int val)
 	{
 		this.value = val;
 		rank = -1;
 		isOutgoing = false;
+		isIncoming = false;
 	}
 	
 	public int getValue()
@@ -37,5 +39,15 @@ public class Link
 	public void setOutgoing(boolean isOutgoing)
 	{
 		this.isOutgoing = isOutgoing;
+	}
+
+	public boolean isIncoming()
+	{
+		return isIncoming;
+	}
+
+	public void setIncoming(boolean isIncoming)
+	{
+		this.isIncoming = isIncoming;
 	}
 }

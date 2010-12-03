@@ -54,6 +54,7 @@ public class Row
 				else if(thisval > othval)
 				{
 					incoming++;
+					this.values.get(i).setIncoming(true);
 				}
 				else if(thisval < othval)
 				{

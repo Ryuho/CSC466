@@ -11,9 +11,9 @@ public class pageRank
 
 	public static void main(String args[])
 	{
-		boolean isDirected = false;
+		boolean isDirected = true;
 		pageRank ranker = new pageRank();
-		file = new CSV("data/stateborders.csv");
+		file = new CSV("data/dolphins.csv");
 
 		if (args.length == 1)
 		{
@@ -138,7 +138,8 @@ public class pageRank
 				for (int j = 0; j < Matrix.matrixSize(); j++)
 				{
 					Row jCur = Matrix.getRowbyId(j);
-					if(jCur.getLinkValue(i) >= 0 && (iCur.getLinkValue(j) <= jCur.getLinkValue(i)))
+					if(jCur.getLinkValue(i) >= 0 && (iCur.getLinkValue(j) >= jCur.getLinkValue(i) 
+							&& j != i))
 					{
 					    sum += (1.0 / jCur.numOutgoing()) * jCur.getPageRank();
 					}
