@@ -34,7 +34,7 @@ public class Row
 		//for each value, check its brother column if it has the same number
 		for(int i = 0; i < values.size(); i++)
 		{
-			if(values.get(i).value != -1 && Matrix.getRowbyId(i).id != id)
+			if(values.get(i).value >= 0 && Matrix.getRowbyId(i).id != id)
 			{
 				int thisval = values.get(i).value;
 				int othval = Matrix.getRowbyId(i).values.get(id).value;

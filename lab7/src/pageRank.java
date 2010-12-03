@@ -13,7 +13,7 @@ public class pageRank
 	{
 		boolean isDirected = false;
 		pageRank ranker = new pageRank();
-		file = new CSV("data/dolphins.csv");
+		file = new CSV("data/stateborders.csv");
 
 		if (args.length == 1)
 		{
@@ -54,7 +54,7 @@ public class pageRank
 			}
 
 		}
-		//Matrix.checkIfSquare();
+		Matrix.checkIfSquare();
 		Matrix.calcOutInMatrix();
 		
 		ranker.rankPages();
@@ -88,7 +88,7 @@ public class pageRank
 	{
 		for (int i = 0; i < Matrix.matrixSize(); i++)
 		{
-			Matrix.getRowbyId(i).setNewPageRank(1.0 / Matrix.matrixSize());
+			Matrix.getRowbyId(i).setNewPageRank(1.0 / ((double) Matrix.matrixSize()));
 			Matrix.getRowbyId(i).setPageRank(Double.MAX_VALUE);
 		}
 	} // end init
@@ -98,10 +98,9 @@ public class pageRank
 		double output = 0.0;
 		for (int i = 0; i < Matrix.matrixSize(); i++)
 		{
-			output += Math.abs(Matrix.getRowbyId(i).getPageRank()
-					- Matrix.getRowbyId(i).getNewPageRank());
+			output += Math.abs(Matrix.getRowbyId(i).getNewPageRank()
+					- Matrix.getRowbyId(i).getPageRank());
 		}
-		System.out.println(output);
 		return output;
 	} // end rankDifference
 
@@ -112,7 +111,7 @@ public class pageRank
 		{
 			Row cur = Matrix.getRowbyId(i);
 			cur.setPageRank(cur.getNewPageRank());
-			cur.setNewPageRank(-1);
+			cur.setNewPageRank(-1.0);
 		}
 	} //end shiftPageRanks
 
@@ -132,22 +131,20 @@ public class pageRank
 			{
 				Row iCur = Matrix.getRowbyId(i);
 				// calculate random probability
-				double randProb = (1.0 - d) * (1.0 / Matrix.matrixSize());
+				double randProb = (1.0 - d) * (1.0 / ((double) Matrix.matrixSize()));
 
 				// calculate outgoing link probability
-				double outProb = d;
 				double sum = 0;
 				for (int j = 0; j < Matrix.matrixSize(); j++)
 				{
 					Row jCur = Matrix.getRowbyId(j);
-					if(jCur.numOutgoing() != 0)
+					if(jCur.getLinkValue(i) >= 0 && (iCur.getLinkValue(j) <= jCur.getLinkValue(i)))
 					{
-						sum += (1.0 / jCur.numOutgoing()) * jCur.getPageRank();
+					    sum += (1.0 / jCur.numOutgoing()) * jCur.getPageRank();
 					}
 				}
-				iCur.setNewPageRank(randProb + (outProb * sum));
+				iCur.setNewPageRank(randProb + (d * sum));
 			}
-			
 		}
 	} // end rankPages
 }
