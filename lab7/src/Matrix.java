@@ -12,10 +12,12 @@ import java.util.ArrayList;
 public class Matrix
 {
 	private static ArrayList<Row> matrix;
+	static boolean isDirected;
 	
-	static void initMatrix()
+	static void initMatrix(boolean direct)
 	{
 		matrix = new ArrayList<Row>();
+		isDirected = direct;
 	}
 	
 	static void addRow(Row val)
