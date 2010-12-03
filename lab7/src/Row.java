@@ -48,7 +48,7 @@ public class Row
 				}
 				else if(othval < 0)
 				{
-					System.err.println("matrix not symmetric");
+					System.err.println("matrix not symmetric, did you set the directed graph flag?");
 					System.exit(-1);
 				}
 				else if(thisval > othval)

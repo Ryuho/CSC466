@@ -13,7 +13,7 @@ public class pageRank
 	{
 		boolean isDirected = false;
 		pageRank ranker = new pageRank();
-		file = new CSV("data/NCAA_football.csv");
+		file = new CSV("data/dolphins.csv");
 
 		if (args.length == 1)
 		{
@@ -54,7 +54,9 @@ public class pageRank
 			}
 
 		}
-
+		//Matrix.checkIfSquare();
+		Matrix.calcOutInMatrix();
+		
 		ranker.rankPages();
 		ranker.printResult();
 	}// end main
@@ -86,7 +88,7 @@ public class pageRank
 	{
 		for (int i = 0; i < Matrix.matrixSize(); i++)
 		{
-			Matrix.getRowbyId(i).setNewPageRank(1 / Matrix.matrixSize());
+			Matrix.getRowbyId(i).setNewPageRank(1.0 / Matrix.matrixSize());
 			Matrix.getRowbyId(i).setPageRank(Double.MAX_VALUE);
 		}
 	} // end init
@@ -140,7 +142,7 @@ public class pageRank
 					Row jCur = Matrix.getRowbyId(j);
 					if(jCur.numOutgoing() != 0)
 					{
-						sum += (1.0 / iCur.numOutgoing()) * jCur.getPageRank();
+						sum += (1.0 / jCur.numOutgoing()) * jCur.getPageRank();
 					}
 				}
 				iCur.setNewPageRank(randProb + (outProb * sum));
