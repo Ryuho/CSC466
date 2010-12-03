@@ -52,6 +52,17 @@ public class CSV {
             if(newValue){
                 rows.add(temp);
             }
+            
+            temp = data.get(i).get(2);
+            newValue = true;
+            for(int j = 0; j < rows.size(); j++){
+                if(temp.compareTo(rows.get(j)) == 0){
+                    newValue = false;
+                }
+            }
+            if(newValue){
+                rows.add(temp);
+            }
         }
         
     }
