@@ -11,8 +11,8 @@ public class Row
 	int incoming;
 	int id;
 	
-	double pageRank;
-	double newPageRank;
+	private double pageRank;
+	private double newPageRank;
 
 	
 	
@@ -98,6 +98,26 @@ public class Row
 	public Link getLink(int valId)
 	{
 		return values.get(valId);
+	}
+
+	public double getPageRank()
+	{
+		return pageRank;
+	}
+
+	public void setPageRank(double pageRank)
+	{
+		this.pageRank = pageRank;
+	}
+
+	public double getNewPageRank()
+	{
+		return newPageRank;
+	}
+
+	public void setNewPageRank(double newPageRank)
+	{
+		this.newPageRank = newPageRank;
 	}
 	
 	
