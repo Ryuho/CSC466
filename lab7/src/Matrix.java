@@ -26,7 +26,7 @@ public class Matrix
 			System.exit(-1);
 		}
 		matrix.add(val);
-		val.id = matrix.size();
+		val.id = matrix.size()-1;
 	}
 	
 	
